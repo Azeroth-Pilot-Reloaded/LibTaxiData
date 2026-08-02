@@ -1,0 +1,10 @@
+package-as: LibTaxiData
+
+ignore:
+  - .github
+  - .gitattributes
+  - .gitignore
+  - .luacheckrc
+  - README.md
+  - tests
+  - tools

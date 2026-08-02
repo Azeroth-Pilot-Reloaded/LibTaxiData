@@ -1,0 +1,54 @@
+name: Release addon
+
+on:
+  push:
+    tags:
+      - data-*
+      - v*
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Tag or Git ref to package
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      ref:
+        description: Tag or Git ref to package
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
+      WOWI_PROJECT_ID: ${{ vars.WOWI_PROJECT_ID }}
+      WAGO_PROJECT_ID: ${{ vars.WAGO_PROJECT_ID }}
+    steps:
+      - name: Validate deployment configuration
+        run: |
+          for name in CF_API_TOKEN WOWI_API_TOKEN WAGO_API_TOKEN CURSEFORGE_PROJECT_ID WOWI_PROJECT_ID WAGO_PROJECT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "Missing repository secret or variable: $name" >&2
+              exit 1
+            fi
+          done
+
+      - name: Checkout release
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Package and upload to CurseForge, Wago, WoWInterface, and GitHub
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -p ${{ vars.CURSEFORGE_PROJECT_ID }} -w ${{ vars.WOWI_PROJECT_ID }} -a ${{ vars.WAGO_PROJECT_ID }}

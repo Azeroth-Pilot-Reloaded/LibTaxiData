@@ -1,0 +1,124 @@
+name: Update Retail taxi data
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  repository_dispatch:
+    types:
+      - wow-build
+  workflow_dispatch:
+    inputs:
+      build:
+        description: Exact Retail build; leave empty to query Blizzard
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-retail-taxi-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Resolve Retail build
+        id: build
+        env:
+          MANUAL_BUILD: ${{ inputs.build }}
+          WEBHOOK_BUILD: ${{ github.event.client_payload.build }}
+        run: |
+          build="$MANUAL_BUILD"
+          if [ -z "$build" ]; then build="$WEBHOOK_BUILD"; fi
+          if [ -z "$build" ]; then build="$(python tools/live_build.py --region eu)"; fi
+          if ! printf '%s' "$build" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid Retail build: $build" >&2
+            exit 1
+          fi
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+
+      - name: Restore DB2 cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/db2
+          key: wago-db2-${{ steps.build.outputs.build }}
+
+      - name: Fingerprint current taxi content
+        id: before
+        run: echo "fingerprint=$(python tools/data_fingerprint.py)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate data from Wago Tools
+        run: python tools/generate.py --build "${{ steps.build.outputs.build }}" --cache-dir .cache/db2
+
+      - name: Detect a semantic data change
+        id: diff
+        env:
+          BEFORE: ${{ steps.before.outputs.fingerprint }}
+        run: |
+          after="$(python tools/data_fingerprint.py)"
+          if [ "$BEFORE" = "$after" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Only build provenance changed; no data release is required."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Lua
+        uses: leafo/gh-actions-lua@v12
+        with:
+          luaVersion: '5.1'
+
+      - name: Set up LuaRocks
+        uses: leafo/gh-actions-luarocks@v6
+
+      - name: Install Luacheck
+        run: luarocks install luacheck
+
+      - name: Validate generated addon
+        run: |
+          luacheck .
+          lua tests/runtime.lua
+          git diff --check
+
+      - name: Create data update pull request
+        if: steps.diff.outputs.changed == 'true'
+        id: pull-request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
+          branch: automation/taxi-data-${{ steps.build.outputs.build }}
+          delete-branch: true
+          commit-message: Update taxi data for Retail ${{ steps.build.outputs.build }}
+          title: Update taxi data for Retail ${{ steps.build.outputs.build }}
+          body: |
+            Automated update for Blizzard Retail build `${{ steps.build.outputs.build }}`.
+
+            Source: `TaxiNodes` and referenced condition tables from Wago Tools DB2 exports.
+            The generator, Lua lint, runtime tests, and whitespace validation completed successfully.
+          add-paths: |
+            Data/**
+            Locale/**
+            LibTaxiData.toc
+
+      - name: Enable automatic merge
+        if: vars.AUTO_MERGE_DATA_UPDATES == 'true' && steps.pull-request.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+          PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "AUTOMATION_TOKEN is required when AUTO_MERGE_DATA_UPDATES=true" >&2
+            exit 1
+          fi
+          gh pr merge --auto --squash "$PR_URL"

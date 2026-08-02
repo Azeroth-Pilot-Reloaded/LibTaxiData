@@ -1,0 +1,12 @@
+## Interface: 120007
+## Title: LibTaxiData
+## Notes: Autonomous, localized Retail taxi-node data, conditions, coordinate conversion, and nearest-node API.
+## Author: Azeroth Pilot Reloaded
+## Version: @project-version@
+## IconTexture: Interface\Icons\Ability_Hunter_EagleEye
+## X-Website: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
+## X-Github: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
+## X-License: All Rights Reserved
+## X-Data-Source: Wago Tools DB2
+
+LibTaxiData.xml
