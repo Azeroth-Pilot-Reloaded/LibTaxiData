@@ -1,34 +1,73 @@
-name: Publish merged taxi data
+name: Publish changed taxi data
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - Data/**
-      - Locale/**
-      - LibTaxiData.toc
-      - tools/profiles.json
+  workflow_run:
+    workflows:
+      - Validate
+    types:
+      - completed
+
+concurrency:
+  group: publish-changed-taxi-data
+  cancel-in-progress: false
 
 permissions:
   actions: write
   contents: write
 
 jobs:
-  tag:
-    if: vars.AUTO_PUBLISH == 'true'
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
-    outputs:
-      created: ${{ steps.tag.outputs.created }}
-      tag: ${{ steps.tag.outputs.tag }}
     steps:
-      - name: Checkout
+      - name: Checkout validated main commit
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Tag the data build
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Compare with the latest published data release
+        id: data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current_fingerprint="$(python tools/data_fingerprint.py)"
+          previous_tag="$(
+            gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+              --jq '.[] | select(.tag_name | startswith("data-multi-")) | .tag_name' \
+              | head -n 1
+          )"
+
+          if [ -z "$previous_tag" ]; then
+            echo "No previous data release was found; publishing the initial data release."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          previous_tree="$RUNNER_TEMP/previous-data-release"
+          git worktree add --detach "$previous_tree" "$previous_tag"
+          previous_fingerprint="$(cd "$previous_tree" && python tools/data_fingerprint.py)"
+          git worktree remove "$previous_tree"
+
+          echo "Previous data release: $previous_tag"
+          if [ "$current_fingerprint" = "$previous_fingerprint" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Taxi data is unchanged; no release will be created."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Taxi data changed; a release will be created."
+          fi
+
+      - name: Tag the validated data
+        if: steps.data.outputs.changed == 'true'
         id: tag
         run: |
           builds="$(grep -h '^[[:space:]]*build = "' Data/*/TaxiNodes.lua | sed -n 's/.*"\([0-9.]*\)".*/\1/p')"
@@ -36,25 +75,23 @@ jobs:
             echo "Invalid generated build catalog" >&2
             exit 1
           fi
-          tag="data-multi-${GITHUB_SHA::7}"
+
+          validated_sha="$(git rev-parse --short=7 HEAD)"
+          tag="data-multi-$validated_sha"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
-            echo "created=false" >> "$GITHUB_OUTPUT"
+            echo "Using existing unpublished tag: $tag"
             exit 0
           fi
+
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git tag -a "$tag" -m "LibTaxiData multi-client data: $(printf '%s' "$builds" | paste -sd, -)"
           git push origin "$tag"
-          echo "created=true" >> "$GITHUB_OUTPUT"
 
-  dispatch-release:
-    needs: tag
-    if: needs.tag.outputs.created == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start the release workflow
+      - name: Start deployment
+        if: steps.data.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ needs.tag.outputs.tag }}
+          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
         run: gh workflow run release.yml --ref main -f ref="$RELEASE_TAG"

@@ -21,8 +21,57 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-addon
+  cancel-in-progress: false
+
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Compile tooling
+        run: python -m py_compile tools/generate.py tools/package.py tools/live_build.py tools/data_fingerprint.py
+
+      - name: Validate client profile catalog and archives
+        run: |
+          python -m json.tool tools/profiles.json >/dev/null
+          python tools/package.py --matrix
+          python tools/package.py --build --output-dir .cache/release-zips
+          python tests/package.py .cache/release-zips
+
+      - name: Set up Lua
+        uses: leafo/gh-actions-lua@v12
+        with:
+          luaVersion: '5.1'
+
+      - name: Set up LuaRocks
+        uses: leafo/gh-actions-luarocks@v6
+
+      - name: Install Luacheck
+        run: luarocks install luacheck
+
+      - name: Validate Lua
+        run: |
+          luacheck .
+          lua tests/client_selection.lua
+          profiles="$(python -c 'import json; print(" ".join(p["id"] for p in json.load(open("tools/profiles.json")) if p.get("build")))')"
+          for profile in $profiles; do
+            lua tests/runtime.lua "$profile"
+          done
+          git diff --check
+
   plan:
+    needs: validate
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.bundles.outputs.matrix }}
