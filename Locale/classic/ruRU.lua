@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "Башня Северного перевалa, Восточные Чумные земли",
     [86] = "Восточная башня, Восточные Чумные земли",
     [87] = "Башня королевской стражи, Восточные Чумные земли",
-    [2913] = "Quest Path 9571: S03 - Runecarving - Shaman - Level 40 Quest - 6 - KJA",
-    [2914] = "Quest Path 9574: S03 - Runecarving - Shaman - Level 40 Quest - 6 - Flight Back - KJA",
-    [2930] = "Quest Path 9620: S03 - Runecarving - Shaman - Level 40 Rune - Corrupted Fire Totem - Tal Taxi Path - KJA",
 }

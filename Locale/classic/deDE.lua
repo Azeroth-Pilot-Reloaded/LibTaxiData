@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "Nordpassturm, östliche Pestländer",
     [86] = "Ostwallturm, östliche Pestländer",
     [87] = "Turm der Kronenwache, östliche Pestländer",
-    [2913] = "Questweg 9571: S03 - Runenschnitzen - Schamane - Stufe 40 Quest - 6 - KJA",
-    [2914] = "Questweg 9574: S03 - Runenschnitzen - Schamane - Stufe 40 Quest - 6 - Flug zurück - KJA",
-    [2930] = "Questweg 9620: S03 - Runenschnitzen - Schamane - Stufe 40 Rune- Verderbtes Feuertotem - Tal Taxi Path - KJA",
 }

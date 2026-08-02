@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "北地哨塔，東瘟疫之地",
     [86] = "東牆之塔，東瘟疫之地",
     [87] = "皇冠哨塔，東瘟疫之地",
-    [2913] = "Quest Path 9571: S03 - Runecarving - Shaman - Level 40 Quest - 6 - KJA",
-    [2914] = "Quest Path 9574: S03 - Runecarving - Shaman - Level 40 Quest - 6 - Flight Back - KJA",
-    [2930] = "Quest Path 9620: S03 - Runecarving - Shaman - Level 40 Rune - Corrupted Fire Totem - Tal Taxi Path - KJA",
 }

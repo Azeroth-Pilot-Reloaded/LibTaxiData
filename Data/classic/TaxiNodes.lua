@@ -12,8 +12,8 @@ lib.Source = {
     channel = "live",
     provider = "Wago Tools",
     tableName = "TaxiNodes",
-    nodeCount = 84,
-    excludedNodeCount = 3,
+    nodeCount = 81,
+    excludedNodeCount = 6,
 }
 
 lib.Nodes = {
@@ -98,15 +98,15 @@ lib.Nodes = {
     [85] = { continentID = 0, x = 3109.3100585938, y = -4285.1298828125, z = 109.44999694824, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 3, uiTextureKitID = 0, minimapAtlasMemberID = 0, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 3574, allianceMountCreatureID = 541 },
     [86] = { continentID = 0, x = 2499.2299804688, y = -4742.8500976562, z = 93.5, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 3, uiTextureKitID = 0, minimapAtlasMemberID = 0, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 3574, allianceMountCreatureID = 541 },
     [87] = { continentID = 0, x = 1857.5600585938, y = -3658.4699707031, z = 143.72999572754, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 3, uiTextureKitID = 0, minimapAtlasMemberID = 0, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 3574, allianceMountCreatureID = 541 },
-    [2913] = { continentID = 1, x = -5167.2900390625, y = -2788.5100097656, z = 89.67520141602, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 0, uiTextureKitID = 0, minimapAtlasMemberID = 0, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 2224, allianceMountCreatureID = 2224 },
-    [2914] = { continentID = 1, x = -5459.7001953125, y = -2468.3100585938, z = 89.27600097656, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 0, uiTextureKitID = 0, minimapAtlasMemberID = 0, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 2224, allianceMountCreatureID = 2224 },
-    [2930] = { continentID = 1, x = 7470.6899414062, y = -2126.7700195312, z = 492.41500854492, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 0, uiTextureKitID = 0, minimapAtlasMemberID = 0, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 2224, allianceMountCreatureID = 2224 },
 }
 
 lib.ExcludedNodes = {
     [3] = { reason = "programmer-isle", name = "Programmer Isle" },
     [24] = { reason = "generic-world-target", name = "Generic, World target for Zeppelin Paths" },
     [36] = { reason = "generic-world-target", name = "Generic, World target" },
+    [2913] = { reason = "quest-path-node", name = "Quest Path 9571: S03 - Runecarving - Shaman - Level 40 Quest - 6 - KJA" },
+    [2914] = { reason = "quest-path-node", name = "Quest Path 9574: S03 - Runecarving - Shaman - Level 40 Quest - 6 - Flight Back - KJA" },
+    [2930] = { reason = "quest-path-node", name = "Quest Path 9620: S03 - Runecarving - Shaman - Level 40 Rune - Corrupted Fire Totem - Tal Taxi Path - KJA" },
 }
 
 lib.MissingPlayerConditions = {

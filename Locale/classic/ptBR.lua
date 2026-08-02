@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "Torre do Passo Norte, Terras Pestilentas Orientais",
     [86] = "Torre da Muralha Leste, Terras Pestilentas Orientais",
     [87] = "Torre da Coroa, Terras Pestilentas Orientais",
-    [2913] = "Quest Path 9571: S03 - Runecarving - Shaman - Level 40 Quest - 6 - KJA",
-    [2914] = "Quest Path 9574: S03 - Runecarving - Shaman - Level 40 Quest - 6 - Voo de Volta - KJA",
-    [2930] = "Quest Path 9620: S03 - Runecarving - Shaman - Level 40 Rune - Corrupted Fire Totem - Tal Taxi Path - KJA",
 }

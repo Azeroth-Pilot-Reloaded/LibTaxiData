@@ -13,13 +13,50 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.generate import load_profiles, profile_content_fingerprint  # noqa: E402
+from tools.generate import (  # noqa: E402
+    classify_taxi,
+    load_profiles,
+    profile_content_fingerprint,
+)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive_dir", type=Path)
     args = parser.parse_args()
+
+    assert classify_taxi(
+        {"ID": "1", "ContinentID": "0", "Name_lang": "[HIDDEN] Network Hub"},
+        set(),
+    ) == "hidden-node"
+    assert classify_taxi(
+        {"ID": "2", "ContinentID": "0", "Name_lang": "TEMPAREA1, Argus"},
+        set(),
+    ) == "temporary-node"
+    assert classify_taxi(
+        {"ID": "3", "ContinentID": "0", "Name_lang": "Temple of Akunda"},
+        set(),
+    ) is None
+    assert classify_taxi(
+        {"ID": "4", "ContinentID": "0", "Name_lang": "Temporal Conflux"},
+        set(),
+    ) is None
+    assert classify_taxi(
+        {"ID": "5", "ContinentID": "0", "Name_lang": "Quest Path 42: Route"},
+        set(),
+    ) == "quest-path-node"
+    assert classify_taxi(
+        {"ID": "6", "ContinentID": "0", "Name_lang": "Transport - Start"},
+        set(),
+    ) == "script-endpoint"
+    assert classify_taxi(
+        {"ID": "7", "ContinentID": "0", "Name_lang": ""},
+        set(),
+    ) == "unnamed-node"
+    assert classify_taxi(
+        {"ID": "8", "ContinentID": "0", "Name_lang": "Old Gate, Revendreth"},
+        set(),
+    ) is None
     archive_dir = args.archive_dir.resolve()
     releases = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
     profiles = [profile for profile in load_profiles() if profile.get("build")]

@@ -60,13 +60,38 @@ NODE_FIELDS = (
     ("allianceMountCreatureID", "MountCreatureID_1"),
 )
 
-TAXI_DEV_RULES = (
+TAXI_EXCLUSION_RULES = (
+    ("hidden-node", re.compile(r"\bhidden\b", re.IGNORECASE)),
+    (
+        "temporary-node",
+        re.compile(r"\btemp(?:area\d*)?\b", re.IGNORECASE),
+    ),
     ("programmer-isle", re.compile(r"^Programmer Isle$", re.IGNORECASE)),
     ("generic-world-target", re.compile(r"^Generic, World Target", re.IGNORECASE)),
     ("test-node", re.compile(r"\btest\b", re.IGNORECASE)),
     ("development-land", re.compile(r"\bDevelopment Land\b", re.IGNORECASE)),
     ("developer-test", re.compile(r"devtest", re.IGNORECASE)),
     ("unused-node", re.compile(r"\[(?:unused|disabled)\b|\bzzz?unused\b", re.IGNORECASE)),
+    (
+        "obsolete-node",
+        re.compile(
+            r"\bNOT USED\b|\bNO LONGER USED\b|\bzzz|"
+            r"\[(?:OLD\d*|REUSEME)\]|xxOLD|\bDisable Taxi Paths\b|"
+            r"\bPre-Prod\b",
+            re.IGNORECASE,
+        ),
+    ),
+    ("prototype-node", re.compile(r"\bProto\b|\bPrototype\b", re.IGNORECASE)),
+    ("personal-node", re.compile(r"\bPERSONAL\b", re.IGNORECASE)),
+    (
+        "out-of-bounds-node",
+        re.compile(r"\bOut of Bounds\b", re.IGNORECASE),
+    ),
+    ("quest-path-node", re.compile(r"^Quest Path\b", re.IGNORECASE)),
+    (
+        "script-endpoint",
+        re.compile(r"(?:\s| - )(?:Start|Begin|End)$", re.IGNORECASE),
+    ),
 )
 
 MAP_DEV_RULE = re.compile(
@@ -401,7 +426,9 @@ def classify_taxi(row: dict[str, str], dev_maps: set[int]) -> str | None:
     if integer(row["ContinentID"]) in dev_maps:
         return "development-map"
     name = row.get("Name_lang", "").strip()
-    for reason, pattern in TAXI_DEV_RULES:
+    if not name:
+        return "unnamed-node"
+    for reason, pattern in TAXI_EXCLUSION_RULES:
         if pattern.search(name):
             return reason
     return None
@@ -763,7 +790,7 @@ def generate_profile(
 
     print(
         f"Generated profile {profile['id']} ({build}): {len(included)} taxi nodes; "
-        f"excluded {len(excluded)} development nodes; "
+        f"excluded {len(excluded)} non-player nodes; "
         f"included {len(condition_ids) - len(missing_conditions)} player conditions and "
         f"{len(tree_ids)} modifier-tree rows.",
         file=sys.stderr,

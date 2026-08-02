@@ -54,7 +54,6 @@ lib.PlayerConditions = {
     [53150] = { AreaID = { 8574, 8714, 0, 0 }, AreaLogic = 196609, Flags = 1 },
     [53471] = { Flags = 1, ModifierTreeID = 66443 },
     [53948] = { Flags = 1, ModifierTreeID = 67430 },
-    [54093] = { Flags = 1, ModifierTreeID = 67701 },
     [55364] = { ContentTuningID = 830, Flags = 33, MinLevel = 110, PrevQuestID = { 50659, 0, 0, 0 }, PrevQuestLogic = 65536 },
     [55588] = { AuraSpellLogic = 65536, Flags = 1, ModifierTreeID = 71115 },
     [57357] = { AuraSpellID = { 271003, 0, 0, 0 }, AuraSpellLogic = 65536, Flags = 1, PrevQuestID = { 51234, 0, 0, 0 }, RaceMasks = { 1309324210, 2854922922 } },

@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "Torre del Paso Norte, Tierras de la Peste del Este",
     [86] = "Torre de la Muralla del Este, Tierras de la Peste del Este",
     [87] = "Torre de la Corona, Tierras de la Peste del Este",
-    [2913] = "Ruta de misión 9571: S03 - Tallado rúnico - Chamán - Misión de nivel 40 - 6 - KJA",
-    [2914] = "Ruta de misión 9574: S03 - Tallado rúnico - Chamán - Misión de nivel 40 - 6 - Vuelo de regreso - KJA",
-    [2930] = "Ruta de misión 9620: S03 - Tallado rúnico - Chamán - Runa de nivel 40 - Tótem de fuego corrupto - Ruta de transporte de Tal - KJA",
 }

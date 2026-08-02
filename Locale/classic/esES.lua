@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "Torre del Paso Norte, Tierras de la Peste del Este",
     [86] = "Torre de la Muralla del Este, Tierras de la Peste del Este",
     [87] = "Torre de la Corona, Tierras de la Peste del Este",
-    [2913] = "Quest Path 9571: S03 - Runecarving - Shaman - Level 40 Quest - 6 - KJA",
-    [2914] = "Quest Path 9574: S03 - Runecarving - Shaman - Level 40 Quest - 6 - Flight Back - KJA",
-    [2930] = "Quest Path 9620: S03 - Runecarving - Shaman - Level 40 Rune - Corrupted Fire Totem - Tal Taxi Path - KJA",
 }

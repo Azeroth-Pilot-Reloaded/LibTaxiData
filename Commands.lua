@@ -2,6 +2,8 @@ if _G.LibTaxiData_CommandsRegistered then return end
 
 local API = _G.LibTaxiData_API
 if not API then return end
+local L = API.LOCALIZATION
+if not L then return end
 
 _G.LibTaxiData_CommandsRegistered = true
 
@@ -33,30 +35,30 @@ end
 
 local function State(value)
     if value == nil then
-        return "unknown"
+        return L["STATE_UNKNOWN"]
     end
-    return value and "yes" or "no"
+    return value and L["STATE_YES"] or L["STATE_NO"]
 end
 
 local function PrintHelp()
-    Print("/ltd name <nodeID> - localized node name")
-    Print("/ltd node <nodeID> [uiMapID] - localized name and full node details")
-    Print("/ltd nearest - nearest taxi to the player and set a waypoint")
-    Print("/ltd nearest <uiMapID> <x> <y> - nearest taxi from local map coordinates")
-    Print("/ltd nearest world <instanceID> <x> <y> - nearest taxi from world coordinates")
-    Print("/ltd waypoint <nodeID> [uiMapID] - set a waypoint on a taxi node")
+    Print(L["COMMAND_HELP_NAME"])
+    Print(L["COMMAND_HELP_NODE"])
+    Print(L["COMMAND_HELP_NEAREST_PLAYER"])
+    Print(L["COMMAND_HELP_NEAREST_MAP"])
+    Print(L["COMMAND_HELP_NEAREST_WORLD"])
+    Print(L["COMMAND_HELP_WAYPOINT"])
 end
 
 local function PrintNode(nodeID, uiMapID)
     local details = API.GetNodeDetails(nodeID, uiMapID)
     if not details then
-        Print("unknown node ID " .. tostring(nodeID))
+        Print(string.format(L["UNKNOWN_NODE_ID"], tostring(nodeID)))
         return
     end
 
-    Print(string.format("%s (node %d)", details.name or UNKNOWN or "Unknown", nodeID))
+    Print(string.format(L["NODE_HEADER"], details.name or L["UNKNOWN_NAME"], nodeID))
     Print(string.format(
-        "world: instance=%d x=%.3f y=%.3f z=%.3f; APR: x=%.3f y=%.3f",
+        L["NODE_WORLD_POSITION"],
         details.worldPosition.instanceID,
         details.worldPosition.x,
         details.worldPosition.y,
@@ -66,7 +68,7 @@ local function PrintNode(nodeID, uiMapID)
     ))
     if details.mapPosition then
         Print(string.format(
-            "map: uiMapID=%d x=%.4f y=%.4f (%.2f, %.2f)",
+            L["NODE_MAP_POSITION"],
             details.mapPosition.mapID,
             details.mapPosition.x,
             details.mapPosition.y,
@@ -75,7 +77,7 @@ local function PrintNode(nodeID, uiMapID)
         ))
     end
     Print(string.format(
-        "available=%s visible=%s conditions: node=%d visibility=%d specialIcon=%d flags=0x%X",
+        L["NODE_CONDITIONS"],
         State(details.availability),
         State(details.visibility),
         details.conditionID or 0,
@@ -84,14 +86,14 @@ local function PrintNode(nodeID, uiMapID)
         details.flags or 0
     ))
     Print(string.format(
-        "mounts: Horde=%d Alliance=%d current=%s; characterBit=%d",
+        L["NODE_MOUNTS"],
         details.hordeMountCreatureID or 0,
         details.allianceMountCreatureID or 0,
-        tostring(details.mountCreatureID or "none"),
+        tostring(details.mountCreatureID or L["NONE"]),
         details.characterBitNumber or 0
     ))
     Print(string.format(
-        "offsets: map=(%.5f, %.5f) flight=(%.5f, %.5f); textureKit=%d minimapAtlas=%d facing=%.3f",
+        L["NODE_OFFSETS"],
         details.mapOffsetX or 0,
         details.mapOffsetY or 0,
         details.flightMapOffsetX or 0,
@@ -102,15 +104,37 @@ local function PrintNode(nodeID, uiMapID)
     ))
 end
 
+local waypointErrorKeys = {
+    ["unknown-node"] = "ERROR_UNKNOWN_NODE",
+    ["no-compatible-ui-map"] = "ERROR_NO_COMPATIBLE_UI_MAP",
+    ["waypoint-api-unavailable"] = "ERROR_WAYPOINT_API_UNAVAILABLE",
+    ["waypoint-rejected"] = "ERROR_WAYPOINT_REJECTED",
+    ["invalid-coordinates"] = "ERROR_INVALID_COORDINATES",
+    ["map-api-unavailable"] = "ERROR_MAP_API_UNAVAILABLE",
+    ["vector-api-unavailable"] = "ERROR_VECTOR_API_UNAVAILABLE",
+    ["map-not-convertible"] = "ERROR_MAP_NOT_CONVERTIBLE",
+    ["outside-map"] = "ERROR_OUTSIDE_MAP",
+    ["unit-position-unavailable"] = "ERROR_UNIT_POSITION_UNAVAILABLE",
+    ["player-position-unavailable"] = "ERROR_PLAYER_POSITION_UNAVAILABLE",
+}
+
+local function LocalizeWaypointError(errorCode)
+    local localizationKey = waypointErrorKeys[errorCode]
+    if localizationKey then
+        return L[localizationKey]
+    end
+    return string.format(L["ERROR_UNKNOWN"], tostring(errorCode))
+end
+
 local function Waypoint(nodeID, uiMapID)
     local success, positionOrError = API.SetWaypointToNode(nodeID, uiMapID)
     if not success then
-        Print("cannot set waypoint: " .. tostring(positionOrError))
+        Print(string.format(L["CANNOT_SET_WAYPOINT"], LocalizeWaypointError(positionOrError)))
         return
     end
     Print(string.format(
-        "waypoint set: %s (node %d) on map %d at %.2f, %.2f",
-        API.GetNodeName(nodeID) or UNKNOWN or "Unknown",
+        L["WAYPOINT_SET"],
+        API.GetNodeName(nodeID) or L["UNKNOWN_NAME"],
         nodeID,
         positionOrError.mapID,
         positionOrError.x * 100,
@@ -137,13 +161,13 @@ local function Nearest(words)
     end
 
     if not result then
-        Print("no matching taxi node was found; check the coordinate format and node conditions")
+        Print(L["NO_MATCHING_TAXI"])
         return
     end
 
     Print(string.format(
-        "nearest: %s (node %d), %.1f yards",
-        result.name or UNKNOWN or "Unknown",
+        L["NEAREST_TAXI"],
+        result.name or L["UNKNOWN_NAME"],
         result.nodeID,
         result.distance
     ))
@@ -157,10 +181,10 @@ local function HandleCommand(message)
         local nodeID = tonumber(words[2])
         local name = nodeID and API.GetNodeName(nodeID) or nil
         if not name then
-            Print("unknown node ID " .. tostring(words[2] or ""))
+            Print(string.format(L["UNKNOWN_NODE_ID"], tostring(words[2] or "")))
             return
         end
-        Print(string.format("%s (node %d)", name, nodeID))
+        Print(string.format(L["NODE_HEADER"], name, nodeID))
     elseif command == "node" or command == "details" then
         local nodeID = tonumber(words[2])
         if not nodeID then

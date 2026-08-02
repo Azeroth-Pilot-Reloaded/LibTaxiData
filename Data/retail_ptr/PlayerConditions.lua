@@ -54,7 +54,6 @@ lib.PlayerConditions = {
     [53150] = { AreaID = { 8574, 8714, 0, 0 }, AreaLogic = 196609, ContentTuningID = 958, Flags = 1, MaxPVPRank = -51, MinPVPRank = -9, TraitNodeEntryLogic = 1048576 },
     [53471] = { ContentTuningID = 958, Flags = 1, MaxPVPRank = -51, MinPVPRank = -9, ModifierTreeID = 66443, TraitNodeEntryLogic = 1048576 },
     [53948] = { ContentTuningID = 958, Flags = 1, MaxPVPRank = -51, MinPVPRank = -9, ModifierTreeID = 67430, TraitNodeEntryLogic = 1048576 },
-    [54093] = { ContentTuningID = 958, Flags = 1, MaxPVPRank = -51, MinPVPRank = -9, ModifierTreeID = 67701, TraitNodeEntryLogic = 1048576 },
     [55364] = { ContentTuningID = 186, Flags = 33, MaxPVPRank = -51, MinLevel = 110, MinPVPRank = -9, PrevQuestID = { 50659, 0, 0, 0 }, PrevQuestLogic = 65536, TraitNodeEntryLogic = 1048576 },
     [55588] = { AuraSpellLogic = 65536, ContentTuningID = 958, Flags = 1, MaxPVPRank = -51, MinPVPRank = -9, ModifierTreeID = 71115, TraitNodeEntryLogic = 1048576 },
     [57357] = { AuraSpellID = { 271003, 0, 0, 0 }, AuraSpellLogic = 65536, ContentTuningID = 958, Flags = 1, MaxPVPRank = -51, MinPVPRank = -9, PrevQuestID = { 51234, 0, 0, 0 }, RaceMasks = { 1309324210, 2854922922 }, TraitNodeEntryLogic = 1048576 },

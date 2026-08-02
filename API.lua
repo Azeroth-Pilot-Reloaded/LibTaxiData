@@ -14,6 +14,7 @@ local FLAG_DO_NOT_SHOW = 0x080
 local API = {
     SOURCE = lib.Source,
     CLIENT = lib.Client,
+    LOCALIZATION = lib.Localization,
     COORDINATE_FORMATS = lib.CoordinateFormats,
     FLAGS = {
         SHOW_ON_ALLIANCE_MAP = FLAG_ALLIANCE,

@@ -88,7 +88,4 @@ lib.Names = {
     [85] = "Tour du Col du nord, Maleterres de l'est",
     [86] = "Tour du Mur d'est, Maleterres de l'est",
     [87] = "Tour de garde de la couronne, Maleterres de l'est",
-    [2913] = "Quest Path 9571 : S03 – Gravure runique – Chaman – Quête niveau 40 – 6 – KJA",
-    [2914] = "Quest Path 9574 : S03 – Gravure runique – Chaman – Quête niveau 40 – 6 – Vol de retour – KJA",
-    [2930] = "Quest Path 9620 : S03 – Gravure runique – Chaman – Rune niveau 40 – Totem de feu corrompu – Trajectoire de taxi Tal – KJA",
 }
