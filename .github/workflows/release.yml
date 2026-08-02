@@ -3,7 +3,6 @@ name: Release addon
 on:
   push:
     tags:
-      - data-*
       - v*
   workflow_dispatch:
     inputs:
@@ -45,6 +44,7 @@ jobs:
       - name: Validate client profile catalog and archives
         run: |
           python -m json.tool tools/profiles.json >/dev/null
+          python -m json.tool tools/release.json >/dev/null
           python tools/package.py --matrix
           python tools/package.py --build --output-dir .cache/release-zips
           python tests/package.py .cache/release-zips

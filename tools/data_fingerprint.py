@@ -12,9 +12,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def generated_paths(profile: str | None = None) -> list[Path]:
-    data_root = ROOT / "Data" / profile if profile else ROOT / "Data"
-    locale_root = ROOT / "Locale" / profile if profile else ROOT / "Locale"
+def generated_paths(profile: str | None = None, root: Path = ROOT) -> list[Path]:
+    data_root = root / "Data" / profile if profile else root / "Data"
+    locale_root = root / "Locale" / profile if profile else root / "Locale"
     paths = sorted(data_root.rglob("*.lua")) + sorted(locale_root.rglob("*.lua"))
     return [path for path in paths if path.name != "ClientProfiles.lua"]
 
@@ -30,11 +30,11 @@ def semantic_content(path: Path) -> str:
     return "\n".join(lines) + "\n"
 
 
-def fingerprint(profile: str | None = None) -> str:
+def fingerprint(profile: str | None = None, root: Path = ROOT) -> str:
     digest = hashlib.sha256()
-    paths = generated_paths(profile)
+    paths = generated_paths(profile, root)
     for path in paths:
-        digest.update(path.relative_to(ROOT).as_posix().encode())
+        digest.update(path.relative_to(root).as_posix().encode())
         digest.update(b"\0")
         digest.update(semantic_content(path).encode())
         digest.update(b"\0")
@@ -57,5 +57,11 @@ def fingerprint(profile: str | None = None) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--profile", help="Fingerprint only one generated profile")
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=ROOT,
+        help="Repository root to fingerprint (defaults to the current checkout)",
+    )
     args = parser.parse_args()
-    print(fingerprint(args.profile))
+    print(fingerprint(args.profile, args.root.resolve()))

@@ -34,30 +34,41 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Compare with the latest published data release
+      - name: Compare with the latest published version
         id: data
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           current_fingerprint="$(python tools/data_fingerprint.py)"
-          previous_tag="$(
+          release_tags="$(
             gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
-              --jq '.[] | select(.tag_name | startswith("data-multi-")) | .tag_name' \
+              --jq '.[].tag_name'
+          )"
+          previous_data_tag="$(
+            printf '%s\n' "$release_tags" \
+              | grep -E '^(data-multi-|v[0-9]+\.[0-9]+\.[0-9]+$)' \
               | head -n 1
           )"
+          previous_version_tag="$(
+            printf '%s\n' "$release_tags" \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+              | sort -V \
+              | tail -n 1
+          )"
+          echo "previous_version_tag=$previous_version_tag" >> "$GITHUB_OUTPUT"
 
-          if [ -z "$previous_tag" ]; then
-            echo "No previous data release was found; publishing the initial data release."
+          if [ -z "$previous_data_tag" ]; then
+            echo "No previous data-bearing release was found; publishing the initial release."
             echo "changed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           previous_tree="$RUNNER_TEMP/previous-data-release"
-          git worktree add --detach "$previous_tree" "$previous_tag"
-          previous_fingerprint="$(cd "$previous_tree" && python tools/data_fingerprint.py)"
+          git worktree add --detach "$previous_tree" "$previous_data_tag"
+          previous_fingerprint="$(python tools/data_fingerprint.py --root "$previous_tree")"
           git worktree remove "$previous_tree"
 
-          echo "Previous data release: $previous_tag"
+          echo "Previous data release: $previous_data_tag"
           if [ "$current_fingerprint" = "$previous_fingerprint" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "Taxi data is unchanged; no release will be created."
@@ -66,9 +77,11 @@ jobs:
             echo "Taxi data changed; a release will be created."
           fi
 
-      - name: Tag the validated data
+      - name: Calculate and tag the semantic version
         if: steps.data.outputs.changed == 'true'
         id: tag
+        env:
+          PREVIOUS_TAG: ${{ steps.data.outputs.previous_version_tag }}
         run: |
           builds="$(grep -h '^[[:space:]]*build = "' Data/*/TaxiNodes.lua | sed -n 's/.*"\([0-9.]*\)".*/\1/p')"
           if [ -z "$builds" ] || printf '%s\n' "$builds" | grep -Evq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
@@ -76,17 +89,43 @@ jobs:
             exit 1
           fi
 
-          validated_sha="$(git rev-parse --short=7 HEAD)"
-          tag="data-multi-$validated_sha"
+          api_major="$(python -c 'import json; print(json.load(open("tools/release.json"))["apiMajor"])')"
+          if ! printf '%s' "$api_major" | grep -Eq '^[1-9][0-9]*$'; then
+            echo "tools/release.json must contain a positive integer apiMajor" >&2
+            exit 1
+          fi
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            tag="v${api_major}.0.0"
+          else
+            version="${PREVIOUS_TAG#v}"
+            IFS=. read -r previous_major previous_minor previous_patch <<< "$version"
+            if [ "$api_major" -lt "$previous_major" ]; then
+              echo "apiMajor cannot decrease from $previous_major to $api_major" >&2
+              exit 1
+            elif ! git diff --quiet "$PREVIOUS_TAG" HEAD -- API.lua && [ "$api_major" -eq "$previous_major" ]; then
+              echo "API.lua changed; increment apiMajor in tools/release.json" >&2
+              exit 1
+            elif [ "$api_major" -gt "$previous_major" ]; then
+              tag="v${api_major}.0.0"
+            else
+              tag="v${api_major}.$((previous_minor + 1)).0"
+            fi
+          fi
+
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+            if [ "$(git rev-list -n 1 "$tag")" != "$(git rev-parse HEAD)" ]; then
+              echo "Tag $tag already exists on another commit" >&2
+              exit 1
+            fi
             echo "Using existing unpublished tag: $tag"
             exit 0
           fi
 
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git tag -a "$tag" -m "LibTaxiData multi-client data: $(printf '%s' "$builds" | paste -sd, -)"
+          git tag -a "$tag" -m "LibTaxiData $tag: $(printf '%s' "$builds" | paste -sd, -)"
           git push origin "$tag"
 
       - name: Start deployment
