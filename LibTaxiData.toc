@@ -13,6 +13,8 @@
 ## X-Github: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
 ## X-License: All Rights Reserved
 ## X-Data-Source: Wago Tools DB2
+## X-Curse-Project-ID: 1636228
+## X-Wago-ID: jK8gl56y
 
 LibTaxiData.lua
 Data\ClientProfiles.lua

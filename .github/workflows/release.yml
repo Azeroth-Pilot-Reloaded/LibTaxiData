@@ -52,15 +52,12 @@ jobs:
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
       GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      CURSEFORGE_PROJECT_ID: ${{ vars.CURSEFORGE_PROJECT_ID }}
-      WOWI_PROJECT_ID: ${{ vars.WOWI_PROJECT_ID }}
-      WAGO_PROJECT_ID: ${{ vars.WAGO_PROJECT_ID }}
     steps:
       - name: Validate deployment configuration
         run: |
-          for name in CF_API_TOKEN WOWI_API_TOKEN WAGO_API_TOKEN CURSEFORGE_PROJECT_ID WOWI_PROJECT_ID WAGO_PROJECT_ID; do
+          for name in CF_API_TOKEN WAGO_API_TOKEN; do
             if [ -z "${!name}" ]; then
-              echo "Missing repository secret or variable: $name" >&2
+              echo "Missing repository secret: $name" >&2
               exit 1
             fi
           done
@@ -80,12 +77,11 @@ jobs:
         run: python tools/package.py --prepare "${{ matrix.data_set }}"
 
       - name: Package and upload to CurseForge, Wago, WoWInterface, and GitHub
-        uses: BigWigsMods/packager@v2
+        uses: BigWigsMods/packager@master
         with:
           args: >-
             -m .pkgmeta.release
             -g "${{ matrix.game_versions }}"
             -n "{package-name}-{project-version}-${{ matrix.data_set }}:{project-version}-${{ matrix.data_set }}-${{ matrix.build }}"
-            -p ${{ vars.CURSEFORGE_PROJECT_ID }}
-            -w ${{ vars.WOWI_PROJECT_ID }}
-            -a ${{ vars.WAGO_PROJECT_ID }}
+            -p 1636228
+            -a jK8gl56y
