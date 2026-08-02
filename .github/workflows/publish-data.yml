@@ -1,6 +1,7 @@
 name: Publish merged taxi data
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -11,6 +12,7 @@ on:
       - tools/profiles.json
 
 permissions:
+  actions: write
   contents: write
 
 jobs:
@@ -46,10 +48,13 @@ jobs:
           git push origin "$tag"
           echo "created=true" >> "$GITHUB_OUTPUT"
 
-  release:
+  dispatch-release:
     needs: tag
     if: needs.tag.outputs.created == 'true'
-    uses: Azeroth-Pilot-Reloaded/LibTaxiData/.github/workflows/release.yml@main
-    with:
-      ref: ${{ needs.tag.outputs.tag }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start the release workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.tag.outputs.tag }}
+        run: gh workflow run release.yml --ref main -f ref="$RELEASE_TAG"
