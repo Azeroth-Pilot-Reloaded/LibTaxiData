@@ -55,7 +55,7 @@ jobs:
     steps:
       - name: Validate deployment configuration
         run: |
-          for name in CF_API_TOKEN WAGO_API_TOKEN; do
+          for name in CF_API_TOKEN WOWI_API_TOKEN WAGO_API_TOKEN; do
             if [ -z "${!name}" ]; then
               echo "Missing repository secret: $name" >&2
               exit 1
@@ -84,4 +84,5 @@ jobs:
             -g "${{ matrix.game_versions }}"
             -n "{package-name}-{project-version}-${{ matrix.data_set }}:{project-version}-${{ matrix.data_set }}-${{ matrix.build }}"
             -p 1636228
+            -w 27178
             -a jK8gl56y

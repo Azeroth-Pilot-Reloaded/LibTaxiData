@@ -59,6 +59,7 @@ def main() -> int:
         assert embedded_profiles == set(release["profile_list"])
         assert toc.count("\\TaxiNodes.lua") == 1
         assert "## X-Curse-Project-ID: 1636228" in toc
+        assert "## X-WoWI-ID: 27178" in toc
         assert "## X-Wago-ID: jK8gl56y" in toc
         packaged_profiles.update(embedded_profiles)
 
