@@ -8,6 +8,7 @@ on:
       - Data/**
       - Locale/**
       - LibTaxiData.toc
+      - tools/profiles.json
 
 permissions:
   contents: write
@@ -28,12 +29,12 @@ jobs:
       - name: Tag the data build
         id: tag
         run: |
-          build="$(sed -n 's/.*build = "\([^"]*\)".*/\1/p' Data/TaxiNodes.lua | head -n 1)"
-          if ! printf '%s' "$build" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Invalid generated build: $build" >&2
+          builds="$(grep -h '^[[:space:]]*build = "' Data/*/TaxiNodes.lua | sed -n 's/.*"\([0-9.]*\)".*/\1/p')"
+          if [ -z "$builds" ] || printf '%s\n' "$builds" | grep -Evq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid generated build catalog" >&2
             exit 1
           fi
-          tag="data-$build-${GITHUB_SHA::7}"
+          tag="data-multi-${GITHUB_SHA::7}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
             echo "created=false" >> "$GITHUB_OUTPUT"
@@ -41,7 +42,7 @@ jobs:
           fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git tag -a "$tag" -m "LibTaxiData for Retail $build"
+          git tag -a "$tag" -m "LibTaxiData multi-client data: $(printf '%s' "$builds" | paste -sd, -)"
           git push origin "$tag"
           echo "created=true" >> "$GITHUB_OUTPUT"
 

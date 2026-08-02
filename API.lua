@@ -13,6 +13,7 @@ local FLAG_DO_NOT_SHOW = 0x080
 
 local API = {
     SOURCE = lib.Source,
+    CLIENT = lib.Client,
     COORDINATE_FORMATS = lib.CoordinateFormats,
     FLAGS = {
         SHOW_ON_ALLIANCE_MAP = FLAG_ALLIANCE,
@@ -97,6 +98,12 @@ end
 ---@return table
 function API.GetSource()
     return lib.Source
+end
+
+---Return the detected client profile, channel, build, and fallback state.
+---@return table
+function API.GetClientInfo()
+    return lib.Client
 end
 
 ---Iterate over all retained (non-development) nodes.

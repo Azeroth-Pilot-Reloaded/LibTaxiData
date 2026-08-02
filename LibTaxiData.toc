@@ -1,12 +1,142 @@
-## Interface: 120007
+## X-Generated-Interfaces-Begin: true
+## Interface: 120007, 120100, 120001, 50504, 50500, 11509, 20506
+## Interface-Classic: 11509
+## Interface-TBC: 20506
+## Interface-Mists: 50504, 50500
+## X-Generated-Interfaces-End: true
 ## Title: LibTaxiData
-## Notes: Autonomous, localized Retail taxi-node data, conditions, coordinate conversion, and nearest-node API.
-## Author: Azeroth Pilot Reloaded
+## Notes: Autonomous, localized multi-client taxi-node data, conditions, coordinate conversion, and nearest-node API.
+## Author: Neoldric
 ## Version: @project-version@
-## IconTexture: Interface\Icons\Ability_Hunter_EagleEye
+## IconTexture: Interface\AddOns\LibTaxiData\assets\logo
 ## X-Website: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
 ## X-Github: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
 ## X-License: All Rights Reserved
 ## X-Data-Source: Wago Tools DB2
+
+LibTaxiData.lua
+Data\ClientProfiles.lua
+Client.lua
+
+## X-Generated-Profiles-Begin: true
+Data\retail\TaxiNodes.lua [AllowLoadGameType mainline]
+Data\retail\PlayerConditions.lua [AllowLoadGameType mainline]
+Data\retail\ModifierTrees.lua [AllowLoadGameType mainline]
+Data\retail\SupportingData.lua [AllowLoadGameType mainline]
+Locale\retail\enUS.lua [AllowLoadGameType mainline]
+Locale\retail\enGB.lua [AllowLoadGameType mainline]
+Locale\retail\deDE.lua [AllowLoadGameType mainline]
+Locale\retail\esES.lua [AllowLoadGameType mainline]
+Locale\retail\esMX.lua [AllowLoadGameType mainline]
+Locale\retail\frFR.lua [AllowLoadGameType mainline]
+Locale\retail\itIT.lua [AllowLoadGameType mainline]
+Locale\retail\koKR.lua [AllowLoadGameType mainline]
+Locale\retail\ptBR.lua [AllowLoadGameType mainline]
+Locale\retail\ruRU.lua [AllowLoadGameType mainline]
+Locale\retail\zhCN.lua [AllowLoadGameType mainline]
+Locale\retail\zhTW.lua [AllowLoadGameType mainline]
+
+Data\retail_ptr\TaxiNodes.lua [AllowLoadGameType mainline]
+Data\retail_ptr\PlayerConditions.lua [AllowLoadGameType mainline]
+Data\retail_ptr\ModifierTrees.lua [AllowLoadGameType mainline]
+Data\retail_ptr\SupportingData.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\enUS.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\enGB.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\deDE.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\esES.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\esMX.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\frFR.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\itIT.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\koKR.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\ptBR.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\ruRU.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\zhCN.lua [AllowLoadGameType mainline]
+Locale\retail_ptr\zhTW.lua [AllowLoadGameType mainline]
+
+Data\retail_beta\TaxiNodes.lua [AllowLoadGameType mainline]
+Data\retail_beta\PlayerConditions.lua [AllowLoadGameType mainline]
+Data\retail_beta\ModifierTrees.lua [AllowLoadGameType mainline]
+Data\retail_beta\SupportingData.lua [AllowLoadGameType mainline]
+Locale\retail_beta\enUS.lua [AllowLoadGameType mainline]
+Locale\retail_beta\enGB.lua [AllowLoadGameType mainline]
+Locale\retail_beta\deDE.lua [AllowLoadGameType mainline]
+Locale\retail_beta\esES.lua [AllowLoadGameType mainline]
+Locale\retail_beta\esMX.lua [AllowLoadGameType mainline]
+Locale\retail_beta\frFR.lua [AllowLoadGameType mainline]
+Locale\retail_beta\itIT.lua [AllowLoadGameType mainline]
+Locale\retail_beta\koKR.lua [AllowLoadGameType mainline]
+Locale\retail_beta\ptBR.lua [AllowLoadGameType mainline]
+Locale\retail_beta\ruRU.lua [AllowLoadGameType mainline]
+Locale\retail_beta\zhCN.lua [AllowLoadGameType mainline]
+Locale\retail_beta\zhTW.lua [AllowLoadGameType mainline]
+
+Data\mists\TaxiNodes.lua [AllowLoadGameType mists]
+Data\mists\PlayerConditions.lua [AllowLoadGameType mists]
+Data\mists\ModifierTrees.lua [AllowLoadGameType mists]
+Data\mists\SupportingData.lua [AllowLoadGameType mists]
+Locale\mists\enUS.lua [AllowLoadGameType mists]
+Locale\mists\enGB.lua [AllowLoadGameType mists]
+Locale\mists\deDE.lua [AllowLoadGameType mists]
+Locale\mists\esES.lua [AllowLoadGameType mists]
+Locale\mists\esMX.lua [AllowLoadGameType mists]
+Locale\mists\frFR.lua [AllowLoadGameType mists]
+Locale\mists\itIT.lua [AllowLoadGameType mists]
+Locale\mists\koKR.lua [AllowLoadGameType mists]
+Locale\mists\ptBR.lua [AllowLoadGameType mists]
+Locale\mists\ruRU.lua [AllowLoadGameType mists]
+Locale\mists\zhCN.lua [AllowLoadGameType mists]
+Locale\mists\zhTW.lua [AllowLoadGameType mists]
+
+Data\mists_beta\TaxiNodes.lua [AllowLoadGameType mists]
+Data\mists_beta\PlayerConditions.lua [AllowLoadGameType mists]
+Data\mists_beta\ModifierTrees.lua [AllowLoadGameType mists]
+Data\mists_beta\SupportingData.lua [AllowLoadGameType mists]
+Locale\mists_beta\enUS.lua [AllowLoadGameType mists]
+Locale\mists_beta\enGB.lua [AllowLoadGameType mists]
+Locale\mists_beta\deDE.lua [AllowLoadGameType mists]
+Locale\mists_beta\esES.lua [AllowLoadGameType mists]
+Locale\mists_beta\esMX.lua [AllowLoadGameType mists]
+Locale\mists_beta\frFR.lua [AllowLoadGameType mists]
+Locale\mists_beta\itIT.lua [AllowLoadGameType mists]
+Locale\mists_beta\koKR.lua [AllowLoadGameType mists]
+Locale\mists_beta\ptBR.lua [AllowLoadGameType mists]
+Locale\mists_beta\ruRU.lua [AllowLoadGameType mists]
+Locale\mists_beta\zhCN.lua [AllowLoadGameType mists]
+Locale\mists_beta\zhTW.lua [AllowLoadGameType mists]
+
+Data\classic\TaxiNodes.lua [AllowLoadGameType classic]
+Data\classic\PlayerConditions.lua [AllowLoadGameType classic]
+Data\classic\ModifierTrees.lua [AllowLoadGameType classic]
+Data\classic\SupportingData.lua [AllowLoadGameType classic]
+Locale\classic\enUS.lua [AllowLoadGameType classic]
+Locale\classic\enGB.lua [AllowLoadGameType classic]
+Locale\classic\deDE.lua [AllowLoadGameType classic]
+Locale\classic\esES.lua [AllowLoadGameType classic]
+Locale\classic\esMX.lua [AllowLoadGameType classic]
+Locale\classic\frFR.lua [AllowLoadGameType classic]
+Locale\classic\itIT.lua [AllowLoadGameType classic]
+Locale\classic\koKR.lua [AllowLoadGameType classic]
+Locale\classic\ptBR.lua [AllowLoadGameType classic]
+Locale\classic\ruRU.lua [AllowLoadGameType classic]
+Locale\classic\zhCN.lua [AllowLoadGameType classic]
+Locale\classic\zhTW.lua [AllowLoadGameType classic]
+
+Data\tbc\TaxiNodes.lua [AllowLoadGameType tbc]
+Data\tbc\PlayerConditions.lua [AllowLoadGameType tbc]
+Data\tbc\ModifierTrees.lua [AllowLoadGameType tbc]
+Data\tbc\SupportingData.lua [AllowLoadGameType tbc]
+Locale\tbc\enUS.lua [AllowLoadGameType tbc]
+Locale\tbc\enGB.lua [AllowLoadGameType tbc]
+Locale\tbc\deDE.lua [AllowLoadGameType tbc]
+Locale\tbc\esES.lua [AllowLoadGameType tbc]
+Locale\tbc\esMX.lua [AllowLoadGameType tbc]
+Locale\tbc\frFR.lua [AllowLoadGameType tbc]
+Locale\tbc\itIT.lua [AllowLoadGameType tbc]
+Locale\tbc\koKR.lua [AllowLoadGameType tbc]
+Locale\tbc\ptBR.lua [AllowLoadGameType tbc]
+Locale\tbc\ruRU.lua [AllowLoadGameType tbc]
+Locale\tbc\zhCN.lua [AllowLoadGameType tbc]
+Locale\tbc\zhTW.lua [AllowLoadGameType tbc]
+## X-Generated-Profiles-End: true
 
 LibTaxiData.xml

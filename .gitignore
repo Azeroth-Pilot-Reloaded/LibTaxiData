@@ -1,4 +1,6 @@
 .cache/
+.pkgmeta.release
+dist/
 .luarocks/
 tools/__pycache__/
 *.py[cod]

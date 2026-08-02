@@ -3,15 +3,20 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
+import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def generated_paths() -> list[Path]:
-    return sorted((ROOT / "Data").glob("*.lua")) + sorted((ROOT / "Locale").glob("*.lua"))
+def generated_paths(profile: str | None = None) -> list[Path]:
+    data_root = ROOT / "Data" / profile if profile else ROOT / "Data"
+    locale_root = ROOT / "Locale" / profile if profile else ROOT / "Locale"
+    paths = sorted(data_root.rglob("*.lua")) + sorted(locale_root.rglob("*.lua"))
+    return [path for path in paths if path.name != "ClientProfiles.lua"]
 
 
 def semantic_content(path: Path) -> str:
@@ -25,24 +30,32 @@ def semantic_content(path: Path) -> str:
     return "\n".join(lines) + "\n"
 
 
-def fingerprint() -> str:
+def fingerprint(profile: str | None = None) -> str:
     digest = hashlib.sha256()
-    for path in generated_paths():
+    paths = generated_paths(profile)
+    for path in paths:
         digest.update(path.relative_to(ROOT).as_posix().encode())
         digest.update(b"\0")
         digest.update(semantic_content(path).encode())
         digest.update(b"\0")
 
-    # A new Retail interface must still create a release even when the DB2 rows
-    # themselves are unchanged.
-    toc = ROOT / "LibTaxiData.toc"
-    interface = next(
-        line for line in toc.read_text(encoding="utf-8-sig").splitlines()
-        if line.startswith("## Interface:")
-    )
-    digest.update(interface.encode())
+    # The full build is part of runtime profile selection, so even a build-only
+    # update must publish a new manifest when DB2 rows are otherwise identical.
+    for path in paths:
+        if path.name != "TaxiNodes.lua":
+            continue
+        match = re.search(
+            r'^\s*build = "(\d+\.\d+\.\d+\.\d+)"',
+            path.read_text(encoding="utf-8-sig"),
+            flags=re.MULTILINE,
+        )
+        if match:
+            digest.update(match.group(1).encode())
     return digest.hexdigest()
 
 
 if __name__ == "__main__":
-    print(fingerprint())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--profile", help="Fingerprint only one generated profile")
+    args = parser.parse_args()
+    print(fingerprint(args.profile))

@@ -86,24 +86,43 @@ local function GetPlayerLevel(flags)
 end
 
 local function IsQuestCompleted(questID)
-    if not C_QuestLog or not C_QuestLog.IsQuestFlaggedCompleted then
+    local checker = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted or _G.IsQuestFlaggedCompleted
+    if not checker then
         return nil
     end
-    return C_QuestLog.IsQuestFlaggedCompleted(questID) == true
+    local success, completed = pcall(checker, questID)
+    if not success then
+        return nil
+    end
+    return completed == true
 end
 
 local function IsOnQuest(questID)
-    if not C_QuestLog or not C_QuestLog.IsOnQuest then
+    if C_QuestLog and C_QuestLog.IsOnQuest then
+        return C_QuestLog.IsOnQuest(questID) == true
+    end
+    local getIndex = _G.GetQuestLogIndexByID or
+        (C_QuestLog and C_QuestLog.GetLogIndexForQuestID)
+    if not getIndex then
         return nil
     end
-    return C_QuestLog.IsOnQuest(questID) == true
+    local success, index = pcall(getIndex, questID)
+    if not success or type(index) ~= "number" then
+        return nil
+    end
+    return index > 0
 end
 
 local function IsQuestReadyToTurnIn(questID)
-    if not C_QuestLog or not C_QuestLog.IsComplete then
+    local checker = C_QuestLog and C_QuestLog.IsComplete or _G.IsQuestComplete
+    if not checker then
         return nil
     end
-    return C_QuestLog.IsComplete(questID) == true
+    local success, completed = pcall(checker, questID)
+    if not success then
+        return nil
+    end
+    return completed == true
 end
 
 local function HasAchievement(achievementID)
@@ -118,14 +137,29 @@ local function HasAchievement(achievementID)
 end
 
 local function GetAuraCount(spellID)
-    if not C_UnitAuras or not C_UnitAuras.GetPlayerAuraBySpellID then
+    if C_UnitAuras and C_UnitAuras.GetPlayerAuraBySpellID then
+        local aura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+        if not aura then
+            return 0
+        end
+        return aura.applications or 1
+    end
+    if not _G.UnitAura then
         return nil
     end
-    local aura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
-    if not aura then
-        return 0
+    for _, filter in ipairs({ "HELPFUL", "HARMFUL" }) do
+        for index = 1, 40 do
+            local name, _, applications, _, _, _, _, _, _, auraSpellID =
+                UnitAura("player", index, filter)
+            if not name then
+                break
+            end
+            if auraSpellID == spellID then
+                return applications or 1
+            end
+        end
     end
-    return aura.applications or 1
+    return 0
 end
 
 local function HasAura(spellID)
@@ -154,11 +188,14 @@ local function GetItemCount(itemID, includeBank)
 end
 
 local function GetCurrencyCount(currencyID)
-    if not C_CurrencyInfo or not C_CurrencyInfo.GetCurrencyInfo then
-        return nil
+    if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
+        local info = C_CurrencyInfo.GetCurrencyInfo(currencyID)
+        return info and info.quantity or nil
     end
-    local info = C_CurrencyInfo.GetCurrencyInfo(currencyID)
-    return info and info.quantity or nil
+    if _G.GetCurrencyInfo then
+        return select(2, GetCurrencyInfo(currencyID))
+    end
+    return nil
 end
 
 local function GetCovenantID()
@@ -252,14 +289,17 @@ local function EvaluateClassMask(classMask)
 end
 
 local function EvaluateReputation(factionID, requiredRank, maximum)
-    if not C_Reputation or not C_Reputation.GetFactionDataByID then
+    local reaction
+    if C_Reputation and C_Reputation.GetFactionDataByID then
+        local faction = C_Reputation.GetFactionDataByID(factionID)
+        reaction = faction and faction.reaction
+    elseif _G.GetFactionInfoByID then
+        reaction = select(3, GetFactionInfoByID(factionID))
+    end
+    if not reaction then
         return nil
     end
-    local faction = C_Reputation.GetFactionDataByID(factionID)
-    if not faction or not faction.reaction then
-        return nil
-    end
-    local rank = faction.reaction - 1
+    local rank = reaction - 1
     if maximum then
         return rank <= (requiredRank or 0)
     end

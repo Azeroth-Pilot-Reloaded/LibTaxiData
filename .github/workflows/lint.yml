@@ -19,7 +19,14 @@ jobs:
           python-version: '3.13'
 
       - name: Compile generator
-        run: python -m py_compile tools/generate.py tools/live_build.py tools/data_fingerprint.py
+        run: python -m py_compile tools/generate.py tools/package.py tools/live_build.py tools/data_fingerprint.py
+
+      - name: Validate client profile catalog
+        run: |
+          python -m json.tool tools/profiles.json >/dev/null
+          python tools/package.py --matrix
+          python tools/package.py --build --output-dir .cache/release-zips
+          python tests/package.py .cache/release-zips
 
       - name: Set up Lua
         uses: leafo/gh-actions-lua@v12
@@ -36,7 +43,12 @@ jobs:
         run: luacheck .
 
       - name: Run runtime tests
-        run: lua tests/runtime.lua
+        run: |
+          lua tests/client_selection.lua
+          profiles="$(python -c 'import json; print(" ".join(p["id"] for p in json.load(open("tools/profiles.json")) if p.get("build")))')"
+          for profile in $profiles; do
+            lua tests/runtime.lua "$profile"
+          done
 
       - name: Check whitespace
         run: git diff --check

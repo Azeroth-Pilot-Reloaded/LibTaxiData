@@ -1,9 +1,9 @@
 # LibTaxiData
 
-LibTaxiData is a standalone Retail World of Warcraft addon and reusable global
-API for localized flight-master data. It provides taxi names in every client
-language, raw DB2 metadata, character-aware condition evaluation, coordinate
-conversion, nearest-node searches, and native Blizzard waypoints.
+LibTaxiData is a standalone multi-client World of Warcraft addon and reusable
+global API for localized flight-master data. It provides taxi names in every
+client language, raw DB2 metadata, character-aware condition evaluation,
+coordinate conversion, nearest-node searches, and native Blizzard waypoints.
 
 It is autonomous: no LibStub, HereBeDragons, or other addon is required.
 
@@ -16,6 +16,13 @@ It is autonomous: no LibStub, HereBeDragons, or other addon is required.
 
 - **Standalone addon:** install the `LibTaxiData` folder directly under
   `Interface/AddOns`; `LibTaxiData.toc` loads the API for consumers.
+- **Multi-client profiles:** Retail Live/PTR/Beta, Mists of Pandaria Classic
+  Live/PTR/Beta, Classic Era, and Burning Crusade data are generated and
+  selected automatically. Wrath and Cataclysm profiles can be generated from
+  an explicit archived build.
+- **Small versioned releases:** published ZIPs contain one compatible data set,
+  not every generated client database. Builds are grouped only when their
+  complete node, condition, and locale fingerprints are identical.
 - **Localized taxi names:** `enUS`, `enGB`, `deDE`, `esES`, `esMX`, `frFR`,
   `itIT`, `koKR`, `ptBR`, `ruRU`, `zhCN`, and `zhTW`, with an `enUS` fallback
   applied while generating data.
@@ -74,6 +81,7 @@ end
 | `IterateNodes()`                                          | `next` iterator over retained nodes.                                                                                                 |
 | `GetExcludedNode(nodeID)`                                 | Excluded development-node name and audit reason.                                                                                     |
 | `GetSource()`                                             | Current build, provider, DB2 table, and row counts.                                                                                  |
+| `GetClientInfo()`                                         | Selected profile/data set, game type, channel, detected build, and exact/fallback selection state.                                  |
 
 ### Coordinate formats
 
@@ -86,7 +94,7 @@ through `API.COORDINATE_FORMATS`.
 | `apr-world` | `{ x = worldY, y = worldX, z, instanceID }` | APR's historical storage format, matching the return order handled from `UnitPosition`. |
 | `map`       | `{ x = 0..1, y = 0..1, mapID, instanceID }` | Normalized coordinates on a specific UI map.                                            |
 
-The conversions use Retail's native `C_Map` API. Object-returning methods are
+The conversions use the clients' native `C_Map` API. Object-returning methods are
 preferred because they preserve the coordinate system explicitly:
 
 ```lua
@@ -140,6 +148,59 @@ The optional table supports `includeUnavailable`, `includeUnknown = false`,
 
 The library never turns an unknown phase, WorldStateExpression, objective,
 AreaTable, or other server-only state into a false positive.
+
+## Client profiles and data generation
+
+`GetBuildInfo()` and `WOW_PROJECT_ID` select the active data profile. Exact
+build matching distinguishes Live, PTR, and Beta clients that share the same
+WoW project ID. `profile` describes the client build while `dataSet` identifies
+the data embedded in the installed archive. A newer ungenerated build uses the
+only safe fallback embedded for that game type and reports `fallback = true`
+through `GetClientInfo()`.
+
+The active profile catalog is stored in `tools/profiles.json`. Builds without
+an explicit `--build` are resolved from Blizzard's public product feeds:
+
+```sh
+# Update one active branch from Blizzard's feed.
+python tools/generate.py --profile classic --cache-dir .cache/db2
+
+# Generate the exact examples used by Classic Era and Mists Classic.
+python tools/generate.py --profile classic --build 1.15.9.68940
+python tools/generate.py --profile mists --build 5.5.4.68806
+
+# Refresh every active Live/PTR/Beta profile.
+python tools/generate.py --all --cache-dir .cache/db2
+
+# Archived clients have no active Blizzard feed and require an exact build.
+python tools/generate.py --profile wrath --build 3.4.3.XXXXX
+python tools/generate.py --profile cataclysm --build 4.4.2.XXXXX
+```
+
+Release archives are built separately:
+
+```sh
+# Build every minimal release ZIP under dist/.
+python tools/package.py --build
+
+# Build only the Classic Era archive.
+python tools/package.py --build --data-set classic
+```
+
+The repository retains raw per-profile exports so the generator can compare
+them. These raw exports are not all shipped. `tools/package.py` fingerprints
+the generated content, creates one archive per unique `dataSet`, trims the TOC
+and runtime manifest, and includes only the matching `Data/<dataSet>` and
+`Locale/<dataSet>` directories. For example, Mists Live and Mists PTR currently
+share one archive because their generated content is byte-for-byte compatible;
+Mists Beta remains separate because its condition schema differs.
+
+Older DB2 layouts are normalized while generating data. Fields absent from a
+client schema, such as Classic's `MinimapAtlasMemberID` and historical content
+tuning offsets, receive neutral zero values so the public node shape remains
+stable across profiles. If localized PTR/Beta exports are unavailable, names
+fall back to the Live build of the same game type; numeric node and condition
+data always come from the requested build.
 
 ##
 

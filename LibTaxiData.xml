@@ -1,24 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Script file="LibTaxiData.lua" />
-
-    <Script file="Data/TaxiNodes.lua" />
-    <Script file="Data/PlayerConditions.lua" />
-    <Script file="Data/ModifierTrees.lua" />
-    <Script file="Data/SupportingData.lua" />
-
-    <Script file="Locale/enUS.lua" />
-    <Script file="Locale/enGB.lua" />
-    <Script file="Locale/deDE.lua" />
-    <Script file="Locale/esES.lua" />
-    <Script file="Locale/esMX.lua" />
-    <Script file="Locale/frFR.lua" />
-    <Script file="Locale/itIT.lua" />
-    <Script file="Locale/koKR.lua" />
-    <Script file="Locale/ptBR.lua" />
-    <Script file="Locale/ruRU.lua" />
-    <Script file="Locale/zhCN.lua" />
-    <Script file="Locale/zhTW.lua" />
-
     <Script file="Conditions.lua" />
     <Script file="Coordinates.lua" />
     <Script file="API.lua" />

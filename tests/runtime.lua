@@ -1,3 +1,42 @@
+local profile = arg and arg[1] or "retail"
+local profileGameTypes = {
+    retail = "mainline",
+    retail_ptr = "mainline",
+    retail_beta = "mainline",
+    mists = "mists",
+    mists_ptr = "mists",
+    mists_beta = "mists",
+    classic = "classic",
+    tbc = "tbc",
+}
+local gameType = assert(profileGameTypes[profile], "unknown test profile: " .. tostring(profile))
+local expectedBuild = arg and arg[2]
+if not expectedBuild then
+    local sourceFile = assert(io.open("Data/" .. profile .. "/TaxiNodes.lua", "rb"))
+    local sourceText = sourceFile:read("*a")
+    sourceFile:close()
+    expectedBuild = assert(sourceText:match('build = "([%d%.]+)"'))
+end
+local version, buildNumber = assert(expectedBuild:match("^(.*)%.(%d+)$"))
+local major, minor, patch = version:match("^(%d+)%.(%d+)%.(%d+)$")
+local interface = tonumber(major) * 10000 + tonumber(minor) * 100 + tonumber(patch)
+
+WOW_PROJECT_MAINLINE = 1
+WOW_PROJECT_CLASSIC = 2
+WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
+WOW_PROJECT_WRATH_CLASSIC = 11
+WOW_PROJECT_CATACLYSM_CLASSIC = 14
+WOW_PROJECT_MISTS_CLASSIC = 19
+local projectIDs = {
+    mainline = WOW_PROJECT_MAINLINE,
+    classic = WOW_PROJECT_CLASSIC,
+    tbc = WOW_PROJECT_BURNING_CRUSADE_CLASSIC,
+    wrath = WOW_PROJECT_WRATH_CLASSIC,
+    cata = WOW_PROJECT_CATACLYSM_CLASSIC,
+    mists = WOW_PROJECT_MISTS_CLASSIC,
+}
+WOW_PROJECT_ID = projectIDs[gameType]
+
 local function Band(left, right)
     left = left % 4294967296
     right = right % 4294967296
@@ -27,6 +66,7 @@ local completedQuests = {}
 local waypoint
 
 function GetLocale() return "frFR" end
+function GetBuildInfo() return version, buildNumber, "", interface end
 function UnitFactionGroup() return faction end
 function UnitRace() return "Humain", "Human", 1 end
 function UnitClass() return "Mage", "MAGE", classID end
@@ -78,22 +118,53 @@ DEFAULT_CHAT_FRAME = { AddMessage = function() end }
 SlashCmdList = {}
 
 dofile("LibTaxiData.lua")
-dofile("Data/TaxiNodes.lua")
-dofile("Data/PlayerConditions.lua")
-dofile("Data/ModifierTrees.lua")
-dofile("Data/SupportingData.lua")
-dofile("Locale/frFR.lua")
+dofile("Data/ClientProfiles.lua")
+dofile("Client.lua")
+local selectedClient = assert(LibTaxiData_Internal.Client)
+local dataSet = assert(selectedClient.dataSet)
+local dataBuild
+for _, candidate in ipairs(LibTaxiData_Internal.ClientProfiles) do
+    if candidate.profile == dataSet then
+        dataBuild = candidate.build
+        break
+    end
+end
+assert(dataBuild, "missing source profile for data set: " .. dataSet)
+dofile("Data/" .. dataSet .. "/TaxiNodes.lua")
+dofile("Data/" .. dataSet .. "/PlayerConditions.lua")
+dofile("Data/" .. dataSet .. "/ModifierTrees.lua")
+dofile("Data/" .. dataSet .. "/SupportingData.lua")
+dofile("Locale/" .. dataSet .. "/frFR.lua")
 dofile("Conditions.lua")
 dofile("Coordinates.lua")
 dofile("API.lua")
 dofile("Commands.lua")
 
 local taxi = assert(LibTaxiData_API)
-assert(taxi.GetSource().build:match("^%d+%.%d+%.%d+%.%d+$"))
-assert(taxi.GetNodeName(2) == "Hurlevent, Elwynn")
+assert(taxi.GetSource().build == dataBuild)
+assert(taxi.GetSource().profile == dataSet)
+assert(taxi.GetSource().dataSet == dataSet)
+assert(taxi.GetSource().gameType == gameType)
+assert(taxi.GetClientInfo().profile == profile)
+assert(taxi.GetClientInfo().dataSet == dataSet)
+assert(taxi.GetClientInfo().detectedBuild == expectedBuild)
+assert(taxi.GetClientInfo().exactBuild == true)
+assert(taxi.GetClientInfo().fallback == false)
+assert(type(taxi.GetNodeName(2)) == "string" and taxi.GetNodeName(2) ~= "")
 assert(taxi.GetNode(2).continentID == 0)
 assert(taxi.GetAllNodeData(2) == taxi.GetNode(2))
 assert(taxi.GetAllNodes()[2] == taxi.GetNode(2))
+
+if profile ~= "retail" then
+    local world = assert(taxi.GetNodeWorldPosition(2))
+    assert(world.coordinateSystem == "world")
+    assert(taxi.FindNearestNodeFromWorld(world.x, world.y, world.instanceID).nodeID == 2)
+    assert(type(SlashCmdList.LIBTAXIDATA) == "function")
+    print("LibTaxiData " .. profile .. " runtime tests: OK")
+    return
+end
+
+assert(taxi.GetNodeName(2) == "Hurlevent, Elwynn")
 assert(taxi.GetNode(3) == nil)
 assert(taxi.GetExcludedNode(3).reason == "programmer-isle")
 

@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
-"""Generate LibTaxiData from Wago Tools DB2 CSV exports.
-
-The generator intentionally has no third-party Python dependency. It uses an
-explicit build when supplied and otherwise resolves the current Retail build
-from Blizzard, so a newer PTR/Beta export can never silently replace live data.
-"""
+"""Generate one or every LibTaxiData client profile from Wago Tools DB2."""
 
 from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import io
+import json
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 from collections import defaultdict, deque
 from pathlib import Path
 
-from live_build import BUILD_PATTERN, get_live_build
+try:
+    from live_build import BUILD_PATTERN, get_product_build
+except ModuleNotFoundError:  # Imported as tools.generate by tests or maintenance scripts.
+    from tools.live_build import BUILD_PATTERN, get_product_build
 
 
 WAGO_CSV_URL = "https://wago.tools/db2/{table}/csv?build={build}&locale={locale}"
+PROFILES_PATH = Path(__file__).with_name("profiles.json")
 LOCALES = (
     "enUS",
     "enGB",
@@ -76,14 +78,30 @@ MAP_DEV_RULE = re.compile(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    profiles = load_profiles()
+    profile_group = parser.add_mutually_exclusive_group()
+    profile_group.add_argument(
+        "--profile",
+        choices=[profile["id"] for profile in profiles],
+        help="Client profile to generate (default: retail)",
+    )
+    profile_group.add_argument(
+        "--all",
+        action="store_true",
+        help="Generate every profile backed by an active Blizzard product",
+    )
     parser.add_argument(
         "--build",
-        help="Exact Wago/Blizzard build. Defaults to Blizzard's live Retail build.",
+        help="Exact Wago/Blizzard build (only valid for one profile)",
+    )
+    parser.add_argument(
+        "--product",
+        help="Override the profile's Blizzard product code when resolving its build",
     )
     parser.add_argument(
         "--region",
         default="eu",
-        help="Retail region used for automatic build detection (default: eu)",
+        help="Blizzard region used for automatic build detection (default: eu)",
     )
     parser.add_argument(
         "--output",
@@ -99,15 +117,37 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def download_csv(table: str, build: str, locale: str, cache_dir: Path | None) -> list[dict[str, str]]:
+def load_profiles() -> list[dict[str, object]]:
+    profiles = json.loads(PROFILES_PATH.read_text(encoding="utf-8"))
+    if not isinstance(profiles, list):
+        raise ValueError(f"Expected a profile list in {PROFILES_PATH}")
+    return profiles
+
+
+def save_profiles(profiles: list[dict[str, object]]) -> None:
+    PROFILES_PATH.write_text(
+        json.dumps(profiles, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+
+def download_csv(
+    table: str,
+    build: str,
+    locale: str,
+    cache_dir: Path | None,
+    *,
+    attempts: int = 3,
+    timeout: int = 120,
+) -> list[dict[str, str]]:
     cache_path = None
     if cache_dir:
         cache_dir.mkdir(parents=True, exist_ok=True)
         cache_path = cache_dir / f"{table}-{build}-{locale}.csv"
 
-    if cache_path and cache_path.exists():
-        payload = cache_path.read_bytes()
-    else:
+    payload = cache_path.read_bytes() if cache_path and cache_path.exists() else b""
+    if not payload.strip():
         url = WAGO_CSV_URL.format(
             table=urllib.parse.quote(table),
             build=urllib.parse.quote(build),
@@ -115,13 +155,32 @@ def download_csv(table: str, build: str, locale: str, cache_dir: Path | None) ->
         )
         request = urllib.request.Request(url, headers={"User-Agent": "LibTaxiData generator"})
         print(f"Downloading {table} ({locale}, {build})...", file=sys.stderr)
-        with urllib.request.urlopen(request, timeout=120) as response:
-            payload = response.read()
-        if cache_path:
-            cache_path.write_bytes(payload)
+        for attempt in range(1, attempts + 1):
+            try:
+                with urllib.request.urlopen(request, timeout=timeout) as response:
+                    payload = response.read()
+                if not payload.strip():
+                    raise ValueError(f"Empty CSV response from {url}")
+                break
+            except (OSError, TimeoutError):
+                if attempt == attempts:
+                    raise
+                delay = 2 ** attempt
+                print(
+                    f"Download failed; retrying {table} ({locale}, {build}) "
+                    f"in {delay}s ({attempt}/{attempts})...",
+                    file=sys.stderr,
+                )
+                time.sleep(delay)
 
     text = payload.decode("utf-8-sig")
-    return list(csv.DictReader(io.StringIO(text, newline="")))
+    reader = csv.DictReader(io.StringIO(text, newline=""))
+    rows = list(reader)
+    if not reader.fieldnames or not rows:
+        raise ValueError(f"Empty or invalid CSV for {table} ({locale}, {build})")
+    if cache_path:
+        cache_path.write_bytes(payload)
+    return rows
 
 
 def numeric(value: str) -> str:
@@ -149,12 +208,13 @@ def lua_string(value: str) -> str:
     )
 
 
-def generated_header(table: str, build: str) -> list[str]:
+def generated_header(table: str, build: str, profile: str) -> list[str]:
     return [
         "-- This file is generated. Do not edit it by hand.",
         f"-- Source: https://wago.tools/db2/{table} (build {build})",
         "local lib = _G.LibTaxiData_Internal",
         "if not lib then return end",
+        f"if not lib.Client or lib.Client.dataSet ~= {lua_string(profile)} then return end",
         "",
     ]
 
@@ -164,26 +224,172 @@ def write_lua(path: Path, lines: list[str]) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
-def update_toc_interface(output: Path, build: str) -> None:
+def build_to_interface(build: str) -> int:
     version_parts = build.split(".")
     if len(version_parts) != 4 or not all(part.isdigit() for part in version_parts):
         raise ValueError(f"Invalid Blizzard build: {build!r}")
     major, minor, patch = map(int, version_parts[:3])
-    interface = major * 10000 + minor * 100 + patch
+    return major * 10000 + minor * 100 + patch
+
+
+def active_profiles(output: Path, profiles: list[dict[str, object]]) -> list[dict[str, object]]:
+    return [
+        profile
+        for profile in profiles
+        if profile.get("build")
+        and (
+            output
+            / "Data"
+            / str(profile.get("dataSet", profile["id"]))
+            / "TaxiNodes.lua"
+        ).exists()
+        and (
+            output
+            / "Locale"
+            / str(profile.get("dataSet", profile["id"]))
+            / "enUS.lua"
+        ).exists()
+    ]
+
+
+def generate_client_profiles(output: Path, profiles: list[dict[str, object]]) -> None:
+    lines = [
+        "-- This file is generated. Do not edit it by hand.",
+        "local lib = _G.LibTaxiData_Internal",
+        "if not lib then return end",
+        "",
+        "lib.ClientProfiles = {",
+    ]
+    for profile in active_profiles(output, profiles):
+        values = [
+            f"profile = {lua_string(str(profile['id']))}",
+            f"dataSet = {lua_string(str(profile.get('dataSet', profile['id'])))}",
+            f"gameType = {lua_string(str(profile['gameType']))}",
+            f"channel = {lua_string(str(profile['channel']))}",
+            f"build = {lua_string(str(profile['build']))}",
+            f"interface = {build_to_interface(str(profile['build']))}",
+        ]
+        if profile.get("product"):
+            values.append(f"product = {lua_string(str(profile['product']))}")
+        if profile.get("default"):
+            values.append("default = true")
+        lines.append("    { " + ", ".join(values) + " },")
+    lines.append("}")
+    write_lua(output / "Data" / "ClientProfiles.lua", lines)
+
+
+def replace_generated_block(text: str, name: str, lines: list[str]) -> str:
+    begin = f"## X-Generated-{name}-Begin: true"
+    end = f"## X-Generated-{name}-End: true"
+    replacement = "\n".join([begin, *lines, end])
+    result, replacements = re.subn(
+        rf"^{re.escape(begin)}$.*?^{re.escape(end)}$",
+        lambda _match: replacement,
+        text,
+        count=1,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    if replacements != 1:
+        raise RuntimeError(f"Generated {name.lower()} markers not found in LibTaxiData.toc")
+    return result
+
+
+def update_toc(output: Path, profiles: list[dict[str, object]]) -> None:
     toc_path = output / "LibTaxiData.toc"
     if not toc_path.exists():
         return
+    enabled = active_profiles(output, profiles)
+    by_game_type: dict[str, list[int]] = defaultdict(list)
+    for profile in enabled:
+        interface = build_to_interface(str(profile["build"]))
+        if interface not in by_game_type[str(profile["gameType"])]:
+            by_game_type[str(profile["gameType"])].append(interface)
+
+    all_interfaces = [
+        interface
+        for values in by_game_type.values()
+        for interface in values
+    ]
+    interface_lines = ["## Interface: " + ", ".join(map(str, all_interfaces))]
+    labels = {
+        "classic": "Classic",
+        "tbc": "TBC",
+        "wrath": "Wrath",
+        "cata": "Cata",
+        "mists": "Mists",
+    }
+    for game_type, label in labels.items():
+        if by_game_type.get(game_type):
+            interface_lines.append(
+                f"## Interface-{label}: " + ", ".join(map(str, by_game_type[game_type]))
+            )
+
+    file_lines = []
+    data_names = ("TaxiNodes.lua", "PlayerConditions.lua", "ModifierTrees.lua", "SupportingData.lua")
+    written_data_sets = set()
+    for profile in enabled:
+        profile_id = str(profile.get("dataSet", profile["id"]))
+        if profile_id in written_data_sets:
+            continue
+        written_data_sets.add(profile_id)
+        game_type = str(profile["gameType"])
+        for name in data_names:
+            file_lines.append(
+                f"Data\\{profile_id}\\{name} [AllowLoadGameType {game_type}]"
+            )
+        for locale in LOCALES:
+            file_lines.append(
+                f"Locale\\{profile_id}\\{locale}.lua [AllowLoadGameType {game_type}]"
+            )
+        file_lines.append("")
+    if file_lines and not file_lines[-1]:
+        file_lines.pop()
+
     toc = toc_path.read_text(encoding="utf-8-sig")
-    toc, replacements = re.subn(
-        r"^## Interface:.*$",
-        f"## Interface: {interface}",
-        toc,
-        count=1,
-        flags=re.MULTILINE,
-    )
-    if replacements != 1:
-        raise RuntimeError(f"Interface metadata not found in {toc_path}")
+    toc = replace_generated_block(toc, "Interfaces", interface_lines)
+    toc = replace_generated_block(toc, "Profiles", file_lines)
     toc_path.write_text(toc, encoding="utf-8", newline="\n")
+
+
+def profile_content_fingerprint(output: Path, profile_id: str) -> str | None:
+    paths = [
+        *(output / "Data" / profile_id).glob("*.lua"),
+        *(output / "Locale" / profile_id).glob("*.lua"),
+    ]
+    if not paths:
+        return None
+    digest = hashlib.sha256()
+    for path in sorted(paths, key=lambda item: (item.parent.parent.name, item.name)):
+        lines = []
+        for line in path.read_text(encoding="utf-8-sig").splitlines():
+            stripped = line.strip()
+            if line.startswith("-- Source:"):
+                continue
+            if line.startswith("if not lib.Client"):
+                continue
+            if stripped.startswith(("build = ", "profile = ", "dataSet = ", "channel = ")):
+                continue
+            lines.append(line)
+        digest.update(path.name.encode())
+        digest.update(b"\0")
+        digest.update("\n".join(lines).encode())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def assign_data_sets(output: Path, profiles: list[dict[str, object]]) -> None:
+    representatives: dict[tuple[str, str], str] = {}
+    for profile in profiles:
+        if not profile.get("build"):
+            profile.pop("dataSet", None)
+            continue
+        profile_id = str(profile["id"])
+        fingerprint = profile_content_fingerprint(output, profile_id)
+        if not fingerprint:
+            continue
+        key = str(profile["gameType"]), fingerprint
+        data_set = representatives.setdefault(key, profile_id)
+        profile["dataSet"] = data_set
 
 
 def classify_map(row: dict[str, str]) -> str | None:
@@ -289,16 +495,22 @@ def grouped_condition(row: dict[str, str]) -> list[tuple[str, str | list[str]]]:
 
 def generate_nodes(
     output: Path,
+    profile: dict[str, object],
     build: str,
     nodes: list[dict[str, str]],
     excluded: list[tuple[dict[str, str], str]],
     missing_conditions: set[int],
 ) -> None:
-    lines = generated_header("TaxiNodes", build)
+    profile_id = str(profile["id"])
+    lines = generated_header("TaxiNodes", build, profile_id)
     lines.extend(
         [
             "lib.Source = {",
             f"    build = {lua_string(build)},",
+            f"    profile = {lua_string(profile_id)},",
+            f"    dataSet = {lua_string(profile_id)},",
+            f"    gameType = {lua_string(str(profile['gameType']))},",
+            f"    channel = {lua_string(str(profile['channel']))},",
             '    provider = "Wago Tools",',
             '    tableName = "TaxiNodes",',
             f"    nodeCount = {len(nodes)},",
@@ -309,7 +521,9 @@ def generate_nodes(
         ]
     )
     for row in sorted(nodes, key=lambda item: integer(item["ID"])):
-        fields = ", ".join(f"{name} = {numeric(row[column])}" for name, column in NODE_FIELDS)
+        fields = ", ".join(
+            f"{name} = {numeric(row.get(column, '0'))}" for name, column in NODE_FIELDS
+        )
         lines.append(f"    [{integer(row['ID'])}] = {{ {fields} }},")
     lines.extend(["}", "", "lib.ExcludedNodes = {"])
     for row, reason in sorted(excluded, key=lambda item: integer(item[0]["ID"])):
@@ -321,17 +535,19 @@ def generate_nodes(
     for condition_id in sorted(missing_conditions):
         lines.append(f"    [{condition_id}] = true,")
     lines.append("}")
-    write_lua(output / "Data" / "TaxiNodes.lua", lines)
+    write_lua(output / "Data" / profile_id / "TaxiNodes.lua", lines)
 
 
 def generate_conditions(
     output: Path,
+    profile: dict[str, object],
     build: str,
     rows: list[dict[str, str]],
     condition_ids: set[int],
 ) -> None:
+    profile_id = str(profile["id"])
     by_id = {integer(row["ID"]): row for row in rows}
-    lines = generated_header("PlayerCondition", build)
+    lines = generated_header("PlayerCondition", build, profile_id)
     lines.append("lib.PlayerConditions = {")
     for condition_id in sorted(condition_ids):
         row = by_id.get(condition_id)
@@ -345,18 +561,20 @@ def generate_conditions(
                 values.append(f"{key} = {value}")
         lines.append(f"    [{condition_id}] = {{ {', '.join(values)} }},")
     lines.append("}")
-    write_lua(output / "Data" / "PlayerConditions.lua", lines)
+    write_lua(output / "Data" / profile_id / "PlayerConditions.lua", lines)
 
 
 def generate_modifier_trees(
     output: Path,
+    profile: dict[str, object],
     build: str,
     rows: list[dict[str, str]],
     tree_ids: set[int],
 ) -> set[int]:
+    profile_id = str(profile["id"])
     by_id = {integer(row["ID"]): row for row in rows}
     content_tuning_ids: set[int] = set()
-    lines = generated_header("ModifierTree", build)
+    lines = generated_header("ModifierTree", build, profile_id)
     lines.append("lib.ModifierTrees = {")
     for tree_id in sorted(tree_ids):
         row = by_id.get(tree_id)
@@ -373,12 +591,13 @@ def generate_modifier_trees(
             f"tertiaryAsset = {integer(row['TertiaryAsset'])} }},"
         )
     lines.append("}")
-    write_lua(output / "Data" / "ModifierTrees.lua", lines)
+    write_lua(output / "Data" / profile_id / "ModifierTrees.lua", lines)
     return content_tuning_ids
 
 
 def generate_supporting_data(
     output: Path,
+    profile: dict[str, object],
     build: str,
     race_rows: list[dict[str, str]],
     content_tuning_rows: list[dict[str, str]],
@@ -386,6 +605,7 @@ def generate_supporting_data(
     condition_ids: set[int],
     modifier_content_tuning_ids: set[int],
 ) -> None:
+    profile_id = str(profile["id"])
     player_conditions = {integer(row["ID"]): row for row in player_condition_rows}
     content_tuning_ids = set(modifier_content_tuning_ids)
     for condition_id in condition_ids:
@@ -393,7 +613,7 @@ def generate_supporting_data(
         if row and integer(row.get("ContentTuningID", "0")):
             content_tuning_ids.add(integer(row["ContentTuningID"]))
 
-    lines = generated_header("ChrRaces + ContentTuning", build)
+    lines = generated_header("ChrRaces + ContentTuning", build, profile_id)
     lines.append("lib.RaceBits = {")
     for row in sorted(race_rows, key=lambda item: integer(item["ID"])):
         bit_index = integer(row.get("PlayableRaceBit", "-1"))
@@ -408,19 +628,21 @@ def generate_supporting_data(
         lines.append(
             f"    [{tuning_id}] = {{ minLevel = {integer(row['MinLevelSquish'])}, "
             f"maxLevel = {integer(row['MaxLevelSquish'])}, "
-            f"minLevelOffset = {integer(row['MinLevelScalingOffset'])}, "
-            f"maxLevelOffset = {integer(row['MaxLevelScalingOffset'])} }},"
+            f"minLevelOffset = {integer(row.get('MinLevelScalingOffset', '0'))}, "
+            f"maxLevelOffset = {integer(row.get('MaxLevelScalingOffset', '0'))} }},"
         )
     lines.append("}")
-    write_lua(output / "Data" / "SupportingData.lua", lines)
+    write_lua(output / "Data" / profile_id / "SupportingData.lua", lines)
 
 
 def generate_locales(
     output: Path,
+    profile: dict[str, object],
     build: str,
     included_ids: set[int],
     locale_rows: dict[str, list[dict[str, str]]],
 ) -> None:
+    profile_id = str(profile["id"])
     en_names = {
         integer(row["ID"]): row.get("Name_lang", "").strip()
         for row in locale_rows["enUS"]
@@ -430,7 +652,7 @@ def generate_locales(
             integer(row["ID"]): row.get("Name_lang", "").strip()
             for row in locale_rows[locale]
         }
-        lines = generated_header("TaxiNodes", build)
+        lines = generated_header("TaxiNodes", build, profile_id)
         lines.extend(
             [
                 f"if GetLocale() ~= {lua_string(locale)} then return end",
@@ -442,28 +664,63 @@ def generate_locales(
             name = localized.get(node_id) or en_names.get(node_id) or ""
             lines.append(f"    [{node_id}] = {lua_string(name)},")
         lines.append("}")
-        write_lua(output / "Locale" / f"{locale}.lua", lines)
+        write_lua(output / "Locale" / profile_id / f"{locale}.lua", lines)
 
 
-def main() -> int:
-    args = parse_args()
-    build = args.build or get_live_build(args.region)
+def generate_profile(
+    output: Path,
+    profile: dict[str, object],
+    build: str,
+    cache_dir: Path | None,
+    locale_fallback_build: str | None,
+) -> None:
     if not BUILD_PATTERN.fullmatch(build):
         raise ValueError(f"Invalid Blizzard build: {build!r}")
-    output = args.output.resolve()
-    output.mkdir(parents=True, exist_ok=True)
 
     tables = {
-        "PlayerCondition": download_csv("PlayerCondition", build, "enUS", args.cache_dir),
-        "ModifierTree": download_csv("ModifierTree", build, "enUS", args.cache_dir),
-        "Map": download_csv("Map", build, "enUS", args.cache_dir),
-        "ChrRaces": download_csv("ChrRaces", build, "enUS", args.cache_dir),
-        "ContentTuning": download_csv("ContentTuning", build, "enUS", args.cache_dir),
+        "PlayerCondition": download_csv("PlayerCondition", build, "enUS", cache_dir),
+        "ModifierTree": download_csv("ModifierTree", build, "enUS", cache_dir),
+        "Map": download_csv("Map", build, "enUS", cache_dir),
+        "ChrRaces": download_csv("ChrRaces", build, "enUS", cache_dir),
+        "ContentTuning": download_csv("ContentTuning", build, "enUS", cache_dir),
     }
     locale_rows = {
-        locale: download_csv("TaxiNodes", build, locale, args.cache_dir)
-        for locale in LOCALES
+        "enUS": download_csv("TaxiNodes", build, "enUS", cache_dir),
     }
+    use_profile_locales = profile.get("localized") is not False
+    if not use_profile_locales:
+        print(
+            f"Profile {profile['id']} uses localized names from "
+            f"{locale_fallback_build or 'enUS'}.",
+            file=sys.stderr,
+        )
+    for locale in LOCALES:
+        if locale == "enUS":
+            continue
+        if use_profile_locales:
+            try:
+                locale_rows[locale] = download_csv(
+                    "TaxiNodes",
+                    build,
+                    locale,
+                    cache_dir,
+                    attempts=1 if locale_fallback_build else 3,
+                    timeout=45 if locale_fallback_build else 120,
+                )
+                continue
+            except (OSError, TimeoutError, ValueError) as error:
+                use_profile_locales = False
+                print(
+                    f"Localized exports are unavailable for {profile['id']} ({build}): "
+                    f"{error}. Falling back to {locale_fallback_build or 'enUS'}.",
+                    file=sys.stderr,
+                )
+        if locale_fallback_build:
+            locale_rows[locale] = download_csv(
+                "TaxiNodes", locale_fallback_build, locale, cache_dir
+            )
+        else:
+            locale_rows[locale] = locale_rows["enUS"]
 
     base_nodes = locale_rows["enUS"]
     dev_maps = {
@@ -487,13 +744,14 @@ def main() -> int:
     )
     included_ids = {integer(row["ID"]) for row in included}
 
-    generate_nodes(output, build, included, excluded, missing_conditions)
-    generate_conditions(output, build, tables["PlayerCondition"], condition_ids)
+    generate_nodes(output, profile, build, included, excluded, missing_conditions)
+    generate_conditions(output, profile, build, tables["PlayerCondition"], condition_ids)
     modifier_content_tuning_ids = generate_modifier_trees(
-        output, build, tables["ModifierTree"], tree_ids
+        output, profile, build, tables["ModifierTree"], tree_ids
     )
     generate_supporting_data(
         output,
+        profile,
         build,
         tables["ChrRaces"],
         tables["ContentTuning"],
@@ -501,11 +759,11 @@ def main() -> int:
         condition_ids,
         modifier_content_tuning_ids,
     )
-    generate_locales(output, build, included_ids, locale_rows)
-    update_toc_interface(output, build)
+    generate_locales(output, profile, build, included_ids, locale_rows)
 
     print(
-        f"Generated {len(included)} taxi nodes; excluded {len(excluded)} development nodes; "
+        f"Generated profile {profile['id']} ({build}): {len(included)} taxi nodes; "
+        f"excluded {len(excluded)} development nodes; "
         f"included {len(condition_ids) - len(missing_conditions)} player conditions and "
         f"{len(tree_ids)} modifier-tree rows.",
         file=sys.stderr,
@@ -516,6 +774,57 @@ def main() -> int:
             + ", ".join(map(str, sorted(missing_conditions))),
             file=sys.stderr,
         )
+
+
+def main() -> int:
+    args = parse_args()
+    if args.all and (args.build or args.product):
+        raise ValueError("--all cannot be combined with --build or --product")
+
+    profiles = load_profiles()
+    by_id = {str(profile["id"]): profile for profile in profiles}
+    if args.all:
+        selected = [profile for profile in profiles if profile.get("product")]
+    else:
+        selected = [by_id[args.profile or "retail"]]
+
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    for profile in selected:
+        product = args.product or profile.get("product")
+        build = args.build
+        if not build:
+            if not product:
+                raise ValueError(
+                    f"Profile {profile['id']!r} has no active Blizzard product; pass --build"
+                )
+            build = get_product_build(str(product), args.region)
+        fallback_profile = next(
+            (
+                candidate
+                for candidate in profiles
+                if candidate.get("gameType") == profile.get("gameType")
+                and candidate.get("default")
+                and candidate.get("build")
+            ),
+            None,
+        )
+        locale_fallback_build = None
+        if fallback_profile and fallback_profile is not profile:
+            locale_fallback_build = str(fallback_profile["build"])
+        generate_profile(
+            output,
+            profile,
+            build,
+            args.cache_dir,
+            locale_fallback_build,
+        )
+        profile["build"] = build
+
+    assign_data_sets(output, profiles)
+    save_profiles(profiles)
+    generate_client_profiles(output, profiles)
+    update_toc(output, profiles)
     return 0
 
 

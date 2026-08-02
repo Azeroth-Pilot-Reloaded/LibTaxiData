@@ -1,4 +1,4 @@
-name: Update Retail taxi data
+name: Update multi-client taxi data
 
 on:
   schedule:
@@ -8,8 +8,23 @@ on:
       - wow-build
   workflow_dispatch:
     inputs:
+      profile:
+        description: Client profile to update
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - retail
+          - retail_ptr
+          - retail_beta
+          - mists
+          - mists_ptr
+          - mists_beta
+          - classic
+          - tbc
       build:
-        description: Exact Retail build; leave empty to query Blizzard
+        description: Exact build for one profile; leave empty to query Blizzard
         required: false
         type: string
 
@@ -18,7 +33,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: update-retail-taxi-data
+  group: update-multi-client-taxi-data
   cancel-in-progress: false
 
 jobs:
@@ -33,33 +48,56 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Resolve Retail build
-        id: build
+      - name: Select profiles
+        id: selection
         env:
+          PROFILE: ${{ inputs.profile || github.event.client_payload.profile }}
           MANUAL_BUILD: ${{ inputs.build }}
           WEBHOOK_BUILD: ${{ github.event.client_payload.build }}
         run: |
-          build="$MANUAL_BUILD"
-          if [ -z "$build" ]; then build="$WEBHOOK_BUILD"; fi
-          if [ -z "$build" ]; then build="$(python tools/live_build.py --region eu)"; fi
-          if ! printf '%s' "$build" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Invalid Retail build: $build" >&2
+          profile="$PROFILE"
+          if [ -z "$profile" ] && [ -n "$WEBHOOK_BUILD" ]; then profile="retail"; fi
+          if [ -z "$profile" ]; then profile="all"; fi
+          requested_build="${MANUAL_BUILD:-$WEBHOOK_BUILD}"
+          if [ "$profile" = "all" ] && [ -n "$requested_build" ]; then
+            echo "A manual build requires a single profile." >&2
             exit 1
           fi
-          echo "build=$build" >> "$GITHUB_OUTPUT"
+          if [ -n "$requested_build" ] && ! printf '%s' "$requested_build" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid build: $requested_build" >&2
+            exit 1
+          fi
+          echo "profile=$profile" >> "$GITHUB_OUTPUT"
+          echo "slug=$profile" >> "$GITHUB_OUTPUT"
 
       - name: Restore DB2 cache
         uses: actions/cache@v4
         with:
           path: .cache/db2
-          key: wago-db2-${{ steps.build.outputs.build }}
+          key: wago-db2-multi-${{ github.run_id }}
+          restore-keys: |
+            wago-db2-multi-
 
       - name: Fingerprint current taxi content
         id: before
         run: echo "fingerprint=$(python tools/data_fingerprint.py)" >> "$GITHUB_OUTPUT"
 
       - name: Generate data from Wago Tools
-        run: python tools/generate.py --build "${{ steps.build.outputs.build }}" --cache-dir .cache/db2
+        env:
+          PROFILE: ${{ steps.selection.outputs.profile }}
+          MANUAL_BUILD: ${{ inputs.build }}
+          WEBHOOK_BUILD: ${{ github.event.client_payload.build }}
+        run: |
+          args=(--cache-dir .cache/db2 --region eu)
+          if [ "$PROFILE" = "all" ]; then
+            args+=(--all)
+          else
+            args+=(--profile "$PROFILE")
+            build="$MANUAL_BUILD"
+            if [ -z "$build" ]; then build="$WEBHOOK_BUILD"; fi
+            if [ -n "$build" ]; then args+=(--build "$build"); fi
+          fi
+          python tools/generate.py "${args[@]}"
 
       - name: Detect a semantic data change
         id: diff
@@ -69,7 +107,7 @@ jobs:
           after="$(python tools/data_fingerprint.py)"
           if [ "$BEFORE" = "$after" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "Only build provenance changed; no data release is required."
+            echo "The generated profile catalog and data are unchanged."
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
@@ -88,7 +126,13 @@ jobs:
       - name: Validate generated addon
         run: |
           luacheck .
-          lua tests/runtime.lua
+          python tools/package.py --build --output-dir .cache/release-zips
+          python tests/package.py .cache/release-zips
+          lua tests/client_selection.lua
+          profiles="$(python -c 'import json; print(" ".join(p["id"] for p in json.load(open("tools/profiles.json")) if p.get("build")))')"
+          for profile in $profiles; do
+            lua tests/runtime.lua "$profile"
+          done
           git diff --check
 
       - name: Create data update pull request
@@ -97,19 +141,21 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.AUTOMATION_TOKEN || secrets.GITHUB_TOKEN }}
-          branch: automation/taxi-data-${{ steps.build.outputs.build }}
+          branch: automation/taxi-data-${{ steps.selection.outputs.slug }}
           delete-branch: true
-          commit-message: Update taxi data for Retail ${{ steps.build.outputs.build }}
-          title: Update taxi data for Retail ${{ steps.build.outputs.build }}
+          commit-message: Update taxi data for ${{ steps.selection.outputs.profile }}
+          title: Update taxi data for ${{ steps.selection.outputs.profile }}
           body: |
-            Automated update for Blizzard Retail build `${{ steps.build.outputs.build }}`.
+            Automated update for client selection `${{ steps.selection.outputs.profile }}`.
 
-            Source: `TaxiNodes` and referenced condition tables from Wago Tools DB2 exports.
+            Builds are resolved from Blizzard's product feeds unless an exact manual build was supplied.
+            Source: `TaxiNodes` and referenced condition tables from versioned Wago Tools DB2 exports.
             The generator, Lua lint, runtime tests, and whitespace validation completed successfully.
           add-paths: |
             Data/**
             Locale/**
             LibTaxiData.toc
+            tools/profiles.json
 
       - name: Enable automatic merge
         if: vars.AUTO_MERGE_DATA_UPDATES == 'true' && steps.pull-request.outputs.pull-request-number != ''

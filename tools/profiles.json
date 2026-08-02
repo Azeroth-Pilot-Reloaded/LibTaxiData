@@ -1,0 +1,88 @@
+[
+  {
+    "id": "retail",
+    "gameType": "mainline",
+    "channel": "live",
+    "product": "wow",
+    "build": "12.0.7.68887",
+    "default": true,
+    "dataSet": "retail"
+  },
+  {
+    "id": "retail_ptr",
+    "gameType": "mainline",
+    "channel": "ptr",
+    "product": "wowt",
+    "build": "12.1.0.68914",
+    "dataSet": "retail_ptr"
+  },
+  {
+    "id": "retail_beta",
+    "gameType": "mainline",
+    "channel": "beta",
+    "product": "wow_beta",
+    "build": "12.0.1.66220",
+    "localized": false,
+    "dataSet": "retail_beta"
+  },
+  {
+    "id": "mists",
+    "gameType": "mists",
+    "channel": "live",
+    "product": "wow_classic",
+    "build": "5.5.4.68806",
+    "default": true,
+    "dataSet": "mists"
+  },
+  {
+    "id": "mists_ptr",
+    "gameType": "mists",
+    "channel": "ptr",
+    "product": "wow_classic_ptr",
+    "build": "5.5.4.67849",
+    "dataSet": "mists"
+  },
+  {
+    "id": "mists_beta",
+    "gameType": "mists",
+    "channel": "beta",
+    "product": "wow_classic_beta",
+    "build": "5.5.0.62071",
+    "localized": false,
+    "dataSet": "mists_beta"
+  },
+  {
+    "id": "classic",
+    "gameType": "classic",
+    "channel": "live",
+    "product": "wow_classic_era",
+    "build": "1.15.9.68940",
+    "default": true,
+    "dataSet": "classic"
+  },
+  {
+    "id": "tbc",
+    "gameType": "tbc",
+    "channel": "ptr",
+    "product": "wow_classic_era_ptr",
+    "build": "2.5.6.68184",
+    "default": true,
+    "dataSet": "tbc"
+  },
+  {
+    "id": "wrath",
+    "gameType": "wrath",
+    "channel": "legacy",
+    "product": null,
+    "build": null,
+    "default": true
+  },
+  {
+    "id": "cataclysm",
+    "gameType": "cata",
+    "channel": "legacy",
+    "product": null,
+    "build": null,
+    "default": true
+  }
+]
