@@ -2,28 +2,19 @@ local lib = _G.LibTaxiData_Internal
 if not lib then return end
 
 local function DetectGameType(interface)
-    local projectTypes = {
-        { constant = "WOW_PROJECT_MAINLINE", gameType = "mainline" },
-        { constant = "WOW_PROJECT_MISTS_CLASSIC", gameType = "mists" },
-        { constant = "WOW_PROJECT_CATACLYSM_CLASSIC", gameType = "cata" },
-        { constant = "WOW_PROJECT_WRATH_CLASSIC", gameType = "wrath" },
-        { constant = "WOW_PROJECT_BURNING_CRUSADE_CLASSIC", gameType = "tbc" },
-        { constant = "WOW_PROJECT_CLASSIC", gameType = "classic" },
-    }
-    for _, candidate in ipairs(projectTypes) do
-        local projectID = _G[candidate.constant]
+    for _, candidate in ipairs(lib.ClientGameTypes or {}) do
+        local projectID = _G[candidate.projectConstant]
         if projectID and projectID == _G.WOW_PROJECT_ID then
             return candidate.gameType
         end
     end
 
     local major = math.floor((tonumber(interface) or 0) / 10000)
-    if major >= 10 then return "mainline" end
-    if major == 5 then return "mists" end
-    if major == 4 then return "cata" end
-    if major == 3 then return "wrath" end
-    if major == 2 then return "tbc" end
-    if major == 1 then return "classic" end
+    for _, profile in ipairs(lib.ClientProfiles or {}) do
+        if math.floor((tonumber(profile.interface) or 0) / 10000) == major then
+            return profile.gameType
+        end
+    end
 end
 
 local version, buildNumber, _, interface

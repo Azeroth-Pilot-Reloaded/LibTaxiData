@@ -12,17 +12,7 @@ on:
         description: Client profile to update
         required: true
         default: all
-        type: choice
-        options:
-          - all
-          - retail
-          - retail_ptr
-          - retail_beta
-          - mists
-          - mists_ptr
-          - mists_beta
-          - classic
-          - tbc
+        type: string
       build:
         description: Exact build for one profile; leave empty to query Blizzard
         required: false
@@ -125,6 +115,7 @@ jobs:
 
       - name: Validate generated addon
         run: |
+          python tools/profiles.py check
           luacheck .
           python tools/package.py --build --output-dir .cache/release-zips
           python tests/package.py .cache/release-zips

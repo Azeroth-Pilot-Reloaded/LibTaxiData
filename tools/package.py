@@ -11,9 +11,23 @@ import zipfile
 from pathlib import Path
 
 try:
-    from generate import active_profiles, generate_client_profiles, load_profiles, update_toc
+    from profile_catalog import (
+        active_profiles,
+        build_number,
+        generate_client_profiles,
+        load_profiles,
+        release_type_for_profile,
+        update_toc,
+    )
 except ModuleNotFoundError:  # Imported as tools.package by tests.
-    from tools.generate import active_profiles, generate_client_profiles, load_profiles, update_toc
+    from tools.profile_catalog import (
+        active_profiles,
+        build_number,
+        generate_client_profiles,
+        load_profiles,
+        release_type_for_profile,
+        update_toc,
+    )
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,18 +49,28 @@ def game_version(build: str) -> str:
     return ".".join(build.split(".")[:3])
 
 
-def release_bundles(root: Path, profiles: list[dict[str, object]]) -> list[dict[str, object]]:
+def release_bundles(
+    root: Path, profiles: list[dict[str, object]]
+) -> list[dict[str, object]]:
     enabled = active_profiles(root, profiles)
-    grouped: dict[str, list[dict[str, object]]] = {}
+    by_id = {str(profile["id"]): profile for profile in profiles}
+    grouped: dict[tuple[str, str], list[dict[str, object]]] = {}
     for profile in enabled:
+        release_type = release_type_for_profile(profile, by_id)
+        if release_type is None:
+            continue
         data_set = str(profile.get("dataSet", profile["id"]))
-        grouped.setdefault(data_set, []).append(profile)
+        grouped.setdefault((data_set, release_type), []).append(profile)
 
     bundles = []
-    for data_set, compatible in grouped.items():
-        source = next(
-            (profile for profile in compatible if profile["id"] == data_set),
-            compatible[0],
+    for (data_set, release_type), compatible in grouped.items():
+        newest = max(
+            compatible,
+            key=lambda profile: (
+                build_number(str(profile["build"])),
+                tuple(map(int, str(profile["build"]).split("."))),
+                str(profile["id"]),
+            ),
         )
         versions = []
         for profile in compatible:
@@ -56,27 +80,43 @@ def release_bundles(root: Path, profiles: list[dict[str, object]]) -> list[dict[
         bundles.append(
             {
                 "data_set": data_set,
-                "build": str(source["build"]),
-                "game_type": str(source["gameType"]),
+                "build": str(newest["build"]),
+                "build_number": build_number(str(newest["build"])),
+                "game_type": str(newest["gameType"]),
                 "game_versions": ",".join(versions),
                 "profiles": " ".join(str(profile["id"]) for profile in compatible),
                 "profile_list": [str(profile["id"]) for profile in compatible],
+                "release_type": release_type,
             }
         )
-    return bundles
+    release_order = {"release": 0, "beta": 1, "alpha": 2}
+    return sorted(
+        bundles,
+        key=lambda bundle: (
+            int(bundle["build_number"]),
+            tuple(map(int, str(bundle["build"]).split("."))),
+            release_order[str(bundle["release_type"])],
+            str(bundle["data_set"]),
+        ),
+    )
 
 
 def profiles_for_bundle(
-    profiles: list[dict[str, object]], data_set: str
+    profiles: list[dict[str, object]], data_set: str, release_type: str
 ) -> list[dict[str, object]]:
+    by_id = {str(profile["id"]): profile for profile in profiles}
     compatible = [
         dict(profile)
         for profile in profiles
         if profile.get("build")
         and str(profile.get("dataSet", profile["id"])) == data_set
+        and release_type_for_profile(profile, by_id) == release_type
     ]
     if not compatible:
-        raise ValueError(f"Unknown or inactive data set: {data_set!r}")
+        raise ValueError(
+            f"Unknown, inactive, or unpublished bundle: "
+            f"{data_set!r} ({release_type})"
+        )
     if not any(profile.get("default") for profile in compatible):
         # A single-data-set archive must remain usable on the next ungenerated
         # client build. Its selected data set is the only safe local fallback.
@@ -112,8 +152,13 @@ def pkgmeta_text(root: Path, data_set: str) -> str:
     return "\n".join(lines) + "\n"
 
 
-def prepare_root(root: Path, profiles: list[dict[str, object]], data_set: str) -> None:
-    compatible = profiles_for_bundle(profiles, data_set)
+def prepare_root(
+    root: Path,
+    profiles: list[dict[str, object]],
+    data_set: str,
+    release_type: str,
+) -> None:
+    compatible = profiles_for_bundle(profiles, data_set, release_type)
     generate_client_profiles(root, compatible)
     update_toc(root, compatible)
     (root / ".pkgmeta.release").write_text(
@@ -128,7 +173,8 @@ def stage_bundle(
     output_dir: Path,
 ) -> dict[str, object]:
     data_set = str(bundle["data_set"])
-    compatible = profiles_for_bundle(profiles, data_set)
+    release_type = str(bundle["release_type"])
+    compatible = profiles_for_bundle(profiles, data_set, release_type)
     output_dir.mkdir(parents=True, exist_ok=True)
     archive = output_dir / f"LibTaxiData-{data_set}-{bundle['build']}.zip"
 
@@ -174,6 +220,11 @@ def parse_args() -> argparse.Namespace:
     operation.add_argument("--prepare", metavar="DATA_SET", help="Prepare this checkout for the packager")
     operation.add_argument("--build", action="store_true", help="Create minimal ZIP archives")
     parser.add_argument("--data-set", help="Build only this data set instead of every bundle")
+    parser.add_argument(
+        "--release-type",
+        choices=("release", "beta", "alpha"),
+        help="Select a release channel when preparing a data set",
+    )
     parser.add_argument("--output-dir", type=Path, default=ROOT / "dist")
     return parser.parse_args()
 
@@ -182,16 +233,43 @@ def main() -> int:
     args = parse_args()
     profiles = load_profiles()
     bundles = release_bundles(ROOT, profiles)
+    if args.release_type and not (args.prepare or args.data_set):
+        raise ValueError("--release-type requires --prepare or --data-set")
     if args.matrix:
         print(json.dumps({"include": bundles}, separators=(",", ":")))
         return 0
     if args.prepare:
-        prepare_root(ROOT, profiles, args.prepare)
+        matching = [
+            bundle
+            for bundle in bundles
+            if bundle["data_set"] == args.prepare
+            and (
+                args.release_type is None
+                or bundle["release_type"] == args.release_type
+            )
+        ]
+        if len(matching) != 1:
+            raise ValueError(
+                f"Expected exactly one publishable bundle for {args.prepare!r}; "
+                "pass --release-type when the data set has multiple channels"
+            )
+        prepare_root(
+            ROOT,
+            profiles,
+            args.prepare,
+            str(matching[0]["release_type"]),
+        )
         return 0
 
     if args.data_set:
         bundles = [
-            bundle for bundle in bundles if bundle["data_set"] == args.data_set
+            bundle
+            for bundle in bundles
+            if bundle["data_set"] == args.data_set
+            and (
+                args.release_type is None
+                or bundle["release_type"] == args.release_type
+            )
         ]
         if not bundles:
             raise ValueError(f"Unknown or inactive data set: {args.data_set!r}")
@@ -208,7 +286,7 @@ def main() -> int:
     for result in results:
         print(
             f"{result['archive']}: {result['bytes']} bytes "
-            f"({result['profiles']})"
+            f"({result['profiles']}, {result['release_type']})"
         )
     return 0
 

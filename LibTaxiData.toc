@@ -1,11 +1,11 @@
 ## X-Generated-Interfaces-Begin: true
-## Interface: 120007, 120100, 120001, 50504, 50500, 11509, 20506
+## Interface: 120007, 120100, 50504, 11509, 20506
 ## Interface-Classic: 11509
 ## Interface-TBC: 20506
-## Interface-Mists: 50504, 50500
+## Interface-Mists: 50504
 ## X-Generated-Interfaces-End: true
 ## Title: LibTaxiData
-## Notes: Autonomous, localized multi-client taxi-node data, conditions, coordinate conversion, and nearest-node API.
+## Notes: Localized multi-client taxi-node data, conditions, coordinate conversion, and nearest-node API.
 ## Author: Neoldric
 ## Version: @project-version@
 ## IconTexture: Interface\AddOns\LibTaxiData\assets\logo
@@ -56,23 +56,6 @@ Locale\retail_ptr\ruRU.lua [AllowLoadGameType mainline]
 Locale\retail_ptr\zhCN.lua [AllowLoadGameType mainline]
 Locale\retail_ptr\zhTW.lua [AllowLoadGameType mainline]
 
-Data\retail_beta\TaxiNodes.lua [AllowLoadGameType mainline]
-Data\retail_beta\PlayerConditions.lua [AllowLoadGameType mainline]
-Data\retail_beta\ModifierTrees.lua [AllowLoadGameType mainline]
-Data\retail_beta\SupportingData.lua [AllowLoadGameType mainline]
-Locale\retail_beta\enUS.lua [AllowLoadGameType mainline]
-Locale\retail_beta\enGB.lua [AllowLoadGameType mainline]
-Locale\retail_beta\deDE.lua [AllowLoadGameType mainline]
-Locale\retail_beta\esES.lua [AllowLoadGameType mainline]
-Locale\retail_beta\esMX.lua [AllowLoadGameType mainline]
-Locale\retail_beta\frFR.lua [AllowLoadGameType mainline]
-Locale\retail_beta\itIT.lua [AllowLoadGameType mainline]
-Locale\retail_beta\koKR.lua [AllowLoadGameType mainline]
-Locale\retail_beta\ptBR.lua [AllowLoadGameType mainline]
-Locale\retail_beta\ruRU.lua [AllowLoadGameType mainline]
-Locale\retail_beta\zhCN.lua [AllowLoadGameType mainline]
-Locale\retail_beta\zhTW.lua [AllowLoadGameType mainline]
-
 Data\mists\TaxiNodes.lua [AllowLoadGameType mists]
 Data\mists\PlayerConditions.lua [AllowLoadGameType mists]
 Data\mists\ModifierTrees.lua [AllowLoadGameType mists]
@@ -89,23 +72,6 @@ Locale\mists\ptBR.lua [AllowLoadGameType mists]
 Locale\mists\ruRU.lua [AllowLoadGameType mists]
 Locale\mists\zhCN.lua [AllowLoadGameType mists]
 Locale\mists\zhTW.lua [AllowLoadGameType mists]
-
-Data\mists_beta\TaxiNodes.lua [AllowLoadGameType mists]
-Data\mists_beta\PlayerConditions.lua [AllowLoadGameType mists]
-Data\mists_beta\ModifierTrees.lua [AllowLoadGameType mists]
-Data\mists_beta\SupportingData.lua [AllowLoadGameType mists]
-Locale\mists_beta\enUS.lua [AllowLoadGameType mists]
-Locale\mists_beta\enGB.lua [AllowLoadGameType mists]
-Locale\mists_beta\deDE.lua [AllowLoadGameType mists]
-Locale\mists_beta\esES.lua [AllowLoadGameType mists]
-Locale\mists_beta\esMX.lua [AllowLoadGameType mists]
-Locale\mists_beta\frFR.lua [AllowLoadGameType mists]
-Locale\mists_beta\itIT.lua [AllowLoadGameType mists]
-Locale\mists_beta\koKR.lua [AllowLoadGameType mists]
-Locale\mists_beta\ptBR.lua [AllowLoadGameType mists]
-Locale\mists_beta\ruRU.lua [AllowLoadGameType mists]
-Locale\mists_beta\zhCN.lua [AllowLoadGameType mists]
-Locale\mists_beta\zhTW.lua [AllowLoadGameType mists]
 
 Data\classic\TaxiNodes.lua [AllowLoadGameType classic]
 Data\classic\PlayerConditions.lua [AllowLoadGameType classic]

@@ -7,7 +7,6 @@ import argparse
 import csv
 import hashlib
 import io
-import json
 import re
 import sys
 import time
@@ -18,26 +17,25 @@ from pathlib import Path
 
 try:
     from live_build import BUILD_PATTERN, get_product_build
+    from profile_catalog import (
+        LOCALES,
+        generate_client_profiles,
+        load_profiles,
+        save_profiles,
+        update_toc,
+    )
 except ModuleNotFoundError:  # Imported as tools.generate by tests or maintenance scripts.
     from tools.live_build import BUILD_PATTERN, get_product_build
+    from tools.profile_catalog import (
+        LOCALES,
+        generate_client_profiles,
+        load_profiles,
+        save_profiles,
+        update_toc,
+    )
 
 
 WAGO_CSV_URL = "https://wago.tools/db2/{table}/csv?build={build}&locale={locale}"
-PROFILES_PATH = Path(__file__).with_name("profiles.json")
-LOCALES = (
-    "enUS",
-    "enGB",
-    "deDE",
-    "esES",
-    "esMX",
-    "frFR",
-    "itIT",
-    "koKR",
-    "ptBR",
-    "ruRU",
-    "zhCN",
-    "zhTW",
-)
 
 NODE_FIELDS = (
     ("continentID", "ContinentID"),
@@ -142,21 +140,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_profiles() -> list[dict[str, object]]:
-    profiles = json.loads(PROFILES_PATH.read_text(encoding="utf-8"))
-    if not isinstance(profiles, list):
-        raise ValueError(f"Expected a profile list in {PROFILES_PATH}")
-    return profiles
-
-
-def save_profiles(profiles: list[dict[str, object]]) -> None:
-    PROFILES_PATH.write_text(
-        json.dumps(profiles, indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
-
-
 def download_csv(
     table: str,
     build: str,
@@ -247,133 +230,6 @@ def generated_header(table: str, build: str, profile: str) -> list[str]:
 def write_lua(path: Path, lines: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
-
-
-def build_to_interface(build: str) -> int:
-    version_parts = build.split(".")
-    if len(version_parts) != 4 or not all(part.isdigit() for part in version_parts):
-        raise ValueError(f"Invalid Blizzard build: {build!r}")
-    major, minor, patch = map(int, version_parts[:3])
-    return major * 10000 + minor * 100 + patch
-
-
-def active_profiles(output: Path, profiles: list[dict[str, object]]) -> list[dict[str, object]]:
-    return [
-        profile
-        for profile in profiles
-        if profile.get("build")
-        and (
-            output
-            / "Data"
-            / str(profile.get("dataSet", profile["id"]))
-            / "TaxiNodes.lua"
-        ).exists()
-        and (
-            output
-            / "Locale"
-            / str(profile.get("dataSet", profile["id"]))
-            / "enUS.lua"
-        ).exists()
-    ]
-
-
-def generate_client_profiles(output: Path, profiles: list[dict[str, object]]) -> None:
-    lines = [
-        "-- This file is generated. Do not edit it by hand.",
-        "local lib = _G.LibTaxiData_Internal",
-        "if not lib then return end",
-        "",
-        "lib.ClientProfiles = {",
-    ]
-    for profile in active_profiles(output, profiles):
-        values = [
-            f"profile = {lua_string(str(profile['id']))}",
-            f"dataSet = {lua_string(str(profile.get('dataSet', profile['id'])))}",
-            f"gameType = {lua_string(str(profile['gameType']))}",
-            f"channel = {lua_string(str(profile['channel']))}",
-            f"build = {lua_string(str(profile['build']))}",
-            f"interface = {build_to_interface(str(profile['build']))}",
-        ]
-        if profile.get("product"):
-            values.append(f"product = {lua_string(str(profile['product']))}")
-        if profile.get("default"):
-            values.append("default = true")
-        lines.append("    { " + ", ".join(values) + " },")
-    lines.append("}")
-    write_lua(output / "Data" / "ClientProfiles.lua", lines)
-
-
-def replace_generated_block(text: str, name: str, lines: list[str]) -> str:
-    begin = f"## X-Generated-{name}-Begin: true"
-    end = f"## X-Generated-{name}-End: true"
-    replacement = "\n".join([begin, *lines, end])
-    result, replacements = re.subn(
-        rf"^{re.escape(begin)}$.*?^{re.escape(end)}$",
-        lambda _match: replacement,
-        text,
-        count=1,
-        flags=re.MULTILINE | re.DOTALL,
-    )
-    if replacements != 1:
-        raise RuntimeError(f"Generated {name.lower()} markers not found in LibTaxiData.toc")
-    return result
-
-
-def update_toc(output: Path, profiles: list[dict[str, object]]) -> None:
-    toc_path = output / "LibTaxiData.toc"
-    if not toc_path.exists():
-        return
-    enabled = active_profiles(output, profiles)
-    by_game_type: dict[str, list[int]] = defaultdict(list)
-    for profile in enabled:
-        interface = build_to_interface(str(profile["build"]))
-        if interface not in by_game_type[str(profile["gameType"])]:
-            by_game_type[str(profile["gameType"])].append(interface)
-
-    all_interfaces = [
-        interface
-        for values in by_game_type.values()
-        for interface in values
-    ]
-    interface_lines = ["## Interface: " + ", ".join(map(str, all_interfaces))]
-    labels = {
-        "classic": "Classic",
-        "tbc": "TBC",
-        "wrath": "Wrath",
-        "cata": "Cata",
-        "mists": "Mists",
-    }
-    for game_type, label in labels.items():
-        if by_game_type.get(game_type):
-            interface_lines.append(
-                f"## Interface-{label}: " + ", ".join(map(str, by_game_type[game_type]))
-            )
-
-    file_lines = []
-    data_names = ("TaxiNodes.lua", "PlayerConditions.lua", "ModifierTrees.lua", "SupportingData.lua")
-    written_data_sets = set()
-    for profile in enabled:
-        profile_id = str(profile.get("dataSet", profile["id"]))
-        if profile_id in written_data_sets:
-            continue
-        written_data_sets.add(profile_id)
-        game_type = str(profile["gameType"])
-        for name in data_names:
-            file_lines.append(
-                f"Data\\{profile_id}\\{name} [AllowLoadGameType {game_type}]"
-            )
-        for locale in LOCALES:
-            file_lines.append(
-                f"Locale\\{profile_id}\\{locale}.lua [AllowLoadGameType {game_type}]"
-            )
-        file_lines.append("")
-    if file_lines and not file_lines[-1]:
-        file_lines.pop()
-
-    toc = toc_path.read_text(encoding="utf-8-sig")
-    toc = replace_generated_block(toc, "Interfaces", interface_lines)
-    toc = replace_generated_block(toc, "Profiles", file_lines)
-    toc_path.write_text(toc, encoding="utf-8", newline="\n")
 
 
 def profile_content_fingerprint(output: Path, profile_id: str) -> str | None:

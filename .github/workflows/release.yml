@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - v*
+      - '!v*-alpha'
+      - '!v*-beta'
   workflow_dispatch:
     inputs:
       ref:
@@ -39,11 +41,11 @@ jobs:
           python-version: '3.13'
 
       - name: Compile tooling
-        run: python -m py_compile tools/generate.py tools/package.py tools/live_build.py tools/data_fingerprint.py
+        run: python -m py_compile tools/generate.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py
 
       - name: Validate client profile catalog and archives
         run: |
-          python -m json.tool tools/profiles.json >/dev/null
+          python tools/profiles.py check
           python -m json.tool tools/release.json >/dev/null
           python tools/package.py --matrix
           python tools/package.py --build --output-dir .cache/release-zips
@@ -74,7 +76,8 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.bundles.outputs.matrix }}
+      bundles: ${{ steps.bundles.outputs.bundles }}
+      count: ${{ steps.bundles.outputs.count }}
     steps:
       - name: Checkout release
         uses: actions/checkout@v5
@@ -88,15 +91,18 @@ jobs:
 
       - name: Resolve compatible data bundles
         id: bundles
-        run: echo "matrix=$(python tools/package.py --matrix)" >> "$GITHUB_OUTPUT"
+        run: |
+          matrix="$(python tools/package.py --matrix)"
+          echo "bundles=$(jq -c '.include' <<< "$matrix")" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq '.include | length' <<< "$matrix")" >> "$GITHUB_OUTPUT"
+          jq -r '.include[] | "build \(.build_number): \(.data_set) -> \(.release_type)"' <<< "$matrix"
 
   release:
     needs: plan
+    if: needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     env:
+      BUNDLES: ${{ needs.plan.outputs.bundles }}
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
@@ -122,16 +128,70 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Keep only the compatible data bundle
-        run: python tools/package.py --prepare "${{ matrix.data_set }}"
-
-      - name: Package and upload to CurseForge, Wago, WoWInterface, and GitHub
-        uses: BigWigsMods/packager@master
+      - name: Checkout BigWigs packager
+        uses: actions/checkout@v5
         with:
-          args: >-
-            -m .pkgmeta.release
-            -g "${{ matrix.game_versions }}"
-            -n "{package-name}-{project-version}-${{ matrix.data_set }}:{project-version}-${{ matrix.data_set }}-${{ matrix.build }}"
-            -p 1636228
-            -w 27178
-            -a jK8gl56y
+          repository: BigWigsMods/packager
+          ref: v2
+          path: .cache/packager
+
+      - name: Package and upload bundles in ascending build order
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base_tag="$(git tag --points-at HEAD --sort=-v:refname | awk '/^v[0-9]+\.[0-9]+\.[0-9]+$/ { print; exit }')"
+          if [ -z "$base_tag" ]; then
+            echo "No semantic release tag points at $(git rev-parse HEAD)." >&2
+            exit 1
+          fi
+
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+          ensure_prerelease_tag() {
+            local tag="$1"
+            if git show-ref --verify --quiet "refs/tags/$tag"; then
+              if [ "$(git rev-list -n 1 "$tag")" != "$(git rev-parse HEAD)" ]; then
+                echo "Tag $tag already points at another commit." >&2
+                exit 1
+              fi
+            else
+              git tag -a "$tag" -m "LibTaxiData $tag"
+            fi
+            if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+              git push origin "refs/tags/$tag"
+            fi
+          }
+
+          while IFS= read -r bundle; do
+            data_set="$(jq -r '.data_set' <<< "$bundle")"
+            build="$(jq -r '.build' <<< "$bundle")"
+            build_number="$(jq -r '.build_number' <<< "$bundle")"
+            game_versions="$(jq -r '.game_versions' <<< "$bundle")"
+            release_type="$(jq -r '.release_type' <<< "$bundle")"
+
+            package_tag="$base_tag"
+            if [ "$release_type" != "release" ]; then
+              package_tag="${base_tag}-${release_type}"
+              ensure_prerelease_tag "$package_tag"
+            fi
+
+            echo "Publishing build $build_number ($data_set) as $release_type using $package_tag"
+            python tools/package.py \
+              --prepare "$data_set" \
+              --release-type "$release_type"
+
+            release_dir="$RUNNER_TEMP/libtaxidata-${build_number}-${data_set}-${release_type}"
+            GITHUB_REF="refs/tags/$package_tag" \
+            GITHUB_REF_NAME="$package_tag" \
+              bash .cache/packager/release.sh \
+                -t "$GITHUB_WORKSPACE" \
+                -r "$release_dir" \
+                -m .pkgmeta.release \
+                -g "$game_versions" \
+                -n "{package-name}-{project-version}-${data_set}:{project-version}-${data_set}-${build}" \
+                -p 1636228 \
+                -w 27178 \
+                -a jK8gl56y
+          done < <(jq -c '.[]' <<< "$BUNDLES")

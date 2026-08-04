@@ -1,15 +1,25 @@
 local profile = arg and arg[1] or "retail"
-local profileGameTypes = {
-    retail = "mainline",
-    retail_ptr = "mainline",
-    retail_beta = "mainline",
-    mists = "mists",
-    mists_ptr = "mists",
-    mists_beta = "mists",
-    classic = "classic",
-    tbc = "tbc",
-}
-local gameType = assert(profileGameTypes[profile], "unknown test profile: " .. tostring(profile))
+local initialInternal = LibTaxiData_Internal
+dofile("LibTaxiData.lua")
+dofile("Data/ClientProfiles.lua")
+local clientGameTypes = LibTaxiData_Internal.ClientGameTypes
+local gameType
+for _, candidate in ipairs(LibTaxiData_Internal.ClientProfiles) do
+    if candidate.profile == profile then
+        gameType = candidate.gameType
+        break
+    end
+end
+assert(gameType, "unknown test profile: " .. tostring(profile))
+
+local projectIDs = {}
+for index, candidate in ipairs(clientGameTypes) do
+    local projectID = 1000 + index
+    _G[candidate.projectConstant] = projectID
+    projectIDs[candidate.gameType] = projectID
+end
+LibTaxiData_Internal = initialInternal
+
 local expectedBuild = arg and arg[2]
 if not expectedBuild then
     local sourceFile = assert(io.open("Data/" .. profile .. "/TaxiNodes.lua", "rb"))
@@ -21,20 +31,6 @@ local version, buildNumber = assert(expectedBuild:match("^(.*)%.(%d+)$"))
 local major, minor, patch = version:match("^(%d+)%.(%d+)%.(%d+)$")
 local interface = tonumber(major) * 10000 + tonumber(minor) * 100 + tonumber(patch)
 
-WOW_PROJECT_MAINLINE = 1
-WOW_PROJECT_CLASSIC = 2
-WOW_PROJECT_BURNING_CRUSADE_CLASSIC = 5
-WOW_PROJECT_WRATH_CLASSIC = 11
-WOW_PROJECT_CATACLYSM_CLASSIC = 14
-WOW_PROJECT_MISTS_CLASSIC = 19
-local projectIDs = {
-    mainline = WOW_PROJECT_MAINLINE,
-    classic = WOW_PROJECT_CLASSIC,
-    tbc = WOW_PROJECT_BURNING_CRUSADE_CLASSIC,
-    wrath = WOW_PROJECT_WRATH_CLASSIC,
-    cata = WOW_PROJECT_CATACLYSM_CLASSIC,
-    mists = WOW_PROJECT_MISTS_CLASSIC,
-}
 WOW_PROJECT_ID = projectIDs[gameType]
 
 local function Band(left, right)
