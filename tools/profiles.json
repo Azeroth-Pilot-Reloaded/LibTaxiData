@@ -4,7 +4,7 @@
     "gameType": "mainline",
     "channel": "live",
     "product": "wow",
-    "build": "12.0.7.68887",
+    "build": "12.0.7.68974",
     "default": true,
     "dataSet": "retail"
   },
@@ -30,7 +30,7 @@
     "gameType": "mists",
     "channel": "live",
     "product": "wow_classic",
-    "build": "5.5.4.68806",
+    "build": "5.5.4.69078",
     "default": true,
     "dataSet": "mists"
   },
