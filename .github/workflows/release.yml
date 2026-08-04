@@ -66,6 +66,8 @@ jobs:
         run: |
           luacheck .
           lua tests/client_selection.lua
+          lua tests/compatibility.lua
+          lua tests/base_versions.lua
           profiles="$(python -c 'import json; print(" ".join(p["id"] for p in json.load(open("tools/profiles.json")) if p.get("build")))')"
           for profile in $profiles; do
             lua tests/runtime.lua "$profile"

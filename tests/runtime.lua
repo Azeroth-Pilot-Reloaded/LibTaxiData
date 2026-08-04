@@ -4,13 +4,23 @@ dofile("LibTaxiData.lua")
 dofile("Data/ClientProfiles.lua")
 local clientGameTypes = LibTaxiData_Internal.ClientGameTypes
 local gameType
+local versionID
 for _, candidate in ipairs(LibTaxiData_Internal.ClientProfiles) do
     if candidate.profile == profile then
         gameType = candidate.gameType
+        versionID = candidate.version
         break
     end
 end
 assert(gameType, "unknown test profile: " .. tostring(profile))
+local baseVersion
+for _, candidate in ipairs(clientGameTypes) do
+    if candidate.version == versionID then
+        baseVersion = candidate
+        break
+    end
+end
+assert(baseVersion, "unknown base version: " .. tostring(versionID))
 
 local projectIDs = {}
 for index, candidate in ipairs(clientGameTypes) do
@@ -132,6 +142,7 @@ dofile("Data/" .. dataSet .. "/ModifierTrees.lua")
 dofile("Data/" .. dataSet .. "/SupportingData.lua")
 dofile("Locale/" .. dataSet .. "/frFR.lua")
 dofile("Localization.lua")
+dofile("Compatibility.lua")
 dofile("Conditions.lua")
 dofile("Coordinates.lua")
 dofile("API.lua")
@@ -144,6 +155,10 @@ assert(taxi.GetSource().profile == dataSet)
 assert(taxi.GetSource().dataSet == dataSet)
 assert(taxi.GetSource().gameType == gameType)
 assert(taxi.GetClientInfo().profile == profile)
+assert(taxi.GetClientInfo().version == versionID)
+assert(taxi.GetClientInfo().apiFamily == baseVersion.apiFamily)
+assert(type(taxi.GetClientInfo().apiCapabilities.questLog) == "string")
+assert(taxi.GetClientInfo().apiCapabilities.mapCoordinates == true)
 assert(taxi.GetClientInfo().dataSet == dataSet)
 assert(taxi.GetClientInfo().detectedBuild == expectedBuild)
 assert(taxi.GetClientInfo().exactBuild == true)

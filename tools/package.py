@@ -35,6 +35,7 @@ COMMON_FILES = (
     "API.lua",
     "Client.lua",
     "Commands.lua",
+    "Compatibility.lua",
     "Conditions.lua",
     "Coordinates.lua",
     "LibTaxiData.lua",

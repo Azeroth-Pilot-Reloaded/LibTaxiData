@@ -52,6 +52,8 @@ for _, candidate in ipairs(clientGameTypes) do
     if not activeGameTypes[candidate.gameType] then
         local unsupported = Select(assert(projectIDs[candidate.gameType]), "0.0.0.1")
         assert(unsupported.supported == false and unsupported.profile == nil)
+        assert(unsupported.version == candidate.version)
+        assert(unsupported.apiFamily == candidate.apiFamily)
     end
 end
 

@@ -15,13 +15,29 @@ sys.path.insert(0, str(ROOT))
 
 from tools.generate import classify_taxi, profile_content_fingerprint  # noqa: E402
 from tools.package import build_number, release_bundles  # noqa: E402
-from tools.profile_catalog import load_profiles, release_type_for_profile  # noqa: E402
+from tools.profile_catalog import (  # noqa: E402
+    load_profiles,
+    load_versions,
+    release_type_for_profile,
+)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive_dir", type=Path)
     args = parser.parse_args()
+
+    versions = load_versions()
+    version_ids = {str(version["id"]) for version in versions}
+    assert {
+        "retail",
+        "classic",
+        "anniversary",
+        "wrath",
+        "cataclysm",
+        "mists",
+    } <= version_ids
+    assert {str(profile["version"]) for profile in load_profiles()} <= version_ids
 
     assert classify_taxi(
         {"ID": "1", "ContinentID": "0", "Name_lang": "[HIDDEN] Network Hub"},
@@ -143,12 +159,17 @@ def main() -> int:
         }
         assert data_sets == {release["data_set"]}
         assert locale_sets == {release["data_set"]}
+        assert "LibTaxiData/Compatibility.lua" in names
+        assert 'version = "wrath"' in manifest
+        assert 'version = "cataclysm"' in manifest
         embedded_profiles = set(re.findall(r'profile = "([^"]+)"', manifest))
         assert embedded_profiles == set(release["profile_list"])
         assert toc.count("\\TaxiNodes.lua") == 1
         assert "## X-Curse-Project-ID: 1636228" in toc
         assert "## X-WoWI-ID: 27178" in toc
         assert "## X-Wago-ID: jK8gl56y" in toc
+        assert "## Interface-Wrath: 30403" in toc
+        assert "## Interface-Cata: 40402" in toc
         packaged_profiles.update(embedded_profiles)
 
     assert packaged_profiles == expected_profiles

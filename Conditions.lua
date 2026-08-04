@@ -1,5 +1,7 @@
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
+local Compatibility = lib.Compatibility
+if not Compatibility then return end
 
 local bit = _G.bit
 local band = bit and bit.band
@@ -86,43 +88,15 @@ local function GetPlayerLevel(flags)
 end
 
 local function IsQuestCompleted(questID)
-    local checker = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted or _G.IsQuestFlaggedCompleted
-    if not checker then
-        return nil
-    end
-    local success, completed = pcall(checker, questID)
-    if not success then
-        return nil
-    end
-    return completed == true
+    return Compatibility.IsQuestCompleted(questID)
 end
 
 local function IsOnQuest(questID)
-    if C_QuestLog and C_QuestLog.IsOnQuest then
-        return C_QuestLog.IsOnQuest(questID) == true
-    end
-    local getIndex = _G.GetQuestLogIndexByID or
-        (C_QuestLog and C_QuestLog.GetLogIndexForQuestID)
-    if not getIndex then
-        return nil
-    end
-    local success, index = pcall(getIndex, questID)
-    if not success or type(index) ~= "number" then
-        return nil
-    end
-    return index > 0
+    return Compatibility.IsOnQuest(questID)
 end
 
 local function IsQuestReadyToTurnIn(questID)
-    local checker = C_QuestLog and C_QuestLog.IsComplete or _G.IsQuestComplete
-    if not checker then
-        return nil
-    end
-    local success, completed = pcall(checker, questID)
-    if not success then
-        return nil
-    end
-    return completed == true
+    return Compatibility.IsQuestReadyToTurnIn(questID)
 end
 
 local function HasAchievement(achievementID)
@@ -137,29 +111,7 @@ local function HasAchievement(achievementID)
 end
 
 local function GetAuraCount(spellID)
-    if C_UnitAuras and C_UnitAuras.GetPlayerAuraBySpellID then
-        local aura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
-        if not aura then
-            return 0
-        end
-        return aura.applications or 1
-    end
-    if not _G.UnitAura then
-        return nil
-    end
-    for _, filter in ipairs({ "HELPFUL", "HARMFUL" }) do
-        for index = 1, 40 do
-            local name, _, applications, _, _, _, _, _, _, auraSpellID =
-                UnitAura("player", index, filter)
-            if not name then
-                break
-            end
-            if auraSpellID == spellID then
-                return applications or 1
-            end
-        end
-    end
-    return 0
+    return Compatibility.GetAuraCount(spellID)
 end
 
 local function HasAura(spellID)
@@ -171,38 +123,19 @@ local function HasAura(spellID)
 end
 
 local function KnowsSpell(spellID)
-    local isKnown = C_SpellBook and C_SpellBook.IsSpellKnown or _G.IsSpellKnown
-    if not isKnown then
-        return nil
-    end
-    return isKnown(spellID) == true
+    return Compatibility.KnowsSpell(spellID)
 end
 
 local function GetItemCount(itemID, includeBank)
-    local getItemCount = C_Item and C_Item.GetItemCount or _G.GetItemCount
-    if not getItemCount then
-        return nil
-    end
-    local success, count = pcall(getItemCount, itemID, includeBank == true)
-    return success and count or nil
+    return Compatibility.GetItemCount(itemID, includeBank)
 end
 
 local function GetCurrencyCount(currencyID)
-    if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
-        local info = C_CurrencyInfo.GetCurrencyInfo(currencyID)
-        return info and info.quantity or nil
-    end
-    if _G.GetCurrencyInfo then
-        return select(2, GetCurrencyInfo(currencyID))
-    end
-    return nil
+    return Compatibility.GetCurrencyCount(currencyID)
 end
 
 local function GetCovenantID()
-    if not C_Covenants or not C_Covenants.GetActiveCovenantID then
-        return nil
-    end
-    return C_Covenants.GetActiveCovenantID()
+    return Compatibility.GetCovenantID()
 end
 
 local function GetFactionIndex()
@@ -289,13 +222,7 @@ local function EvaluateClassMask(classMask)
 end
 
 local function EvaluateReputation(factionID, requiredRank, maximum)
-    local reaction
-    if C_Reputation and C_Reputation.GetFactionDataByID then
-        local faction = C_Reputation.GetFactionDataByID(factionID)
-        reaction = faction and faction.reaction
-    elseif _G.GetFactionInfoByID then
-        reaction = select(3, GetFactionInfoByID(factionID))
-    end
+    local reaction = Compatibility.GetReputationReaction(factionID)
     if not reaction then
         return nil
     end

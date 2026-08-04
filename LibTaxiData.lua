@@ -2,6 +2,7 @@
 -- capabilities instead of comparing release numbers.
 _G.LibTaxiData_Internal = {
     ClientProfiles = {},
+    ClientVersions = {},
     ContentTuning = {},
     ExcludedNodes = {},
     MissingPlayerConditions = {},

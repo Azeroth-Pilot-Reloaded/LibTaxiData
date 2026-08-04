@@ -2,8 +2,7 @@
   {
     "id": "retail",
     "name": "Retail",
-    "gameType": "mainline",
-    "projectConstant": "WOW_PROJECT_MAINLINE",
+    "version": "retail",
     "channel": "live",
     "product": "wow",
     "build": "12.0.7.68887",
@@ -13,8 +12,7 @@
   {
     "id": "retail_ptr",
     "name": "Retail PTR",
-    "gameType": "mainline",
-    "projectConstant": "WOW_PROJECT_MAINLINE",
+    "version": "retail",
     "channel": "ptr",
     "product": "wowt",
     "build": "12.1.0.68914",
@@ -24,8 +22,7 @@
   {
     "id": "mists",
     "name": "Mists of Pandaria Classic",
-    "gameType": "mists",
-    "projectConstant": "WOW_PROJECT_MISTS_CLASSIC",
+    "version": "mists",
     "channel": "live",
     "product": "wow_classic",
     "build": "5.5.4.68806",
@@ -35,8 +32,7 @@
   {
     "id": "mists_ptr",
     "name": "Mists of Pandaria Classic PTR",
-    "gameType": "mists",
-    "projectConstant": "WOW_PROJECT_MISTS_CLASSIC",
+    "version": "mists",
     "channel": "ptr",
     "product": "wow_classic_ptr",
     "build": "5.5.4.67849",
@@ -46,8 +42,7 @@
   {
     "id": "classic",
     "name": "Classic Era",
-    "gameType": "classic",
-    "projectConstant": "WOW_PROJECT_CLASSIC",
+    "version": "classic",
     "channel": "live",
     "product": "wow_classic_era",
     "build": "1.15.9.68940",
@@ -57,32 +52,11 @@
   {
     "id": "tbc",
     "name": "Burning Crusade Classic Anniversary PTR",
-    "gameType": "tbc",
-    "projectConstant": "WOW_PROJECT_BURNING_CRUSADE_CLASSIC",
+    "version": "anniversary",
     "channel": "ptr",
     "product": "wow_classic_era_ptr",
     "build": "2.5.6.68184",
     "default": true,
     "dataSet": "tbc"
-  },
-  {
-    "id": "wrath",
-    "name": "Wrath Classic (archived)",
-    "gameType": "wrath",
-    "projectConstant": "WOW_PROJECT_WRATH_CLASSIC",
-    "channel": "legacy",
-    "product": null,
-    "build": null,
-    "default": true
-  },
-  {
-    "id": "cataclysm",
-    "name": "Cataclysm Classic (archived)",
-    "gameType": "cata",
-    "projectConstant": "WOW_PROJECT_CATACLYSM_CLASSIC",
-    "channel": "legacy",
-    "product": null,
-    "build": null,
-    "default": true
   }
 ]

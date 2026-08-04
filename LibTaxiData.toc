@@ -1,7 +1,9 @@
 ## X-Generated-Interfaces-Begin: true
-## Interface: 120007, 120100, 50504, 11509, 20506
+## Interface: 120007, 120100, 50504, 11509, 20506, 30403, 40402
 ## Interface-Classic: 11509
 ## Interface-TBC: 20506
+## Interface-Wrath: 30403
+## Interface-Cata: 40402
 ## Interface-Mists: 50504
 ## X-Generated-Interfaces-End: true
 ## Title: LibTaxiData

@@ -1,0 +1,61 @@
+[
+  {
+    "id": "retail",
+    "name": "Retail",
+    "gameType": "mainline",
+    "projectConstant": "WOW_PROJECT_MAINLINE",
+    "apiFamily": "modern",
+    "minimumInterfaceMajor": 10,
+    "tocInterface": 120007
+  },
+  {
+    "id": "classic",
+    "name": "Classic Era",
+    "gameType": "classic",
+    "projectConstant": "WOW_PROJECT_CLASSIC",
+    "apiFamily": "modern",
+    "interfaceMajor": 1,
+    "tocInterface": 11509,
+    "tocLabel": "Classic"
+  },
+  {
+    "id": "anniversary",
+    "name": "Anniversary / Burning Crusade Classic",
+    "gameType": "tbc",
+    "projectConstant": "WOW_PROJECT_BURNING_CRUSADE_CLASSIC",
+    "apiFamily": "modern",
+    "interfaceMajor": 2,
+    "tocInterface": 20506,
+    "tocLabel": "TBC"
+  },
+  {
+    "id": "wrath",
+    "name": "Wrath of the Lich King Classic",
+    "gameType": "wrath",
+    "projectConstant": "WOW_PROJECT_WRATH_CLASSIC",
+    "apiFamily": "legacy",
+    "interfaceMajor": 3,
+    "tocInterface": 30403,
+    "tocLabel": "Wrath"
+  },
+  {
+    "id": "cataclysm",
+    "name": "Cataclysm Classic",
+    "gameType": "cata",
+    "projectConstant": "WOW_PROJECT_CATACLYSM_CLASSIC",
+    "apiFamily": "legacy",
+    "interfaceMajor": 4,
+    "tocInterface": 40402,
+    "tocLabel": "Cata"
+  },
+  {
+    "id": "mists",
+    "name": "Mists of Pandaria Classic",
+    "gameType": "mists",
+    "projectConstant": "WOW_PROJECT_MISTS_CLASSIC",
+    "apiFamily": "modern",
+    "interfaceMajor": 5,
+    "tocInterface": 50504,
+    "tocLabel": "Mists"
+  }
+]

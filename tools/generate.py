@@ -268,7 +268,10 @@ def assign_data_sets(output: Path, profiles: list[dict[str, object]]) -> None:
         fingerprint = profile_content_fingerprint(output, profile_id)
         if not fingerprint:
             continue
-        key = str(profile["gameType"]), fingerprint
+        # Data may only be shared inside the same permanent client version.
+        # Two clients can expose the same gameType-like loading behavior while
+        # still differing in DB2 layout or API semantics.
+        key = str(profile["version"]), fingerprint
         data_set = representatives.setdefault(key, profile_id)
         profile["dataSet"] = data_set
 
@@ -686,7 +689,7 @@ def main() -> int:
             (
                 candidate
                 for candidate in profiles
-                if candidate.get("gameType") == profile.get("gameType")
+                if candidate.get("version") == profile.get("version")
                 and candidate.get("default")
                 and candidate.get("build")
             ),
