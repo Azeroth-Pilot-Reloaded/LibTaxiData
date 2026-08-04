@@ -34,12 +34,11 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Compare with the latest published version
-        id: data
+      - name: Plan the automatic semantic release
+        id: release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          current_fingerprint="$(python tools/data_fingerprint.py)"
           release_tags="$(
             gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
               --jq '.[].tag_name'
@@ -55,33 +54,21 @@ jobs:
               | sort -V \
               | tail -n 1
           )"
-          echo "previous_version_tag=$previous_version_tag" >> "$GITHUB_OUTPUT"
 
-          if [ -z "$previous_data_tag" ]; then
-            echo "No previous data-bearing release was found; publishing the initial release."
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            exit 0
+          args=(--github-output "$GITHUB_OUTPUT")
+          if [ -n "$previous_version_tag" ]; then
+            args+=(--previous-version-tag "$previous_version_tag")
           fi
-
-          previous_tree="$RUNNER_TEMP/previous-data-release"
-          git worktree add --detach "$previous_tree" "$previous_data_tag"
-          previous_fingerprint="$(python tools/data_fingerprint.py --root "$previous_tree")"
-          git worktree remove "$previous_tree"
-
-          echo "Previous data release: $previous_data_tag"
-          if [ "$current_fingerprint" = "$previous_fingerprint" ]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "Taxi data is unchanged; no release will be created."
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "Taxi data changed; a release will be created."
+          if [ -n "$previous_data_tag" ]; then
+            args+=(--previous-data-tag "$previous_data_tag")
           fi
+          python tools/release_version.py "${args[@]}"
 
-      - name: Calculate and tag the semantic version
-        if: steps.data.outputs.changed == 'true'
+      - name: Tag the planned semantic version
+        if: steps.release.outputs.changed == 'true'
         id: tag
         env:
-          PREVIOUS_TAG: ${{ steps.data.outputs.previous_version_tag }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
           builds="$(grep -h '^[[:space:]]*build = "' Data/*/TaxiNodes.lua | sed -n 's/.*"\([0-9.]*\)".*/\1/p')"
           if [ -z "$builds" ] || printf '%s\n' "$builds" | grep -Evq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
@@ -89,28 +76,10 @@ jobs:
             exit 1
           fi
 
-          api_major="$(python -c 'import json; print(json.load(open("tools/release.json"))["apiMajor"])')"
-          if ! printf '%s' "$api_major" | grep -Eq '^[1-9][0-9]*$'; then
-            echo "tools/release.json must contain a positive integer apiMajor" >&2
+          tag="$RELEASE_TAG"
+          if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid planned release tag: $tag" >&2
             exit 1
-          fi
-
-          if [ -z "$PREVIOUS_TAG" ]; then
-            tag="v${api_major}.0.0"
-          else
-            version="${PREVIOUS_TAG#v}"
-            IFS=. read -r previous_major previous_minor previous_patch <<< "$version"
-            if [ "$api_major" -lt "$previous_major" ]; then
-              echo "apiMajor cannot decrease from $previous_major to $api_major" >&2
-              exit 1
-            elif ! git diff --quiet "$PREVIOUS_TAG" HEAD -- API.lua && [ "$api_major" -eq "$previous_major" ]; then
-              echo "API.lua changed; increment apiMajor in tools/release.json" >&2
-              exit 1
-            elif [ "$api_major" -gt "$previous_major" ]; then
-              tag="v${api_major}.0.0"
-            else
-              tag="v${api_major}.$((previous_minor + 1)).0"
-            fi
           fi
 
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
@@ -129,7 +98,7 @@ jobs:
           git push origin "$tag"
 
       - name: Start deployment
-        if: steps.data.outputs.changed == 'true'
+        if: steps.release.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.tag.outputs.tag }}

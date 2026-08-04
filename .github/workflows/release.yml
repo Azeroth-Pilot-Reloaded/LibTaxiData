@@ -41,12 +41,12 @@ jobs:
           python-version: '3.13'
 
       - name: Compile tooling
-        run: python -m py_compile tools/generate.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py
+        run: python -m py_compile tools/generate.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py tools/release_version.py
 
       - name: Validate client profile catalog and archives
         run: |
           python tools/profiles.py check
-          python -m json.tool tools/release.json >/dev/null
+          python tests/release_version.py
           python tools/package.py --matrix
           python tools/package.py --build --output-dir .cache/release-zips
           python tests/package.py .cache/release-zips
