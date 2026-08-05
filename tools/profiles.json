@@ -15,7 +15,7 @@
     "version": "retail",
     "channel": "ptr",
     "product": "wowt",
-    "build": "12.1.0.68914",
+    "build": "12.1.0.69111",
     "releaseBase": "retail",
     "dataSet": "retail_ptr"
   },
@@ -45,7 +45,7 @@
     "version": "classic",
     "channel": "live",
     "product": "wow_classic_era",
-    "build": "1.15.9.68940",
+    "build": "1.15.9.69109",
     "default": true,
     "dataSet": "classic"
   },
