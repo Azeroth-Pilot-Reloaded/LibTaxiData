@@ -97,7 +97,7 @@ jobs:
           matrix="$(python tools/package.py --matrix)"
           echo "bundles=$(jq -c '.include' <<< "$matrix")" >> "$GITHUB_OUTPUT"
           echo "count=$(jq '.include | length' <<< "$matrix")" >> "$GITHUB_OUTPUT"
-          jq -r '.include[] | "build \(.build_number): \(.data_set) -> \(.release_type)"' <<< "$matrix"
+          jq -r '.include[] | "build \(.build) [\(.build_number)]: \(.data_set) -> \(.release_type)"' <<< "$matrix"
 
   release:
     needs: plan
@@ -108,11 +108,11 @@ jobs:
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
-      GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - name: Validate deployment configuration
         run: |
-          for name in CF_API_TOKEN WOWI_API_TOKEN WAGO_API_TOKEN; do
+          for name in CF_API_TOKEN WOWI_API_TOKEN WAGO_API_TOKEN GITHUB_TOKEN; do
             if [ -z "${!name}" ]; then
               echo "Missing repository secret: $name" >&2
               exit 1
@@ -137,7 +137,7 @@ jobs:
           ref: v2
           path: .cache/packager
 
-      - name: Package and upload bundles in ascending build order
+      - name: Package and upload bundles in ascending full build order
         shell: bash
         run: |
           set -euo pipefail
@@ -179,12 +179,14 @@ jobs:
               ensure_prerelease_tag "$package_tag"
             fi
 
-            echo "Publishing build $build_number ($data_set) as $release_type using $package_tag"
+            echo "Publishing build $build [$build_number] ($data_set) as $release_type using $package_tag"
             python tools/package.py \
               --prepare "$data_set" \
               --release-type "$release_type"
 
             release_dir="$RUNNER_TEMP/libtaxidata-${build_number}-${data_set}-${release_type}"
+            CF_API_KEY="$CF_API_TOKEN" \
+            GITHUB_OAUTH="$GITHUB_TOKEN" \
             GITHUB_REF="refs/tags/$package_tag" \
             GITHUB_REF_NAME="$package_tag" \
               bash .cache/packager/release.sh \

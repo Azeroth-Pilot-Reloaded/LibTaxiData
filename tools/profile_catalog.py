@@ -85,17 +85,19 @@ def lua_string(value: str) -> str:
     )
 
 
-def build_to_interface(build: str) -> int:
+def build_components(build: str) -> tuple[int, int, int, int]:
     if not BUILD_PATTERN.fullmatch(build):
         raise ValueError(f"Invalid Blizzard build: {build!r}")
-    major, minor, patch, _build_number = map(int, build.split("."))
+    return tuple(map(int, build.split(".")))
+
+
+def build_to_interface(build: str) -> int:
+    major, minor, patch, _build_number = build_components(build)
     return major * 10000 + minor * 100 + patch
 
 
 def build_number(build: str) -> int:
-    if not BUILD_PATTERN.fullmatch(build):
-        raise ValueError(f"Invalid Blizzard build: {build!r}")
-    return int(build.rsplit(".", 1)[1])
+    return build_components(build)[-1]
 
 
 def release_type_for_profile(
@@ -111,11 +113,11 @@ def release_type_for_profile(
 
     release_base_id = profile.get("releaseBase")
     if not release_base_id:
-        return None
+        return release_type
     release_base = by_id.get(str(release_base_id))
     if not release_base or not release_base.get("build"):
         return None
-    if build_number(str(build)) <= build_number(str(release_base["build"])):
+    if build_components(str(build)) <= build_components(str(release_base["build"])):
         return None
     return release_type
 

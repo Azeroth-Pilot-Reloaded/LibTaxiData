@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from tools.generate import classify_taxi, profile_content_fingerprint  # noqa: E402
-from tools.package import build_number, release_bundles  # noqa: E402
+from tools.package import build_components, build_number, release_bundles  # noqa: E402
 from tools.profile_catalog import (  # noqa: E402
     load_profiles,
     load_versions,
@@ -82,7 +82,7 @@ def main() -> int:
         "id": "newer_ptr",
         "gameType": "mainline",
         "channel": "ptr",
-        "build": "1.3.0.101",
+        "build": "1.3.0.99",
         "releaseBase": "normal",
     }
     newer_beta = {
@@ -96,30 +96,48 @@ def main() -> int:
         "id": "older_ptr",
         "gameType": "mainline",
         "channel": "ptr",
-        "build": "99.0.0.99",
+        "build": "1.2.3.99",
         "releaseBase": "normal",
+    }
+    standalone_ptr = {
+        "id": "standalone_ptr",
+        "gameType": "tbc",
+        "channel": "ptr",
+        "build": "2.5.6.90",
     }
     synthetic = {
         str(profile["id"]): profile
-        for profile in (normal, newer_ptr, newer_beta, older_ptr)
+        for profile in (normal, newer_ptr, newer_beta, older_ptr, standalone_ptr)
     }
     assert release_type_for_profile(normal, synthetic) == "release"
     assert release_type_for_profile(newer_ptr, synthetic) == "beta"
     assert release_type_for_profile(newer_beta, synthetic) == "alpha"
     assert release_type_for_profile(older_ptr, synthetic) is None
+    assert release_type_for_profile(standalone_ptr, synthetic) == "beta"
     assert build_number("99.0.0.99") == 99
+    assert build_components("12.1.0.68914") > build_components("12.0.7.68974")
 
     archive_dir = args.archive_dir.resolve()
     releases = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
     profiles = [profile for profile in load_profiles() if profile.get("build")]
     bundles = release_bundles(ROOT, load_profiles())
+    assert {
+        (bundle["data_set"], bundle["release_type"])
+        for bundle in bundles
+    } == {
+        ("classic", "release"),
+        ("mists", "release"),
+        ("retail", "release"),
+        ("retail_ptr", "beta"),
+        ("tbc", "beta"),
+    }
     expected_profiles = {
         profile_id
         for bundle in bundles
         for profile_id in bundle["profile_list"]
     }
-    assert [release["build_number"] for release in releases] == sorted(
-        release["build_number"] for release in releases
+    assert [build_components(release["build"]) for release in releases] == sorted(
+        build_components(release["build"]) for release in releases
     )
     assert [
         (release["data_set"], release["release_type"])

@@ -13,6 +13,7 @@ from pathlib import Path
 try:
     from profile_catalog import (
         active_profiles,
+        build_components,
         build_number,
         generate_client_profiles,
         load_profiles,
@@ -22,6 +23,7 @@ try:
 except ModuleNotFoundError:  # Imported as tools.package by tests.
     from tools.profile_catalog import (
         active_profiles,
+        build_components,
         build_number,
         generate_client_profiles,
         load_profiles,
@@ -68,8 +70,7 @@ def release_bundles(
         newest = max(
             compatible,
             key=lambda profile: (
-                build_number(str(profile["build"])),
-                tuple(map(int, str(profile["build"]).split("."))),
+                build_components(str(profile["build"])),
                 str(profile["id"]),
             ),
         )
@@ -94,8 +95,7 @@ def release_bundles(
     return sorted(
         bundles,
         key=lambda bundle: (
-            int(bundle["build_number"]),
-            tuple(map(int, str(bundle["build"]).split("."))),
+            build_components(str(bundle["build"])),
             release_order[str(bundle["release_type"])],
             str(bundle["data_set"]),
         ),

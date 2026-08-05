@@ -180,15 +180,17 @@ The list command also shows whether a profile is currently publishable and as
 which release type. The release rules are:
 
 - a normal profile is published as a stable release;
-- a `ptr` profile is published as Beta only when its build number is strictly
-  greater than its `releaseBase` build number;
+- a `ptr` profile is published as Beta when its complete build is strictly
+  greater than its `releaseBase` build;
 - a `beta` profile is published as Alpha under the same condition;
-- a PTR/Beta profile without `releaseBase`, or whose build is older or equal,
-  remains available to the generator/runtime but is omitted from releases.
+- a PTR/Beta profile without `releaseBase` is a standalone prerelease and is
+  published using its channel;
+- a PTR/Beta profile whose complete build is older or equal to its
+  `releaseBase` remains available to the generator/runtime but is omitted.
 
-Only the last component of a Blizzard build is compared: for
-`12.1.0.68914`, the build number is `68914`. Publishable bundles are then
-uploaded sequentially from the smallest to the largest build number.
+All four components of a Blizzard build are compared in order. For example,
+`12.1.0.68914` is newer than `12.0.7.68974`. Publishable bundles are uploaded
+sequentially from the smallest to the largest complete build.
 
 ### Adding a base version
 
