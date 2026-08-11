@@ -13,7 +13,11 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.generate import classify_taxi, profile_content_fingerprint  # noqa: E402
+from tools.generate import (  # noqa: E402
+    classify_taxi,
+    deactivate_redundant_prereleases,
+    profile_content_fingerprint,
+)
 from tools.package import build_components, build_number, release_bundles  # noqa: E402
 from tools.profile_catalog import (  # noqa: E402
     load_profiles,
@@ -72,6 +76,33 @@ def main() -> int:
         set(),
     ) is None
 
+    duplicate_profiles = [
+        {
+            "id": "normal",
+            "channel": "live",
+            "build": "1.2.3.100",
+            "dataSet": "normal",
+        },
+        {
+            "id": "normal_ptr",
+            "channel": "ptr",
+            "build": "1.2.3.100",
+            "releaseBase": "normal",
+            "dataSet": "normal_ptr",
+        },
+        {
+            "id": "normal_beta",
+            "channel": "beta",
+            "build": "1.3.0.101",
+            "releaseBase": "normal",
+            "dataSet": "normal_beta",
+        },
+    ]
+    assert deactivate_redundant_prereleases(duplicate_profiles) == ["normal_ptr"]
+    assert duplicate_profiles[1]["build"] is None
+    assert "dataSet" not in duplicate_profiles[1]
+    assert duplicate_profiles[2]["build"] == "1.3.0.101"
+
     normal = {
         "id": "normal",
         "gameType": "mainline",
@@ -119,18 +150,24 @@ def main() -> int:
 
     archive_dir = args.archive_dir.resolve()
     releases = json.loads((archive_dir / "manifest.json").read_text(encoding="utf-8"))
-    profiles = [profile for profile in load_profiles() if profile.get("build")]
-    bundles = release_bundles(ROOT, load_profiles())
-    assert {
-        (bundle["data_set"], bundle["release_type"])
-        for bundle in bundles
-    } == {
+    all_profiles = load_profiles()
+    profiles = [profile for profile in all_profiles if profile.get("build")]
+    bundles = release_bundles(ROOT, all_profiles)
+    expected_bundle_types = {
         ("classic", "release"),
         ("mists", "release"),
         ("retail", "release"),
-        ("retail_ptr", "beta"),
         ("tbc", "beta"),
     }
+    retail_ptr = next(
+        profile for profile in all_profiles if profile["id"] == "retail_ptr"
+    )
+    if retail_ptr.get("build"):
+        expected_bundle_types.add(("retail_ptr", "beta"))
+    assert {
+        (bundle["data_set"], bundle["release_type"])
+        for bundle in bundles
+    } == expected_bundle_types
     expected_profiles = {
         profile_id
         for bundle in bundles

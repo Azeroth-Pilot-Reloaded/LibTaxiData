@@ -276,6 +276,31 @@ def assign_data_sets(output: Path, profiles: list[dict[str, object]]) -> None:
         profile["dataSet"] = data_set
 
 
+def deactivate_redundant_prereleases(
+    profiles: list[dict[str, object]],
+) -> list[str]:
+    """Deactivate prerelease feeds that currently mirror their release base."""
+    by_id = {str(profile["id"]): profile for profile in profiles}
+    deactivated = []
+    for profile in profiles:
+        release_base_id = profile.get("releaseBase")
+        if not release_base_id or not profile.get("build"):
+            continue
+        release_base = by_id.get(str(release_base_id))
+        if not release_base or profile.get("build") != release_base.get("build"):
+            continue
+        build = str(profile["build"])
+        profile["build"] = None
+        profile.pop("dataSet", None)
+        deactivated.append(str(profile["id"]))
+        print(
+            f"Deactivated profile {profile['id']} because its build {build} "
+            f"matches release base {release_base_id}.",
+            file=sys.stderr,
+        )
+    return deactivated
+
+
 def classify_map(row: dict[str, str]) -> str | None:
     value = f"{row.get('MapName_lang', '')} {row.get('Directory', '')}"
     return "development-map" if MAP_DEV_RULE.search(value) else None
@@ -707,6 +732,7 @@ def main() -> int:
         )
         profile["build"] = build
 
+    deactivate_redundant_prereleases(profiles)
     assign_data_sets(output, profiles)
     save_profiles(profiles)
     generate_client_profiles(output, profiles)
