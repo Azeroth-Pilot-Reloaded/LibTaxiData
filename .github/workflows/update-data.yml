@@ -78,7 +78,7 @@ jobs:
           MANUAL_BUILD: ${{ inputs.build }}
           WEBHOOK_BUILD: ${{ github.event.client_payload.build }}
         run: |
-          args=(--cache-dir .cache/db2 --region eu)
+          args=(--cache-dir .cache/db2 --region us)
           if [ "$PROFILE" = "all" ]; then
             args+=(--all)
           else

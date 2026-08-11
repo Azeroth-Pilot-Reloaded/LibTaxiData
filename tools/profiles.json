@@ -15,7 +15,7 @@
     "version": "retail",
     "channel": "ptr",
     "product": "wowt",
-    "build": "12.1.0.68914",
+    "build": "12.1.0.69214",
     "releaseBase": "retail",
     "dataSet": "retail_ptr"
   },
@@ -25,7 +25,7 @@
     "version": "mists",
     "channel": "live",
     "product": "wow_classic",
-    "build": "5.5.4.69078",
+    "build": "5.5.4.69155",
     "default": true,
     "dataSet": "mists"
   },
@@ -45,7 +45,7 @@
     "version": "classic",
     "channel": "live",
     "product": "wow_classic_era",
-    "build": "1.15.9.68940",
+    "build": "1.15.9.69109",
     "default": true,
     "dataSet": "classic"
   },
@@ -55,7 +55,7 @@
     "version": "anniversary",
     "channel": "ptr",
     "product": "wow_classic_era_ptr",
-    "build": "2.5.6.68184",
+    "build": "2.5.6.69110",
     "default": true,
     "dataSet": "tbc"
   }

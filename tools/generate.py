@@ -123,8 +123,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--region",
-        default="eu",
-        help="Blizzard region used for automatic build detection (default: eu)",
+        default="us",
+        help="Blizzard region used for automatic build detection (default: us)",
     )
     parser.add_argument(
         "--output",

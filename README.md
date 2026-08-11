@@ -276,10 +276,10 @@ taxi data fallback.
 
 The product code is the segment used by Blizzard's public version endpoint,
 `https://us.version.battle.net/<product>/versions`. Test a product and inspect
-its current EU build with:
+its current US build with:
 
 ```sh
-python tools/live_build.py --product wow_beta --region eu
+python tools/live_build.py --product wow_beta --region us
 ```
 
 The exact build is also returned by WoW's `GetBuildInfo()` and is visible in the
