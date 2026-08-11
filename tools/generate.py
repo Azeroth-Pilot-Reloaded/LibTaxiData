@@ -58,6 +58,17 @@ NODE_FIELDS = (
     ("allianceMountCreatureID", "MountCreatureID_1"),
 )
 
+PLAYER_CONDITION_NEGATIVE_SENTINEL_FIELDS = frozenset(
+    {
+        "MinPVPRank",
+        "MaxPVPRank",
+    }
+)
+
+PLAYER_CONDITION_LOGIC_ARRAYS = {
+    "TraitNodeEntryLogic": "TraitNodeEntryID",
+}
+
 TAXI_EXCLUSION_RULES = (
     ("hidden-node", re.compile(r"\bhidden\b", re.IGNORECASE)),
     (
@@ -388,19 +399,28 @@ def grouped_condition(row: dict[str, str]) -> list[tuple[str, str | list[str]]]:
             arrays[match.group(1)][int(match.group(2))] = numeric(raw_value)
             continue
         value = numeric(raw_value)
+        if key in PLAYER_CONDITION_NEGATIVE_SENTINEL_FIELDS and int(value) < 0:
+            continue
         if value not in ("0", "-1"):
             scalars.append((key, value))
 
-    result: list[tuple[str, str | list[str]]] = list(scalars)
+    result: list[tuple[str, str | list[str]]] = []
+    populated_arrays: set[str] = set()
     for key in sorted(arrays):
         values_by_index = arrays[key]
         values = [values_by_index.get(i, "0") for i in range(max(values_by_index) + 1)]
         if any(value != "0" for value in values):
+            populated_arrays.add(key)
             # The two race mask words are unsigned bit fields even though the
             # CSV representation may use signed int32 values.
             if key == "RaceMasks":
                 values = [str(int(value) & 0xFFFFFFFF) for value in values]
             result.append((key, values))
+    for key, value in scalars:
+        required_array = PLAYER_CONDITION_LOGIC_ARRAYS.get(key)
+        if required_array and required_array not in populated_arrays:
+            continue
+        result.append((key, value))
     return sorted(result, key=lambda item: item[0])
 
 

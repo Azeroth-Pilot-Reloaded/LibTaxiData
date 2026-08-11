@@ -16,6 +16,7 @@ sys.path.insert(0, str(ROOT))
 from tools.generate import (  # noqa: E402
     classify_taxi,
     deactivate_redundant_prereleases,
+    grouped_condition,
     profile_content_fingerprint,
 )
 from tools.package import build_components, build_number, release_bundles  # noqa: E402
@@ -75,6 +76,43 @@ def main() -> int:
         {"ID": "8", "ContinentID": "0", "Name_lang": "Old Gate, Revendreth"},
         set(),
     ) is None
+
+    sentinel_condition = dict(
+        grouped_condition(
+            {
+                "ID": "924",
+                "Flags": "1",
+                "MinPVPRank": "-9",
+                "MaxPVPRank": "-51",
+                "TraitNodeEntryLogic": "1048576",
+                "TraitNodeEntryID_0": "0",
+                "RaceMasks_0": "-1321907123",
+                "RaceMasks_1": "1427461461",
+            }
+        )
+    )
+    assert sentinel_condition == {
+        "Flags": "1",
+        "RaceMasks": ["2973060173", "1427461461"],
+    }
+
+    meaningful_condition = dict(
+        grouped_condition(
+            {
+                "ID": "1",
+                "MinPVPRank": "1",
+                "MaxPVPRank": "14",
+                "TraitNodeEntryLogic": "1048576",
+                "TraitNodeEntryID_0": "123",
+            }
+        )
+    )
+    assert meaningful_condition == {
+        "MaxPVPRank": "14",
+        "MinPVPRank": "1",
+        "TraitNodeEntryID": ["123"],
+        "TraitNodeEntryLogic": "1048576",
+    }
 
     duplicate_profiles = [
         {
