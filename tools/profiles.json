@@ -15,7 +15,7 @@
     "version": "retail",
     "channel": "ptr",
     "product": "wowt",
-    "build": "12.1.0.69189",
+    "build": "12.1.0.69214",
     "releaseBase": "retail",
     "dataSet": "retail_ptr"
   },
@@ -55,7 +55,7 @@
     "version": "anniversary",
     "channel": "ptr",
     "product": "wow_classic_era_ptr",
-    "build": "2.5.6.68184",
+    "build": "2.5.6.69110",
     "default": true,
     "dataSet": "tbc"
   }
