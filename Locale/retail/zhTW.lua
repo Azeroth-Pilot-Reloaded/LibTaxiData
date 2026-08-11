@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.0.7.68974)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69214)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -967,6 +967,7 @@ lib.Names = {
     [3162] = "離繫空間",
     [3163] = "亞瑟隆廢墟",
     [3164] = "赫薩斯之眠",
+    [3168] = "托卡臺地，盤蛇島",
     [3169] = "基礎節點",
     [3170] = "柯拉薩",
     [3171] = "深井",
@@ -995,4 +996,8 @@ lib.Names = {
     [3278] = "真菌熔爐",
     [3279] = "中樞港口",
     [3280] = "撤離海岸",
+    [3284] = "12.1 Ulatek - Faction Feature - Temple - Traversal - Flight Master - Eastern Entrance (HCR)",
+    [3285] = "阿曼尼據點",
+    [3286] = "東部入口",
+    [3288] = "阿曼尼據點，阿塔烏特克寶庫",
 }
