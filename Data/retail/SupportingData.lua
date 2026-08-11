@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/ChrRaces + ContentTuning (build 12.0.7.68974)
+-- Source: https://wago.tools/db2/ChrRaces + ContentTuning (build 12.1.0.69214)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -41,12 +41,14 @@ lib.RaceBits = {
 }
 
 lib.ContentTuning = {
-    [178] = { minLevel = 10, maxLevel = 40, minLevelOffset = 0, maxLevelOffset = 0 },
+    [186] = { minLevel = 10, maxLevel = 60, minLevelOffset = 0, maxLevelOffset = 0 },
     [464] = { minLevel = 50, maxLevel = 50, minLevelOffset = 0, maxLevelOffset = 0 },
-    [691] = { minLevel = 50, maxLevel = 50, minLevelOffset = 0, maxLevelOffset = 0 },
+    [698] = { minLevel = 50, maxLevel = 50, minLevelOffset = 0, maxLevelOffset = 0 },
     [830] = { minLevel = 10, maxLevel = 60, minLevelOffset = 0, maxLevelOffset = 0 },
-    [949] = { minLevel = 255, maxLevel = 255, minLevelOffset = 0, maxLevelOffset = 0 },
+    [958] = { minLevel = 20, maxLevel = 0, minLevelOffset = 0, maxLevelOffset = 2 },
+    [1087] = { minLevel = 30, maxLevel = 30, minLevelOffset = 0, maxLevelOffset = 0 },
+    [1138] = { minLevel = 40, maxLevel = 40, minLevelOffset = 0, maxLevelOffset = 0 },
     [1206] = { minLevel = 50, maxLevel = 50, minLevelOffset = 0, maxLevelOffset = 0 },
     [1221] = { minLevel = 10, maxLevel = 40, minLevelOffset = 0, maxLevelOffset = 0 },
-    [1281] = { minLevel = 50, maxLevel = 0, minLevelOffset = 0, maxLevelOffset = 2 },
+    [2028] = { minLevel = 10, maxLevel = 0, minLevelOffset = 0, maxLevelOffset = 2 },
 }

@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.0.7.68974)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69214)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -967,6 +967,7 @@ lib.Names = {
     [3162] = "Безграничье",
     [3163] = "Руины Яатрона",
     [3164] = "Покой Хосааса",
+    [3168] = "Лагерь Токки, Спиральный остров",
     [3169] = "Базовая станция",
     [3170] = "Коллапсар",
     [3171] = "Глубокий колодец",
@@ -995,4 +996,8 @@ lib.Names = {
     [3278] = "Спорогорн",
     [3279] = "Порт Нексуса",
     [3280] = "Место эвакуации",
+    [3284] = "12.1 Ulatek - Faction Feature - Temple - Traversal - Flight Master - Eastern Entrance (HCR)",
+    [3285] = "Плацдарм Амани",
+    [3286] = "Восточный вход",
+    [3288] = "Плацдарм Амани, хранилища Атал'Утека",
 }
