@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.0.7.68974)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69214)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -967,6 +967,7 @@ lib.Names = {
     [3162] = "Espaço Desprendido",
     [3163] = "Ruínas de Yaathron",
     [3164] = "Pouso de Hosaas",
+    [3168] = "Pouso de Tokka, A Ilha Enrolada",
     [3169] = "Nodo de Base",
     [3170] = "Collapsar",
     [3171] = "Poço Fundo",
@@ -995,4 +996,8 @@ lib.Names = {
     [3278] = "Forjesporo",
     [3279] = "Porto do Nexus",
     [3280] = "Costa da Extração",
+    [3284] = "12.1 Ulatek - Faction Feature - Temple - Traversal - Flight Master - Eastern Entrance (HCR)",
+    [3285] = "Ponto de Apoio dos Amani",
+    [3286] = "Entrada Leste",
+    [3288] = "Ponto de Apoio dos Amani, Câmaras de Atal'Utek",
 }

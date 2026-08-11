@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.0.7.68974)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69214)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -967,6 +967,7 @@ lib.Names = {
     [3162] = "풀어헤쳐진 우주",
     [3163] = "야트론 폐허",
     [3164] = "호사스의 안식처",
+    [3168] = "똬리의 섬 - 토카의 상륙지",
     [3169] = "기본 지점",
     [3170] = "중력 붕괴 항성",
     [3171] = "심연의 샘",
@@ -995,4 +996,8 @@ lib.Names = {
     [3278] = "진균괴철로",
     [3279] = "연합 항구",
     [3280] = "추출의 해안",
+    [3284] = "12.1 Ulatek - Faction Feature - Temple - Traversal - Flight Master - Eastern Entrance (HCR)",
+    [3285] = "아마니 거점",
+    [3286] = "동쪽 입구",
+    [3288] = "아마니 거점 - 아탈우텍 금고",
 }
