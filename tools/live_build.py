@@ -13,7 +13,7 @@ BUILD_PATTERN = re.compile(r"^\d+\.\d+\.\d+\.\d+$")
 PRODUCT_PATTERN = re.compile(r"^[a-z0-9_]+$")
 
 
-def get_product_build(product: str = "wow", region: str = "eu") -> str:
+def get_product_build(product: str = "wow", region: str = "us") -> str:
     if not PRODUCT_PATTERN.fullmatch(product):
         raise ValueError(f"Invalid Blizzard product: {product!r}")
     request = urllib.request.Request(
@@ -37,7 +37,7 @@ def get_product_build(product: str = "wow", region: str = "eu") -> str:
     )
 
 
-def get_live_build(region: str = "eu") -> str:
+def get_live_build(region: str = "us") -> str:
     """Backward-compatible alias for the Retail live product."""
     return get_product_build("wow", region)
 
@@ -45,7 +45,7 @@ def get_live_build(region: str = "eu") -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--product", default="wow", help="Blizzard product code (default: wow)")
-    parser.add_argument("--region", default="eu", help="Blizzard region (default: eu)")
+    parser.add_argument("--region", default="us", help="Blizzard region (default: us)")
     args = parser.parse_args()
     print(get_product_build(args.product, args.region))
     return 0

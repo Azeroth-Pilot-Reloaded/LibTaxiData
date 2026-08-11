@@ -1,6 +1,8 @@
 {
   "Lua.runtime.version": "Lua 5.1",
-  "Lua.diagnostics.globals": ["UNKNOWN"],
+  "Lua.diagnostics.globals": [
+    "UNKNOWN"
+  ],
   "Lua.runtime.builtin": {
     "basic": "disable",
     "debug": "disable",
