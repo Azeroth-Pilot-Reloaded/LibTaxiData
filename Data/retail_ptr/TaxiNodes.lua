@@ -1,11 +1,11 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69189)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69214)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail_ptr" then return end
 
 lib.Source = {
-    build = "12.1.0.69189",
+    build = "12.1.0.69214",
     profile = "retail_ptr",
     dataSet = "retail_ptr",
     gameType = "mainline",
