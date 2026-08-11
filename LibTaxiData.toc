@@ -1,5 +1,5 @@
 ## X-Generated-Interfaces-Begin: true
-## Interface: 120007, 120100, 50504, 11509, 20506, 30403, 40402
+## Interface: 120100, 120007, 50504, 11509, 20506, 30403, 40402
 ## Interface-Classic: 11509
 ## Interface-TBC: 20506
 ## Interface-Wrath: 30403
@@ -40,23 +40,6 @@ Locale\retail\ptBR.lua [AllowLoadGameType mainline]
 Locale\retail\ruRU.lua [AllowLoadGameType mainline]
 Locale\retail\zhCN.lua [AllowLoadGameType mainline]
 Locale\retail\zhTW.lua [AllowLoadGameType mainline]
-
-Data\retail_ptr\TaxiNodes.lua [AllowLoadGameType mainline]
-Data\retail_ptr\PlayerConditions.lua [AllowLoadGameType mainline]
-Data\retail_ptr\ModifierTrees.lua [AllowLoadGameType mainline]
-Data\retail_ptr\SupportingData.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\enUS.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\enGB.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\deDE.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\esES.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\esMX.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\frFR.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\itIT.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\koKR.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\ptBR.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\ruRU.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\zhCN.lua [AllowLoadGameType mainline]
-Locale\retail_ptr\zhTW.lua [AllowLoadGameType mainline]
 
 Data\mists\TaxiNodes.lua [AllowLoadGameType mists]
 Data\mists\PlayerConditions.lua [AllowLoadGameType mists]
