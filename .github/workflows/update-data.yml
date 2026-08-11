@@ -150,8 +150,9 @@ jobs:
             LibTaxiData.toc
             tools/profiles.json
 
-      - name: Enable automatic merge
+      - name: Merge automatically after validation
         if: vars.AUTO_MERGE_DATA_UPDATES == 'true' && steps.pull-request.outputs.pull-request-number != ''
+        timeout-minutes: 30
         env:
           GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
           PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
@@ -160,4 +161,22 @@ jobs:
             echo "AUTOMATION_TOKEN is required when AUTO_MERGE_DATA_UPDATES=true" >&2
             exit 1
           fi
-          gh pr merge --auto --squash "$PR_URL"
+
+          head_sha="$(gh pr view "$PR_URL" --json headRefOid --jq '.headRefOid')"
+          for attempt in {1..120}; do
+            check_count="$(
+              gh api "repos/$GITHUB_REPOSITORY/commits/$head_sha/check-runs" \
+                --jq '.total_count'
+            )"
+            if [ "$check_count" -gt 0 ]; then
+              break
+            fi
+            if [ "$attempt" -eq 120 ]; then
+              echo "No validation check was reported for $PR_URL after 20 minutes." >&2
+              exit 1
+            fi
+            sleep 10
+          done
+
+          gh pr checks --watch --fail-fast --interval 10 "$PR_URL"
+          gh pr merge --squash --delete-branch "$PR_URL"
