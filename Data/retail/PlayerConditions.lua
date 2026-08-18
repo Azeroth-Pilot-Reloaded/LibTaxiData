@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/PlayerCondition (build 12.1.0.69299)
+-- Source: https://wago.tools/db2/PlayerCondition (build 12.1.0.69382)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
