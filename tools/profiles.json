@@ -24,7 +24,7 @@
     "version": "mists",
     "channel": "live",
     "product": "wow_classic",
-    "build": "5.5.4.69155",
+    "build": "5.5.4.69383",
     "default": true,
     "dataSet": "mists"
   },
@@ -36,7 +36,7 @@
     "product": "wow_classic_ptr",
     "build": "5.5.4.67849",
     "releaseBase": "mists",
-    "dataSet": "mists"
+    "dataSet": "mists_ptr"
   },
   {
     "id": "classic",
