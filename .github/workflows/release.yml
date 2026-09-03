@@ -41,12 +41,13 @@ jobs:
           python-version: '3.13'
 
       - name: Compile tooling
-        run: python -m py_compile tools/generate.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py tools/release_version.py
+        run: python -m py_compile tools/generate.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py tools/release_version.py .github/scripts/post_discord.py
 
       - name: Validate client profile catalog and archives
         run: |
           python tools/profiles.py check
           python tests/release_version.py
+          python tests/post_discord.py
           python tools/package.py --matrix
           python tools/package.py --build --output-dir .cache/release-zips
           python tests/package.py .cache/release-zips
@@ -103,6 +104,8 @@ jobs:
     needs: plan
     if: needs.plan.outputs.count != '0'
     runs-on: ubuntu-latest
+    outputs:
+      published_tags: ${{ steps.publish.outputs.published_tags }}
     env:
       BUNDLES: ${{ needs.plan.outputs.bundles }}
       CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
@@ -138,6 +141,7 @@ jobs:
           path: .cache/packager
 
       - name: Package and upload bundles in ascending full build order
+        id: publish
         shell: bash
         run: |
           set -euo pipefail
@@ -199,3 +203,58 @@ jobs:
                 -w 27178 \
                 -a jK8gl56y
           done < <(jq -c '.[]' <<< "$BUNDLES")
+
+          published_tags_json="$(
+            jq -r --arg base_tag "$base_tag" '
+              .[]
+              | if .release_type == "release"
+                then $base_tag
+                else "\($base_tag)-\(.release_type)"
+                end
+            ' <<< "$BUNDLES" \
+              | awk '!seen[$0]++' \
+              | jq -Rsc 'split("\n") | map(select(length > 0))'
+          )"
+          echo "published_tags=$published_tags_json" >> "$GITHUB_OUTPUT"
+
+  notify-discord:
+    needs: release
+    if: >-
+      needs.release.result == 'success' &&
+      needs.release.outputs.published_tags != '' &&
+      needs.release.outputs.published_tags != '[]'
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      GH_TOKEN: ${{ github.token }}
+      PUBLISHED_TAGS: ${{ needs.release.outputs.published_tags }}
+    steps:
+      - name: Validate Discord configuration
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "Missing repository secret: DISCORD_WEBHOOK_URL" >&2
+            exit 1
+          fi
+
+      - name: Checkout release
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Post release notes to Discord
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          index=0
+          while IFS= read -r tag; do
+            release_json="$RUNNER_TEMP/release-$index.json"
+            gh release view "$tag" --json tagName,body,url > "$release_json"
+            python .github/scripts/post_discord.py --release-json "$release_json"
+            index=$((index + 1))
+          done < <(jq -r '.[]' <<< "$PUBLISHED_TAGS")

@@ -6,11 +6,13 @@
 ## Interface-Cata: 40402
 ## Interface-Mists: 50504
 ## X-Generated-Interfaces-End: true
+
 ## Title: LibTaxiData
 ## Notes: Localized multi-client taxi-node data, conditions, coordinate conversion, and nearest-node API.
+## IconTexture: Interface\AddOns\LibTaxiData\assets\logo
 ## Author: Neoldric
 ## Version: @project-version@
-## IconTexture: Interface\AddOns\LibTaxiData\assets\logo
+
 ## X-Website: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
 ## X-Github: https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData
 ## X-License: All Rights Reserved
