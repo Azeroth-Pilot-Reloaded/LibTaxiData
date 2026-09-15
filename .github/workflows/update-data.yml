@@ -154,14 +154,9 @@ jobs:
         if: vars.AUTO_MERGE_DATA_UPDATES == 'true' && steps.pull-request.outputs.pull-request-number != ''
         timeout-minutes: 30
         env:
-          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN || github.token }}
           PR_URL: ${{ steps.pull-request.outputs.pull-request-url }}
         run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "AUTOMATION_TOKEN is required when AUTO_MERGE_DATA_UPDATES=true" >&2
-            exit 1
-          fi
-
           head_sha="$(gh pr view "$PR_URL" --json headRefOid --jq '.headRefOid')"
           for attempt in {1..120}; do
             check_count="$(
