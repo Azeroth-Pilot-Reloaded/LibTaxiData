@@ -197,11 +197,18 @@ def main() -> int:
         ("retail", "release"),
         ("tbc", "beta"),
     }
+    by_id = {str(profile["id"]): profile for profile in all_profiles}
     retail_ptr = next(
         profile for profile in all_profiles if profile["id"] == "retail_ptr"
     )
-    if retail_ptr.get("build"):
-        expected_bundle_types.add(("retail_ptr", "beta"))
+    retail_ptr_release_type = release_type_for_profile(retail_ptr, by_id)
+    if retail_ptr_release_type is not None:
+        expected_bundle_types.add(
+            (
+                str(retail_ptr.get("dataSet", retail_ptr["id"])),
+                retail_ptr_release_type,
+            )
+        )
     assert {
         (bundle["data_set"], bundle["release_type"])
         for bundle in bundles
