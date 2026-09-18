@@ -7,25 +7,55 @@ for _, candidate in ipairs(lib.ClientVersions or {}) do
 end
 
 local function DetectVersion(interface)
-    -- Project constants are authoritative and continue to work when a family
-    -- currently has no active profile/server in tools/profiles.json.
+    local numericInterface = tonumber(interface) or 0
+    local major = math.floor(numericInterface / 10000)
+    local minor = math.floor(numericInterface / 100) % 100
+
+    local function MatchesInterface(candidate)
+        if candidate.interfaceMajor then
+            return candidate.interfaceMajor == major and
+                (not candidate.minimumInterfaceMinor or
+                    minor >= candidate.minimumInterfaceMinor)
+        end
+        return candidate.minimumInterfaceMajor and
+            major >= candidate.minimumInterfaceMajor
+    end
+
+    -- A project ID can be shared by multiple clients. Resolve those by their
+    -- interface rule while retaining the project-only path for older clients.
+    local projectMatches = {}
     for _, candidate in ipairs(lib.ClientVersions or {}) do
         local projectID = _G[candidate.projectConstant]
         if projectID and projectID == _G.WOW_PROJECT_ID then
-            return candidate
+            projectMatches[#projectMatches + 1] = candidate
         end
+    end
+    if #projectMatches == 1 then
+        return projectMatches[1]
+    end
+    if #projectMatches > 1 then
+        for _, candidate in ipairs(projectMatches) do
+            if MatchesInterface(candidate) then
+                return candidate
+            end
+        end
+        return nil
     end
 
     -- Interface-major rules are a fallback for test clients and old clients
     -- on which a project constant is missing.
-    local major = math.floor((tonumber(interface) or 0) / 10000)
     for _, candidate in ipairs(lib.ClientVersions or {}) do
-        if candidate.interfaceMajor == major then
+        if candidate.minimumInterfaceMinor and MatchesInterface(candidate) then
             return candidate
         end
     end
     for _, candidate in ipairs(lib.ClientVersions or {}) do
-        if candidate.minimumInterfaceMajor and major >= candidate.minimumInterfaceMajor then
+        if candidate.interfaceMajor and MatchesInterface(candidate) then
+            return candidate
+        end
+    end
+    for _, candidate in ipairs(lib.ClientVersions or {}) do
+        if candidate.minimumInterfaceMajor and MatchesInterface(candidate) then
             return candidate
         end
     end

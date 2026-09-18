@@ -37,6 +37,7 @@ def main() -> int:
     assert {
         "retail",
         "classic",
+        "forever",
         "anniversary",
         "wrath",
         "cataclysm",
@@ -193,6 +194,7 @@ def main() -> int:
     bundles = release_bundles(ROOT, all_profiles)
     expected_bundle_types = {
         ("classic", "release"),
+        ("forever", "alpha"),
         ("mists", "release"),
         ("retail", "release"),
         ("tbc", "beta"),
@@ -233,8 +235,11 @@ def main() -> int:
     for profile in profiles:
         data_set = str(profile.get("dataSet", profile["id"]))
         if data_set != profile["id"]:
-            assert profile_content_fingerprint(ROOT, str(profile["id"])) == \
-                profile_content_fingerprint(ROOT, data_set)
+            raw_fingerprint = profile_content_fingerprint(ROOT, str(profile["id"]))
+            source_fingerprint = profile_content_fingerprint(ROOT, data_set)
+            assert source_fingerprint is not None
+            if raw_fingerprint is not None:
+                assert raw_fingerprint == source_fingerprint
 
     for release in releases:
         archive = archive_dir / release["archive"]

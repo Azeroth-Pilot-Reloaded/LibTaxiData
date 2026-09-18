@@ -50,6 +50,16 @@
     "dataSet": "classic"
   },
   {
+    "id": "wow_forever",
+    "name": "WoW Forever Beta",
+    "version": "forever",
+    "channel": "beta",
+    "product": "wow_classic_beta",
+    "build": "1.60.1.69913",
+    "default": true,
+    "dataSet": "forever"
+  },
+  {
     "id": "tbc",
     "name": "Burning Crusade Classic Anniversary PTR",
     "version": "anniversary",

@@ -1,6 +1,7 @@
 ## X-Generated-Interfaces-Begin: true
-## Interface: 120100, 120007, 50504, 11509, 20506, 30403, 40402
+## Interface: 120100, 120007, 50504, 11509, 16001, 20506, 30403, 40402
 ## Interface-Classic: 11509
+## Interface-Camelot: 16001
 ## Interface-TBC: 20506
 ## Interface-Wrath: 30403
 ## Interface-Cata: 40402
@@ -93,6 +94,23 @@ Locale\classic\ptBR.lua [AllowLoadGameType classic]
 Locale\classic\ruRU.lua [AllowLoadGameType classic]
 Locale\classic\zhCN.lua [AllowLoadGameType classic]
 Locale\classic\zhTW.lua [AllowLoadGameType classic]
+
+Data\forever\TaxiNodes.lua [AllowLoadGameType camelot]
+Data\forever\PlayerConditions.lua [AllowLoadGameType camelot]
+Data\forever\ModifierTrees.lua [AllowLoadGameType camelot]
+Data\forever\SupportingData.lua [AllowLoadGameType camelot]
+Locale\forever\enUS.lua [AllowLoadGameType camelot]
+Locale\forever\enGB.lua [AllowLoadGameType camelot]
+Locale\forever\deDE.lua [AllowLoadGameType camelot]
+Locale\forever\esES.lua [AllowLoadGameType camelot]
+Locale\forever\esMX.lua [AllowLoadGameType camelot]
+Locale\forever\frFR.lua [AllowLoadGameType camelot]
+Locale\forever\itIT.lua [AllowLoadGameType camelot]
+Locale\forever\koKR.lua [AllowLoadGameType camelot]
+Locale\forever\ptBR.lua [AllowLoadGameType camelot]
+Locale\forever\ruRU.lua [AllowLoadGameType camelot]
+Locale\forever\zhCN.lua [AllowLoadGameType camelot]
+Locale\forever\zhTW.lua [AllowLoadGameType camelot]
 
 Data\tbc\TaxiNodes.lua [AllowLoadGameType tbc]
 Data\tbc\PlayerConditions.lua [AllowLoadGameType tbc]

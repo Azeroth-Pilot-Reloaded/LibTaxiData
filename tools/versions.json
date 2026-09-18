@@ -19,6 +19,17 @@
     "tocLabel": "Classic"
   },
   {
+    "id": "forever",
+    "name": "WoW Forever",
+    "gameType": "camelot",
+    "projectConstant": "WOW_PROJECT_MAINLINE",
+    "apiFamily": "modern",
+    "interfaceMajor": 1,
+    "minimumInterfaceMinor": 60,
+    "tocInterface": 16001,
+    "tocLabel": "Camelot"
+  },
+  {
     "id": "anniversary",
     "name": "Anniversary / Burning Crusade Classic",
     "gameType": "tbc",

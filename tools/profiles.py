@@ -39,6 +39,8 @@ def print_versions(
     rows = []
     for version in versions:
         interface_rule = version.get("interfaceMajor")
+        if interface_rule is not None and version.get("minimumInterfaceMinor") is not None:
+            interface_rule = f"{interface_rule}.>={version['minimumInterfaceMinor']}"
         if interface_rule is None:
             interface_rule = f">={version['minimumInterfaceMajor']}"
         rows.append(

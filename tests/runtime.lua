@@ -5,10 +5,12 @@ dofile("Data/ClientProfiles.lua")
 local clientGameTypes = LibTaxiData_Internal.ClientGameTypes
 local gameType
 local versionID
+local selectedDataSet
 for _, candidate in ipairs(LibTaxiData_Internal.ClientProfiles) do
     if candidate.profile == profile then
         gameType = candidate.gameType
         versionID = candidate.version
+        selectedDataSet = candidate.dataSet
         break
     end
 end
@@ -23,8 +25,10 @@ end
 assert(baseVersion, "unknown base version: " .. tostring(versionID))
 
 local projectIDs = {}
+local idsByConstant = {}
 for index, candidate in ipairs(clientGameTypes) do
-    local projectID = 1000 + index
+    local projectID = idsByConstant[candidate.projectConstant] or 1000 + index
+    idsByConstant[candidate.projectConstant] = projectID
     _G[candidate.projectConstant] = projectID
     projectIDs[candidate.gameType] = projectID
 end
@@ -32,7 +36,8 @@ LibTaxiData_Internal = initialInternal
 
 local expectedBuild = arg and arg[2]
 if not expectedBuild then
-    local sourceFile = assert(io.open("Data/" .. profile .. "/TaxiNodes.lua", "rb"))
+    local sourceFile = io.open("Data/" .. profile .. "/TaxiNodes.lua", "rb") or
+        assert(io.open("Data/" .. selectedDataSet .. "/TaxiNodes.lua", "rb"))
     local sourceText = sourceFile:read("*a")
     sourceFile:close()
     expectedBuild = assert(sourceText:match('build = "([%d%.]+)"'))
@@ -130,7 +135,8 @@ local selectedClient = assert(LibTaxiData_Internal.Client)
 local dataSet = assert(selectedClient.dataSet)
 local dataBuild
 for _, candidate in ipairs(LibTaxiData_Internal.ClientProfiles) do
-    if candidate.profile == dataSet then
+    if candidate.profile == dataSet or
+        (candidate.dataSet == dataSet and candidate.profile == profile) then
         dataBuild = candidate.build
         break
     end

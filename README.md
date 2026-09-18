@@ -204,16 +204,19 @@ if there is no corresponding server profile.
 | `id` | yes | Permanent lowercase identifier referenced by server profiles, for example `anniversary`. |
 | `name` | yes | Human-readable base-client name. |
 | `gameType` | yes | Value accepted by WoW's TOC `AllowLoadGameType`, such as `mainline`, `classic`, `tbc`, `wrath`, `cata`, or `mists`. |
-| `projectConstant` | yes | Client global whose value can equal `WOW_PROJECT_ID`, for example `WOW_PROJECT_MISTS_CLASSIC`. Inspect both values in-game with `/dump WOW_PROJECT_ID` and `/dump WOW_PROJECT_MISTS_CLASSIC`. |
+| `projectConstant` | yes | Client global whose value can equal `WOW_PROJECT_ID`, for example `WOW_PROJECT_MISTS_CLASSIC`. A project constant may be shared by base versions with disjoint interface rules. Inspect both values in-game with `/dump WOW_PROJECT_ID` and `/dump WOW_PROJECT_MISTS_CLASSIC`. |
 | `apiFamily` | yes | Preferred adapter order: `modern` tries namespaced `C_*` APIs first; `legacy` tries historical global functions first. Missing or failing calls always fall back to the other implementation. |
 | `interfaceMajor` | one rule | Exact first component returned by `GetBuildInfo()`, normally `1` through `5` for Classic branches. |
+| `minimumInterfaceMinor` | no | Lower bound for the second component when `interfaceMajor` is set, used to distinguish Forever (`1.60+`) from Classic Era (`1.15`). |
 | `minimumInterfaceMajor` | one rule | Open-ended interface rule used by Retail. Only one base version can define it. |
 | `tocInterface` | yes | Last known compatible full TOC interface. It keeps the common API loadable when the base has no active server; active profile interfaces are added automatically. |
-| `tocLabel` | Classic branches | Suffix used for `## Interface-<label>` in the TOC, for example `Mists`. |
+| `tocLabel` | client branches | Suffix used for `## Interface-<label>` in the TOC, for example `Mists` or `Camelot`. |
 | `apiOverrides` | no | Per-feature `modern`/`legacy` preference when this client differs from its general `apiFamily`. Supported keys are `questCompleted`, `questLog`, `questReady`, `auras`, `spellBook`, `items`, `currency`, and `reputation`. |
 
-The base registry currently covers Retail, Classic Era, Anniversary/Burning
-Crusade, Wrath, Cataclysm, and Mists. Wrath and Cataclysm intentionally have no
+The base registry currently covers Retail, Classic Era, Forever,
+Anniversary/Burning Crusade, Wrath, Cataclysm, and Mists. Forever shares
+`WOW_PROJECT_MAINLINE` with Retail but uses the `camelot` game type and
+interface `16001`. Wrath and Cataclysm intentionally have no
 server profile: they remain detectable with their legacy-first API policy and
 report `supported = false` until data is attached to a profile.
 
@@ -239,7 +242,7 @@ Add one object to `tools/profiles.json`. These fields are supported:
 | `releaseBase` | to publish PTR/Beta | `id` of the related normal profile. It must use the same base `version`. |
 | `default` | no | Set `true` on the single safe fallback profile for a base version; normally omit it on PTR/Beta entries. |
 | `localized` | no | Set `false` when localized DB2 exports are unavailable so locale names fall back to the normal build. |
-| `dataSet` | no | Always omit this on a new profile. The generator assigns it after comparing complete generated fingerprints. |
+| `dataSet` | no | Usually omit this and let the generator assign it after comparing complete generated fingerprints. Set it when the generated directory must have a distinct name from the profile ID, as with `wow_forever` using `forever`. |
 
 Example for re-adding a Retail Beta later:
 

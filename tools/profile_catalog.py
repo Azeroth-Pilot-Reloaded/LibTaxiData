@@ -51,6 +51,7 @@ VERSION_KEYS = {
     "apiFamily",
     "apiOverrides",
     "interfaceMajor",
+    "minimumInterfaceMinor",
     "minimumInterfaceMajor",
     "tocInterface",
     "tocLabel",
@@ -130,8 +131,8 @@ def validate_versions(versions: object) -> list[dict[str, object]]:
     validated: list[dict[str, object]] = []
     ids: set[str] = set()
     game_types: set[str] = set()
-    project_constants: set[str] = set()
     exact_interface_majors: set[int] = set()
+    specialized_interface_majors: set[int] = set()
     minimum_interface_versions = 0
     for index, raw_version in enumerate(versions):
         location = f"base version #{index + 1}"
@@ -180,14 +181,12 @@ def validate_versions(versions: object) -> list[dict[str, object]]:
             raise ValueError(f"Duplicate base-version id: {version_id!r}")
         if game_type in game_types:
             raise ValueError(f"Duplicate game type: {game_type!r}")
-        if project_constant in project_constants:
-            raise ValueError(f"Duplicate project constant: {project_constant!r}")
         ids.add(version_id)
         game_types.add(game_type)
-        project_constants.add(project_constant)
 
         exact_major = version.get("interfaceMajor")
         minimum_major = version.get("minimumInterfaceMajor")
+        minimum_minor = version.get("minimumInterfaceMinor")
         if exact_major is not None and minimum_major is not None:
             raise ValueError(
                 f"Base version {version_id!r} cannot define both interface rules"
@@ -196,12 +195,24 @@ def validate_versions(versions: object) -> list[dict[str, object]]:
             raise ValueError(
                 f"Base version {version_id!r} requires an interface detection rule"
             )
+        if minimum_minor is not None and (
+            exact_major is None
+            or not isinstance(minimum_minor, int)
+            or isinstance(minimum_minor, bool)
+            or not 0 <= minimum_minor <= 99
+        ):
+            raise ValueError(f"Invalid minimumInterfaceMinor for {version_id!r}")
         if exact_major is not None:
             if not isinstance(exact_major, int) or exact_major <= 0:
                 raise ValueError(f"Invalid interfaceMajor for {version_id!r}")
-            if exact_major in exact_interface_majors:
+            seen_majors = (
+                specialized_interface_majors
+                if minimum_minor is not None
+                else exact_interface_majors
+            )
+            if exact_major in seen_majors:
                 raise ValueError(f"Duplicate interface major: {exact_major}")
-            exact_interface_majors.add(exact_major)
+            seen_majors.add(exact_major)
         if minimum_major is not None:
             if not isinstance(minimum_major, int) or minimum_major <= 0:
                 raise ValueError(f"Invalid minimumInterfaceMajor for {version_id!r}")
@@ -219,6 +230,10 @@ def validate_versions(versions: object) -> list[dict[str, object]]:
             raise ValueError(
                 f"tocInterface for {version_id!r} does not match interfaceMajor"
             )
+        if minimum_minor is not None and toc_interface % 10000 // 100 < minimum_minor:
+            raise ValueError(
+                f"tocInterface for {version_id!r} is below minimumInterfaceMinor"
+            )
         if minimum_major is not None and toc_major < minimum_major:
             raise ValueError(
                 f"tocInterface for {version_id!r} is below minimumInterfaceMajor"
@@ -227,6 +242,22 @@ def validate_versions(versions: object) -> list[dict[str, object]]:
 
     if minimum_interface_versions > 1:
         raise ValueError("Only one open-ended minimum interface rule is supported")
+    for index, version in enumerate(validated):
+        for previous in validated[:index]:
+            if version["projectConstant"] != previous["projectConstant"]:
+                continue
+            major = version.get("interfaceMajor")
+            other_major = previous.get("interfaceMajor")
+            if major is None and other_major is None:
+                raise ValueError("Shared project constant has overlapping interface rules")
+            if major is None:
+                overlaps = other_major >= version["minimumInterfaceMajor"]
+            elif other_major is None:
+                overlaps = major >= previous["minimumInterfaceMajor"]
+            else:
+                overlaps = major == other_major
+            if overlaps:
+                raise ValueError("Shared project constant has overlapping interface rules")
     return validated
 
 
@@ -346,9 +377,16 @@ def validate_profiles(
         data_set = str(profile.get("dataSet", profile["id"]))
         source = by_id.get(data_set)
         if source is None:
-            raise ValueError(
-                f"Profile {profile['id']!r} references unknown data set {data_set!r}"
-            )
+            owners = [
+                candidate for candidate in validated
+                if candidate.get("dataSet") == data_set
+                and candidate.get("version") == profile.get("version")
+            ]
+            if not owners:
+                raise ValueError(
+                    f"Profile {profile['id']!r} references unknown data set {data_set!r}"
+                )
+            source = owners[0]
         if source.get("version") != profile.get("version"):
             raise ValueError(
                 f"Profile {profile['id']!r} and data set {data_set!r} have "
@@ -460,6 +498,10 @@ def render_client_profiles(
         ]
         if version.get("interfaceMajor") is not None:
             values.append(f"interfaceMajor = {int(version['interfaceMajor'])}")
+        if version.get("minimumInterfaceMinor") is not None:
+            values.append(
+                f"minimumInterfaceMinor = {int(version['minimumInterfaceMinor'])}"
+            )
         if version.get("minimumInterfaceMajor") is not None:
             values.append(
                 f"minimumInterfaceMajor = {int(version['minimumInterfaceMajor'])}"
@@ -626,7 +668,10 @@ def generated_profile_directories(root: Path) -> set[str]:
 def orphan_profile_directories(
     root: Path, profiles: list[dict[str, object]]
 ) -> list[Path]:
-    known = {str(profile["id"]) for profile in profiles}
+    known = {
+        name for profile in profiles
+        for name in (str(profile["id"]), str(profile.get("dataSet", profile["id"])))
+    }
     orphans = generated_profile_directories(root).difference(known)
     return [
         parent / profile_id

@@ -7,11 +7,15 @@ dofile("Data/ClientProfiles.lua")
 local clientGameTypes = LibTaxiData_Internal.ClientGameTypes
 local clientProfiles = LibTaxiData_Internal.ClientProfiles
 local projectIDs = {}
+local idsByConstant = {}
 for index, candidate in ipairs(clientGameTypes) do
-    local projectID = 1000 + index
+    local projectID = idsByConstant[candidate.projectConstant] or 1000 + index
+    idsByConstant[candidate.projectConstant] = projectID
     _G[candidate.projectConstant] = projectID
     projectIDs[candidate.gameType] = projectID
 end
+
+assert(projectIDs.mainline == projectIDs.camelot)
 
 function GetBuildInfo()
     return version, buildNumber, "", interface
@@ -37,6 +41,13 @@ for _, profile in ipairs(clientProfiles) do
     assert(exact.dataSet == profile.dataSet)
     assert(exact.exactBuild and not exact.fallback and exact.supported)
 end
+
+local forever = Select(projectIDs.camelot, "1.60.1.69913")
+assert(forever.version == "forever" and forever.profile == "wow_forever")
+local era = Select(projectIDs.classic, "1.15.9.69722")
+assert(era.version == "classic" and era.profile == "classic")
+local withoutProject = Select(nil, "1.60.1.69913")
+assert(withoutProject.version == "forever")
 
 for _, profile in ipairs(clientProfiles) do
     if profile.default then

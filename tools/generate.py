@@ -271,19 +271,25 @@ def profile_content_fingerprint(output: Path, profile_id: str) -> str | None:
 
 def assign_data_sets(output: Path, profiles: list[dict[str, object]]) -> None:
     representatives: dict[tuple[str, str], str] = {}
+    profile_ids = {str(profile["id"]) for profile in profiles}
     for profile in profiles:
         if not profile.get("build"):
             profile.pop("dataSet", None)
             continue
         profile_id = str(profile["id"])
-        fingerprint = profile_content_fingerprint(output, profile_id)
+        preferred_data_set = str(profile.get("dataSet", profile_id))
+        source_id = profile_id
+        fingerprint = profile_content_fingerprint(output, source_id)
+        if fingerprint is None and preferred_data_set not in profile_ids:
+            source_id = preferred_data_set
+            fingerprint = profile_content_fingerprint(output, source_id)
         if not fingerprint:
             continue
         # Data may only be shared inside the same permanent client version.
         # Two clients can expose the same gameType-like loading behavior while
         # still differing in DB2 layout or API semantics.
         key = str(profile["version"]), fingerprint
-        data_set = representatives.setdefault(key, profile_id)
+        data_set = representatives.setdefault(key, source_id)
         profile["dataSet"] = data_set
 
 
@@ -743,9 +749,16 @@ def main() -> int:
         locale_fallback_build = None
         if fallback_profile and fallback_profile is not profile:
             locale_fallback_build = str(fallback_profile["build"])
+        data_set = str(profile.get("dataSet", profile["id"]))
+        source_profile = (
+            {**profile, "id": data_set}
+            if data_set not in by_id
+            and not (output / "Data" / str(profile["id"])).exists()
+            else profile
+        )
         generate_profile(
             output,
-            profile,
+            source_profile,
             build,
             args.cache_dir,
             locale_fallback_build,

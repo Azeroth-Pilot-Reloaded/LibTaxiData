@@ -5,6 +5,7 @@ if not lib then return end
 lib.ClientVersions = {
     { version = "retail", name = "Retail", gameType = "mainline", projectConstant = "WOW_PROJECT_MAINLINE", apiFamily = "modern", minimumInterfaceMajor = 10 },
     { version = "classic", name = "Classic Era", gameType = "classic", projectConstant = "WOW_PROJECT_CLASSIC", apiFamily = "modern", interfaceMajor = 1, tocLabel = "Classic" },
+    { version = "forever", name = "WoW Forever", gameType = "camelot", projectConstant = "WOW_PROJECT_MAINLINE", apiFamily = "modern", interfaceMajor = 1, minimumInterfaceMinor = 60, tocLabel = "Camelot" },
     { version = "anniversary", name = "Anniversary / Burning Crusade Classic", gameType = "tbc", projectConstant = "WOW_PROJECT_BURNING_CRUSADE_CLASSIC", apiFamily = "modern", interfaceMajor = 2, tocLabel = "TBC" },
     { version = "wrath", name = "Wrath of the Lich King Classic", gameType = "wrath", projectConstant = "WOW_PROJECT_WRATH_CLASSIC", apiFamily = "legacy", interfaceMajor = 3, tocLabel = "Wrath" },
     { version = "cataclysm", name = "Cataclysm Classic", gameType = "cata", projectConstant = "WOW_PROJECT_CATACLYSM_CLASSIC", apiFamily = "legacy", interfaceMajor = 4, tocLabel = "Cata" },
@@ -19,5 +20,6 @@ lib.ClientProfiles = {
     { profile = "mists", dataSet = "mists", version = "mists", gameType = "mists", channel = "live", build = "5.5.4.69585", interface = 50504, product = "wow_classic", default = true },
     { profile = "mists_ptr", dataSet = "mists_ptr", version = "mists", gameType = "mists", channel = "ptr", build = "5.5.4.67849", interface = 50504, product = "wow_classic_ptr" },
     { profile = "classic", dataSet = "classic", version = "classic", gameType = "classic", channel = "live", build = "1.15.9.69722", interface = 11509, product = "wow_classic_era", default = true },
+    { profile = "wow_forever", dataSet = "forever", version = "forever", gameType = "camelot", channel = "beta", build = "1.60.1.69913", interface = 16001, product = "wow_classic_beta", default = true },
     { profile = "tbc", dataSet = "tbc", version = "anniversary", gameType = "tbc", channel = "ptr", build = "2.5.6.69110", interface = 20506, product = "wow_classic_era_ptr", default = true },
 }
