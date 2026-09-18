@@ -189,6 +189,11 @@ jobs:
               --release-type "$release_type"
 
             release_dir="$RUNNER_TEMP/libtaxidata-${build_number}-${data_set}-${release_type}"
+            wowi_args=(-w 27178)
+            # WoWInterface does not support the forever game type.
+            if [ "$data_set" = "forever" ]; then
+              wowi_args=()
+            fi
             CF_API_KEY="$CF_API_TOKEN" \
             GITHUB_OAUTH="$GITHUB_TOKEN" \
             GITHUB_REF="refs/tags/$package_tag" \
@@ -200,7 +205,7 @@ jobs:
                 -g "$game_versions" \
                 -n "{package-name}-{project-version}-${data_set}:{project-version}-${data_set}-${build}" \
                 -p 1636228 \
-                -w 27178 \
+                "${wowi_args[@]}" \
                 -a jK8gl56y
           done < <(jq -c '.[]' <<< "$BUNDLES")
 
