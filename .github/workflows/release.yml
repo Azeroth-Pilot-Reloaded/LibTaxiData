@@ -137,7 +137,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: BigWigsMods/packager
-          ref: v2
+          ref: v2.6.1
           path: .cache/packager
 
       - name: Package and upload bundles in ascending full build order
