@@ -5,7 +5,7 @@
     "version": "retail",
     "channel": "live",
     "product": "wow",
-    "build": "12.1.0.69875",
+    "build": "12.1.0.69933",
     "default": true,
     "dataSet": "retail"
   },
@@ -17,7 +17,7 @@
     "product": "wowt",
     "build": "12.1.0.69587",
     "releaseBase": "retail",
-    "dataSet": "retail"
+    "dataSet": "retail_ptr"
   },
   {
     "id": "mists",
@@ -25,7 +25,7 @@
     "version": "mists",
     "channel": "live",
     "product": "wow_classic",
-    "build": "5.5.4.69585",
+    "build": "5.5.4.69934",
     "default": true,
     "dataSet": "mists"
   },
