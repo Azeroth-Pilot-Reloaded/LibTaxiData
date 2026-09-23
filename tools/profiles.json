@@ -55,7 +55,7 @@
     "version": "forever",
     "channel": "beta",
     "product": "wow_classic_beta",
-    "build": "1.60.1.69913",
+    "build": "1.60.1.69977",
     "default": true,
     "dataSet": "forever"
   },
