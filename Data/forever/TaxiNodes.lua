@@ -1,11 +1,11 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 1.60.1.69977)
+-- Source: https://wago.tools/db2/TaxiNodes (build 1.60.1.70009)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "forever" then return end
 
 lib.Source = {
-    build = "1.60.1.69977",
+    build = "1.60.1.70009",
     profile = "forever",
     dataSet = "forever",
     gameType = "camelot",
@@ -18,7 +18,7 @@ lib.Source = {
 
 lib.Nodes = {
     [1] = { continentID = 0, x = -8888.98046875, y = -0.54000002146, z = 94.38999938965, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 0, flags = 1024, uiTextureKitID = 0, minimapAtlasMemberID = 4689, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 308, allianceMountCreatureID = 0 },
-    [2] = { continentID = 0, x = -8840.5595703125, y = 489.70001220703, z = 109.61000061035, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 2, flags = 1025, uiTextureKitID = 0, minimapAtlasMemberID = 4689, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 0, allianceMountCreatureID = 541 },
+    [2] = { continentID = 0, x = -8832.76953125, y = 478.62298583984, z = 109.61599731445, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 2, flags = 1025, uiTextureKitID = 0, minimapAtlasMemberID = 4689, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 0, allianceMountCreatureID = 541 },
     [4] = { continentID = 0, x = -10628.889648438, y = 1036.6800537109, z = 34.06000137329, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 4, flags = 1025, uiTextureKitID = 0, minimapAtlasMemberID = 4689, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 0, allianceMountCreatureID = 541 },
     [5] = { continentID = 0, x = -9429.099609375, y = -2231.3999023438, z = 68.65000152588, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 5, flags = 1025, uiTextureKitID = 0, minimapAtlasMemberID = 4689, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 0, allianceMountCreatureID = 541 },
     [6] = { continentID = 0, x = -4821.7797851562, y = -1155.4399414062, z = 502.20999145508, mapOffsetX = 0, mapOffsetY = 0, flightMapOffsetX = 0, flightMapOffsetY = 0, conditionID = 0, characterBitNumber = 6, flags = 1025, uiTextureKitID = 0, minimapAtlasMemberID = 4689, facing = 0, specialIconConditionID = 0, visibilityConditionID = 0, hordeMountCreatureID = 0, allianceMountCreatureID = 541 },
