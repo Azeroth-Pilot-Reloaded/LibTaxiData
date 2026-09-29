@@ -19,7 +19,7 @@ lib.ClientProfiles = {
     { profile = "retail_ptr", dataSet = "retail_ptr", version = "retail", gameType = "mainline", channel = "ptr", build = "12.1.0.69587", interface = 120100, product = "wowt" },
     { profile = "mists", dataSet = "mists", version = "mists", gameType = "mists", channel = "live", build = "5.5.4.70032", interface = 50504, product = "wow_classic", default = true },
     { profile = "mists_ptr", dataSet = "mists_ptr", version = "mists", gameType = "mists", channel = "ptr", build = "5.5.4.67849", interface = 50504, product = "wow_classic_ptr" },
-    { profile = "classic", dataSet = "classic", version = "classic", gameType = "classic", channel = "live", build = "1.15.9.69722", interface = 11509, product = "wow_classic_era", default = true },
-    { profile = "wow_forever", dataSet = "forever", version = "forever", gameType = "camelot", channel = "beta", build = "1.60.1.70009", interface = 16001, product = "wow_classic_beta", default = true },
+    { profile = "classic", dataSet = "classic", version = "classic", gameType = "classic", channel = "live", build = "1.15.9.70003", interface = 11509, product = "wow_classic_era", default = true },
+    { profile = "wow_forever", dataSet = "forever", version = "forever", gameType = "camelot", channel = "beta", build = "1.60.1.70058", interface = 16001, product = "wow_classic_beta", default = true },
     { profile = "tbc", dataSet = "tbc", version = "anniversary", gameType = "tbc", channel = "ptr", build = "2.5.6.69110", interface = 20506, product = "wow_classic_era_ptr", default = true },
 }
