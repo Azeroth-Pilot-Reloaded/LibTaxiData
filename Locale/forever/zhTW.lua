@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 1.60.1.70124)
+-- Source: https://wago.tools/db2/TaxiNodes (build 1.60.1.70170)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "forever" then return end
@@ -51,7 +51,7 @@ lib.Names = {
     [45] = "守望堡，詛咒之地",
     [46] = "南海鎮渡口，希爾斯布萊德",
     [47] = "傳送，格羅姆 - 奧格瑪",
-    [48] = "血毒河，費伍德森林",
+    [48] = "血毒崗哨，費伍德森林",
     [49] = "月光林地",
     [50] = "傳送，米奈希爾船隻",
     [51] = "傳送，魯瑟蘭 - 奧伯丁",
