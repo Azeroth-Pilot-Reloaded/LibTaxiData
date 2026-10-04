@@ -144,6 +144,7 @@ def pkgmeta_text(root: Path, data_set: str) -> str:
         "  - .pkgmeta",
         "  - .pkgmeta.release",
         "  - README.md",
+        "  - readme",
         "  - tests",
         "  - tools",
     ]

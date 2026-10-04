@@ -1,59 +1,216 @@
-# LibTaxiData
+<a name="readme-top"></a>
 
-LibTaxiData is a standalone multi-client World of Warcraft addon and reusable
-global API for localized flight-master data. It provides taxi names in every
-client language, raw DB2 metadata, character-aware condition evaluation,
-coordinate conversion, nearest-node searches, and native Blizzard waypoints.
+<p align="center">
+  <a href="https://www.curseforge.com/wow/addons/libtaxidata">
+    <img src="readme/assets/banner-rounded.svg" alt="LibTaxiData" width="1000">
+  </a>
+</p>
 
-It is autonomous: no LibStub, HereBeDragons, or other addon is required.
+<h1 align="center">Every flight. The right connection.</h1>
 
-[![Discord](https://github.com/Azeroth-Pilot-Reloaded/azeroth-pilot-reloaded/assets/43384589/f9fc38ba-26b0-4669-a584-ce56f0bf57d6)](https://discord.gg/YgcdybKdWX)
-[![GitHub](https://github.com/Azeroth-Pilot-Reloaded/azeroth-pilot-reloaded/assets/43384589/2c9d96ac-f38a-4442-9dfc-cc6b3ce36981)](https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData)
-[![CurseForge](https://github.com/user-attachments/assets/1bae5d08-d88b-403a-b902-ad3aa5c55248)](https://www.curseforge.com/wow/addons/libtaxidata)
-[![Patreon](https://github.com/Azeroth-Pilot-Reloaded/azeroth-pilot-reloaded/assets/43384589/8431a849-5507-4489-b6ab-f3b7993ef4ef)](https://www.patreon.com/AzerothPilotReloaded)
+<p align="center">
+  Localized flight-master data and navigation helpers for <strong>World of Warcraft</strong>.<br>
+  Find a nearby taxi, inspect its requirements, or build flight-aware addons with a reusable API.
+</p>
 
-![Features](https://github.com/user-attachments/assets/a3af1185-9b5d-411a-8b14-60a0a21249f9)
+<p align="center">
+  <a href="https://www.curseforge.com/wow/addons/libtaxidata"><img src="https://raw.githubusercontent.com/Azeroth-Pilot-Reloaded/APR-Route-Recorder/297d201d783cf5b9a86bfe0799878edfd0e64cdc/docs/assets/readme/curseforge-button.svg" alt="CurseForge - Download LibTaxiData" width="260"></a>
+  <a href="https://discord.gg/YgcdybKdWX"><img src="https://raw.githubusercontent.com/Azeroth-Pilot-Reloaded/APR-Route-Recorder/297d201d783cf5b9a86bfe0799878edfd0e64cdc/docs/assets/readme/discord-button.svg" alt="Discord - Join the community" width="260"></a>
+  <a href="https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData"><img src="https://raw.githubusercontent.com/Azeroth-Pilot-Reloaded/APR-Route-Recorder/297d201d783cf5b9a86bfe0799878edfd0e64cdc/docs/assets/readme/github-button.svg" alt="GitHub - Explore LibTaxiData" width="260"></a>
+</p>
+<p align="center">
+  <a href="https://www.patreon.com/AzerothPilotReloaded"><img src="https://raw.githubusercontent.com/Azeroth-Pilot-Reloaded/azeroth-pilot-reloaded/e67d6c36cd4f9e5d5365cccd0c6ba2434f0c781d/readme/assets/patreon-button.svg" alt="Patreon - Support development" width="260"></a>
+  <a href="https://www.paypal.com/paypalme/neogeekmo"><img src="https://raw.githubusercontent.com/Azeroth-Pilot-Reloaded/azeroth-pilot-reloaded/e67d6c36cd4f9e5d5365cccd0c6ba2434f0c781d/readme/assets/paypal-button.svg" alt="PayPal - Make a one-time donation" width="260"></a>
+</p>
 
-- **Standalone addon:** install the `LibTaxiData` folder directly under
-  `Interface/AddOns`; `LibTaxiData.toc` loads the API for consumers.
-- **Multi-client profiles:** Retail Live/PTR, Mists of Pandaria Classic
-  Live/PTR, Classic Era, and Burning Crusade Anniversary data are generated and
-  selected automatically. Wrath and Cataclysm remain registered as base clients
-  without fake servers; additional Live, PTR, Beta, or archived profiles can be
-  attached when needed.
-- **Small versioned releases:** published ZIPs contain one compatible data set,
-  not every generated client database. Builds are grouped only when their
-  complete node, condition, and locale fingerprints are identical.
-- **Localized taxi names:** `enUS`, `enGB`, `deDE`, `esES`, `esMX`, `frFR`,
-  `itIT`, `koKR`, `ptBR`, `ruRU`, `zhCN`, and `zhTW`, with an `enUS` fallback
-  applied while generating data.
-- **Complete node metadata:** positions, map offsets, flags, texture IDs,
-  faction mounts, PlayerCondition references, visibility conditions, and audit
-  records for deliberately excluded development nodes.
-- **Character-aware results:** faction, race, class, level, quest, reputation,
-  item, spell, achievement, covenant, and supported ModifierTree requirements.
-- **Navigation helpers:** local-map/world/APR coordinate conversion, nearest
-  usable taxi searches, and native Blizzard user waypoints.
+LibTaxiData is a **standalone multi-client addon** and a shared data source for other addons, including [Azeroth Pilot Reloaded](https://www.curseforge.com/wow/addons/azeroth-pilot-reloaded). It works without LibStub, HereBeDragons, or any other addon. The same public API exposes localized taxi names, generated DB2 records, character conditions, coordinates, nearby nodes, and native Blizzard waypoints.
 
-![Settings & Commands](https://github.com/user-attachments/assets/f691f4d2-d9ee-4a14-8135-2d85a0334c6b)
+<p align="center">
+  <a href="#getting-started"><strong>Get started</strong></a> &nbsp;&middot;&nbsp;
+  <a href="#features"><strong>Features</strong></a> &nbsp;&middot;&nbsp;
+  <a href="#clients-and-compatibility"><strong>Clients</strong></a> &nbsp;&middot;&nbsp;
+  <a href="#commands"><strong>Commands</strong></a> &nbsp;&middot;&nbsp;
+  <a href="#public-api"><strong>API</strong></a> &nbsp;&middot;&nbsp;
+  <a href="#data-profiles-and-generation"><strong>Data</strong></a> &nbsp;&middot;&nbsp;
+  <a href="#support-and-contributions"><strong>Support</strong></a>
+</p>
 
-Use `/ltd` or `/libtaxidata` in chat. Local coordinates accept either normalized
-values (`0.438 0.682`) or percentages (`43.8 68.2`).
+---
 
-| Command                                             | What it does                                                                                                                                                                                    |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/ltd name <nodeID>`                                | Prints only the localized node name.                                                                                                                                                            |
-| `/ltd node <nodeID> [uiMapID]`                      | Prints the localized name, all retained condition/flag/mount/offset/visual information, standard world coordinates, APR coordinates, and optional local map coordinates. `details` is an alias. |
-| `/ltd nearest`                                      | Finds the nearest usable taxi to the player, prints its name/distance, and sets a Blizzard waypoint.                                                                                            |
-| `/ltd nearest <uiMapID> <x> <y>`                    | Finds the nearest taxi from normalized or percentage local map coordinates and sets a waypoint.                                                                                                 |
-| `/ltd nearest world <instanceID> <worldX> <worldY>` | Finds the nearest taxi from conventional world coordinates. A waypoint is set when the node can be resolved on the current map hierarchy.                                                       |
-| `/ltd waypoint <nodeID> [uiMapID]`                  | Sets and super-tracks a native Blizzard waypoint on the requested node.                                                                                                                         |
-| `/ltd help`                                         | Prints the command list.                                                                                                                                                                        |
+## Getting started
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>01 &nbsp; Install your version</h3>
+      <p>Download the release for your game client from <a href="https://www.curseforge.com/wow/addons/libtaxidata">CurseForge</a>. LibTaxiData has no addon dependencies.</p>
+      <p>Installing manually? Place the <code>LibTaxiData</code> folder in <code>Interface/AddOns</code>, then enable it on the character selection screen.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>02 &nbsp; Find your next flight</h3>
+      <p>Type <code>/ltd nearest</code> to find a nearby taxi node that passes the default availability and visibility filters.</p>
+      <p>The command prints its name and distance, then attempts to set a native Blizzard waypoint.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>03 &nbsp; Inspect a flight master</h3>
+      <p>Use <code>/ltd node &lt;nodeID&gt;</code> for coordinates, conditions, flags, mounts, and visual metadata. Add a map ID to request local map coordinates.</p>
+      <p>Need just the name? Use <code>/ltd name &lt;nodeID&gt;</code>. Type <code>/ltd</code> or <code>/ltd help</code> for the command list.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>04 &nbsp; Build with the data</h3>
+      <p>Other addons access <code>_G.LibTaxiData_API</code> after LibTaxiData has loaded. Use the public methods for names, node details, searches, and coordinate conversion.</p>
+      <p>Declare <code>LibTaxiData</code> as a dependency in your addon's TOC when your addon requires it.</p>
+    </td>
+  </tr>
+</table>
+
+> **Tip:** Local coordinates in chat commands accept normalized values (`0.438 0.682`) or percentages (`43.8 68.2`). Coordinate APIs use normalized map values. Native waypoints and map conversions depend on the APIs available in your game client and on finding a compatible map.
+
+---
+
+<p align="center">
+  <img src="readme/assets/features-rounded.svg" alt="Features" width="1000">
+</p>
+
+## Features
+
+<p align="center">
+  <strong>Localized names &nbsp;&middot;&nbsp; Character-aware data &nbsp;&middot;&nbsp; Navigation helpers &nbsp;&middot;&nbsp; A shared API</strong>
+</p>
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>Flight data in your language</h3>
+      <ul>
+        <li><strong>Localized taxi names</strong> for all 12 supported client locales, selected automatically from the active game language.</li>
+        <li><strong>English fallback</strong> applied during data generation when a translated name is missing.</li>
+        <li><strong>Stable node IDs</strong> let addons look up the same flight master across languages.</li>
+        <li><strong>Localized chat output</strong> for node details, search results, help, and waypoint errors.</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h3>Complete node records</h3>
+      <ul>
+        <li><strong>Raw generated DB2 metadata</strong>: world positions, map and flight-map offsets, flags, textures, facing, and faction mounts.</li>
+        <li><strong>Enriched node details</strong> combine the raw record with its localized name, coordinate formats, availability, visibility, and faction mount.</li>
+        <li><strong>Condition references</strong> include availability, world-map visibility, and special-icon requirements.</li>
+        <li><strong>Excluded-node audit records</strong> retain the name and reason for deliberately omitted test or development nodes.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>Results that fit your character</h3>
+      <ul>
+        <li><strong>Faction and character checks</strong> cover supported race, class, level, quest, reputation, item, spell, achievement, covenant, and ModifierTree requirements.</li>
+        <li><strong>Separate availability and visibility</strong> checks distinguish using a node from displaying it on the map.</li>
+        <li><strong>Three-state evaluation</strong> returns satisfied, rejected, or unknown when the public game API cannot evaluate a requirement.</li>
+        <li><strong>Configurable search filters</strong> let addon authors control unavailable, hidden, arrival-only, ignored, and unknown nodes.</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h3>Coordinates and navigation</h3>
+      <ul>
+        <li><strong>Nearest-node searches</strong> from the player, a map position, conventional world coordinates, or APR's historical coordinate format.</li>
+        <li><strong>Distance in yards</strong>, with optional three-dimensional distance and custom filters through the API.</li>
+        <li><strong>Map and world conversion</strong> with explicit coordinate-system fields and HereBeDragons-style convenience signatures.</li>
+        <li><strong>Native Blizzard waypoints</strong> resolve nodes on a preferred or current map and its parents, with super-tracking when available.</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>The right data for your client</h3>
+      <ul>
+        <li><strong>Automatic profile selection</strong> uses the detected client build and WoW project, including branches that share a project ID.</li>
+        <li><strong>Separate client and server catalogs</strong> describe permanent client versions and their Live, PTR, Beta, or archived data profiles.</li>
+        <li><strong>Explicit fallback reporting</strong> identifies when an installed archive uses its compatible fallback on an ungenerated build.</li>
+        <li><strong>Capability checks</strong> and modern/legacy API adapters account for differences between game clients.</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h3>Lightweight releases, reusable API</h3>
+      <ul>
+        <li><strong>One compatible data set per release archive</strong>, rather than shipping every generated client database.</li>
+        <li><strong>Complete data fingerprints</strong> group builds only when their node, condition, and locale data match.</li>
+        <li><strong>A standalone global API</strong> that consumers can check by capability, without a LibStub major or minimum data-version constant.</li>
+        <li><strong>Generated data and tooling</strong> keep the runtime manifest, interface metadata, release plan, and profile catalogs synchronized.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+### Supported languages
+
+`enUS`, `enGB`, `deDE`, `esES`, `esMX`, `frFR`, `itIT`, `koKR`, `ptBR`, `ruRU`, `zhCN`, and `zhTW`.
+
+## Clients and compatibility
+
+| Client family                             | Data coverage in the current catalog                                             |
+| ----------------------------------------- | -------------------------------------------------------------------------------- |
+| **Retail**                                | Live and PTR profiles with their own generated node, condition, and locale data. |
+| **Mists of Pandaria Classic**             | Live and PTR profiles.                                                           |
+| **Classic Era**                           | A dedicated Live profile and generated data set.                                 |
+| **WoW Forever**                           | A dedicated Beta profile and generated data set.                                 |
+| **Anniversary / Burning Crusade Classic** | A dedicated TBC data set; the current catalog uses a PTR profile.                |
+| **Wrath of the Lich King Classic**        | Registered as a base client; no active data profile is attached.                 |
+| **Cataclysm Classic**                     | Registered as a base client; no active data profile is attached.                 |
+
+Install the published archive that matches your client. Registered base clients without a generated data profile are recognized but report `supported = false`. A generated PTR or Beta profile is published only when its release rules allow it; catalog coverage does not imply that every profile has a currently published prerelease.
+
+Addon authors can inspect the selected profile, embedded data set, detected build, exact/fallback state, and API capabilities through `GetClientInfo()`.
+
+---
+
+<p align="center">
+  <img src="readme/assets/settings-commands-rounded.svg" alt="Settings and Commands" width="1000">
+</p>
+
+## Commands
+
+Use **`/ltd`** or **`/libtaxidata`** in chat. Both prefixes open the same commands. LibTaxiData's controls are available through chat commands and its public API.
+
+| Command                                             | What it does                                                                                                                                                                                   |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/ltd` / `/ltd help`                                | Print the command list.                                                                                                                                                                        |
+| `/ltd name <nodeID>`                                | Print the localized node name and its ID.                                                                                                                                                      |
+| `/ltd node <nodeID> [uiMapID]`                      | Print the node's localized name, world/APR coordinates, conditions, flags, mounts, offsets, and visual metadata; include map coordinates when a map ID can be resolved. `details` is an alias. |
+| `/ltd nearest`                                      | Find the nearest node using the default availability and visibility filters, print its name and distance, and attempt to set a waypoint.                                                       |
+| `/ltd nearest <uiMapID> <x> <y>`                    | Search from normalized or percentage map coordinates and attempt to set a waypoint.                                                                                                            |
+| `/ltd nearest world <instanceID> <worldX> <worldY>` | Search from conventional world coordinates and attempt to resolve the result on the current map hierarchy.                                                                                     |
+| `/ltd waypoint <nodeID> [uiMapID]`                  | Set a native Blizzard waypoint for the node, using the preferred map when provided; enable super-tracking when available.                                                                      |
+
+Examples:
+
+```text
+/ltd nearest
+/ltd name 2
+/ltd node 2 84
+/ltd waypoint 2 84
+/ltd nearest 2437 43.8 68.2
+```
+
+> **Important:** A nearest-node result reflects the library's data and character filters. Requirements that depend on unknown server-side state remain unknown and are eligible by default. Use the API option `includeUnknown = false` if your addon needs to reject nodes with unknown availability.
+
+---
 
 ## Public API
 
 The addon exposes `_G.LibTaxiData_API`. It does not register a LibStub major and
 there is no minimum data-version constant for consumers to maintain.
+
+### Load LibTaxiData before your addon
+
+When LibTaxiData is required, declare it in your addon's TOC:
+
+```toc
+## Dependencies: LibTaxiData
+```
+
+Consumers should check the public methods they use and inspect `GetClientInfo().supported` when deciding whether flight data is available for the detected client.
 
 ```lua
 local taxi = _G.LibTaxiData_API
@@ -82,7 +239,19 @@ end
 | `IterateNodes()`                                          | `next` iterator over retained nodes.                                                                                                 |
 | `GetExcludedNode(nodeID)`                                 | Excluded development-node name and audit reason.                                                                                     |
 | `GetSource()`                                             | Current build, provider, DB2 table, and row counts.                                                                                  |
-| `GetClientInfo()`                                         | Selected profile/data set, game type, channel, detected build, and exact/fallback selection state.                                  |
+| `GetClientInfo()`                                         | Selected profile/data set, game type, channel, detected build, and exact/fallback selection state.                                   |
+
+### Node conditions and mounts
+
+| API                                    | Result                                                                                                        |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `GetPlayerCondition(conditionID)`      | Raw generated PlayerCondition record, or `nil` when it is not retained.                                       |
+| `IsNodeAvailable(nodeID)`              | Whether the node's faction and availability requirements pass; `nil` when required state cannot be evaluated. |
+| `IsNodeVisible(nodeID)`                | Whether the node should appear for the character according to faction, visibility conditions, and flags.      |
+| `HasSpecialIcon(nodeID)`               | Whether the node's conditional special icon applies.                                                          |
+| `EvaluatePlayerCondition(conditionID)` | Three-state evaluation of a PlayerCondition.                                                                  |
+| `EvaluateModifierTree(treeID)`         | Three-state evaluation of a supported ModifierTree.                                                           |
+| `GetMountCreatureID(nodeID)`           | The current faction's taxi mount creature ID when one is defined.                                             |
 
 ### Coordinate formats
 
@@ -119,6 +288,19 @@ local sameMapX, sameMapY =
     taxi.GetZoneCoordinatesFromWorldInstance(worldX, worldY, instanceID, 2437)
 ```
 
+### Coordinate conversion helpers
+
+| API                                                                                            | Result                                                                              |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `MapToWorld(uiMapID, mapX, mapY)`                                                              | Convert normalized map coordinates to a conventional world-position object.         |
+| `WorldToMap(instanceID, worldX, worldY, uiMapID[, allowOutOfBounds])`                          | Convert world coordinates to normalized coordinates on the requested UI map.        |
+| `GetPlayerWorldPosition()`                                                                     | The player's conventional world-position object when it can be resolved.            |
+| `WorldToAPRWorld(worldX, worldY, worldZ, instanceID)`                                          | Convert conventional world X/Y to APR's historical swapped-axis position object.    |
+| `APRWorldToWorld(aprX, aprY, worldZ, instanceID)`                                              | Convert an APR position back to a conventional world-position object.               |
+| `GetWorldCoordinatesFromZone(mapX, mapY, uiMapID)`                                             | Return conventional `worldX`, `worldY`, and `instanceID`.                           |
+| `GetZoneCoordinatesFromWorld(worldX, worldY, uiMapID[, allowOutOfBounds])`                     | Return normalized `mapX`, `mapY`, and `mapID`, inferring the target world instance. |
+| `GetZoneCoordinatesFromWorldInstance(worldX, worldY, instanceID, uiMapID[, allowOutOfBounds])` | Return normalized `mapX`, `mapY`, and `mapID` with an explicit world instance.      |
+
 ### Nearest-node searches
 
 | API                                                               | Origin format                       |
@@ -138,6 +320,15 @@ The optional table supports `includeUnavailable`, `includeUnknown = false`,
 `includeHidden`, `includeEndpointOnly`, `includeIgnored`, `threeDimensional`,
 `z`, and a custom `filter(nodeID, node, availability, visibility)` callback.
 
+### Native waypoints
+
+| API                                                | Result                                                                                                                                                            |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ResolveNodeMapPosition(nodeID[, preferredMapID])` | Find the node's normalized position on a preferred or current map, checking parent maps as needed. Returns `nil` and an error code when no map can be resolved.   |
+| `SetWaypointToNode(nodeID[, preferredMapID])`      | Set a native Blizzard waypoint and enable super-tracking when available. Returns `true` and the map position on success, or `false` and an error code on failure. |
+
+Map conversion, player-position lookup, and native waypoints depend on client API capabilities. A successful nearest-node search does not guarantee that a waypoint can be placed on the current map hierarchy.
+
 ### Conditions
 
 `IsNodeAvailable`, `IsNodeVisible`, `EvaluatePlayerCondition`, and
@@ -150,25 +341,11 @@ The optional table supports `includeUnavailable`, `includeUnknown = false`,
 The library never turns an unknown phase, WorldStateExpression, objective,
 AreaTable, or other server-only state into a false positive.
 
-## Client profiles and data generation
+## Data profiles and generation
 
-`GetBuildInfo()` and `WOW_PROJECT_ID` select the active data profile. Exact
-build matching distinguishes Live, PTR, and Beta clients that share the same
-WoW project ID. `profile` describes the client build while `dataSet` identifies
-the data embedded in the installed archive. A newer ungenerated build uses the
-only safe fallback embedded for that base version and reports `fallback = true`
-through `GetClientInfo()`.
+Client detection selects the profile from `GetBuildInfo()` and `WOW_PROJECT_ID`. `profile` describes the client build, while `dataSet` identifies the data shipped in the installed archive. `GetClientInfo()` reports the selected profile, exact/fallback state, support status, and available API capabilities.
 
-The catalog deliberately separates permanent client versions from temporary
-servers/builds:
-
-- `tools/versions.json` contains every supported base client, even when no
-  Blizzard server currently exists for it;
-- `tools/profiles.json` contains the Live, PTR, Beta, or archived server builds
-  that can actually generate a data set.
-
-The generator, runtime manifest, TOC, tests, update workflow, and release plan
-consume both catalogs. Useful catalog commands are:
+The generator uses Blizzard's public build feed and versioned Wago Tools DB2 exports. It keeps client profiles, generated data, and TOC interfaces synchronized. Release archives include one compatible data set; builds share storage only when their complete node, condition, and locale fingerprints match.
 
 ```sh
 python tools/profiles.py list
@@ -176,192 +353,56 @@ python tools/profiles.py check
 python tools/package.py --matrix
 ```
 
-The list command also shows whether a profile is currently publishable and as
-which release type. The release rules are:
+See the **[data-generation guide](readme/DATA-GENERATION.md)** for adding base clients or server profiles, regenerating data, API adapters, release-channel rules, archived builds, and packaging commands.
 
-- a normal profile is published as a stable release;
-- a `ptr` profile is published as Beta when its complete build is strictly
-  greater than its `releaseBase` build;
-- a `beta` profile is published as Alpha under the same condition;
-- a PTR/Beta profile without `releaseBase` is a standalone prerelease and is
-  published using its channel;
-- a PTR/Beta profile whose complete build is older or equal to its
-  `releaseBase` remains available to the generator/runtime but is omitted.
+---
 
-All four components of a Blizzard build are compared in order. For example,
-`12.1.0.68914` is newer than `12.0.7.68974`. Publishable bundles are uploaded
-sequentially from the smallest to the largest complete build.
+## Support and contributions
 
-### Adding a base version
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>Read the source and report an issue</h3>
+      <p>Browse the <a href="https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData">GitHub repository</a> for the API, generated data, tests, and build tooling.</p>
+      <p>Report bugs or request improvements through <a href="https://github.com/Azeroth-Pilot-Reloaded/LibTaxiData/issues">GitHub Issues</a>. Include your addon version, game client and build, node or map IDs, the command or API call, and any Lua error.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>Join the community</h3>
+      <p>Visit <a href="https://discord.gg/YgcdybKdWX">Discord</a> for setup help, API discussions, and translation contributions.</p>
+      <p>For client-selection or data problems, include the result of <code>GetClientInfo()</code> and <code>GetSource()</code> so the selected profile and data source can be identified.</p>
+    </td>
+  </tr>
+</table>
 
-Add a base client to `tools/versions.json` once, then run
-`python tools/profiles.py sync`. It is included in `Data/ClientProfiles.lua`,
-so the runtime can detect it from `WOW_PROJECT_ID` or its interface major even
-if there is no corresponding server profile.
+---
 
-| Field | Required | Meaning and source |
-| --- | --- | --- |
-| `id` | yes | Permanent lowercase identifier referenced by server profiles, for example `anniversary`. |
-| `name` | yes | Human-readable base-client name. |
-| `gameType` | yes | Value accepted by WoW's TOC `AllowLoadGameType`, such as `mainline`, `classic`, `tbc`, `wrath`, `cata`, or `mists`. |
-| `projectConstant` | yes | Client global whose value can equal `WOW_PROJECT_ID`, for example `WOW_PROJECT_MISTS_CLASSIC`. A project constant may be shared by base versions with disjoint interface rules. Inspect both values in-game with `/dump WOW_PROJECT_ID` and `/dump WOW_PROJECT_MISTS_CLASSIC`. |
-| `apiFamily` | yes | Preferred adapter order: `modern` tries namespaced `C_*` APIs first; `legacy` tries historical global functions first. Missing or failing calls always fall back to the other implementation. |
-| `interfaceMajor` | one rule | Exact first component returned by `GetBuildInfo()`, normally `1` through `5` for Classic branches. |
-| `minimumInterfaceMinor` | no | Lower bound for the second component when `interfaceMajor` is set, used to distinguish Forever (`1.60+`) from Classic Era (`1.15`). |
-| `minimumInterfaceMajor` | one rule | Open-ended interface rule used by Retail. Only one base version can define it. |
-| `tocInterface` | yes | Last known compatible full TOC interface. It keeps the common API loadable when the base has no active server; active profile interfaces are added automatically. |
-| `tocLabel` | client branches | Suffix used for `## Interface-<label>` in the TOC, for example `Mists` or `Camelot`. |
-| `apiOverrides` | no | Per-feature `modern`/`legacy` preference when this client differs from its general `apiFamily`. Supported keys are `questCompleted`, `questLog`, `questReady`, `auras`, `spellBook`, `items`, `currency`, and `reputation`. |
+<p align="center">
+  <img src="readme/assets/credits-rounded.svg" alt="Credits" width="1000">
+</p>
 
-The base registry currently covers Retail, Classic Era, Forever,
-Anniversary/Burning Crusade, Wrath, Cataclysm, and Mists. Forever shares
-`WOW_PROJECT_MAINLINE` with Retail but uses the `camelot` game type and
-interface `16001`. Wrath and Cataclysm intentionally have no
-server profile: they remain detectable with their legacy-first API policy and
-report `supported = false` until data is attached to a profile.
+## Credits
 
-`Compatibility.lua` centralizes APIs whose signatures/names changed between
-clients. It records the implementation actually found in
-`GetClientInfo().apiCapabilities`. Map conversion, player position, and
-waypoints are also capability-probed at runtime. When Blizzard changes an API,
-add its adapter there; use `apiOverrides` only when a particular base client
-must prefer a different valid implementation.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>Development</h3>
+      <p><strong>Neoldric</strong><br>Addon development, public API, and data tooling.</p>
+      <p>Built for the World of Warcraft addon community and the <a href="https://github.com/Azeroth-Pilot-Reloaded">Azeroth Pilot Reloaded</a> projects.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>Data and tooling</h3>
+      <ul>
+        <li><strong>Blizzard Entertainment</strong> - World of Warcraft client APIs and public build feed.</li>
+        <li><a href="https://wago.tools/"><strong>Wago Tools</strong></a> - Versioned DB2 exports.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
-### Adding a profile
+---
 
-Add one object to `tools/profiles.json`. These fields are supported:
-
-| Field | Required | Meaning and source |
-| --- | --- | --- |
-| `id` | yes | Stable lowercase identifier used by commands and generated directories, for example `retail_ptr`. |
-| `name` | yes | Human-readable label shown by `tools/profiles.py list`. |
-| `version` | yes | `id` from `tools/versions.json`; this supplies the game type, project constant, interface rule, and API policy. |
-| `channel` | yes | `live`, `ptr`, `beta`, or `legacy`. It controls the release type. |
-| `product` | yes | Blizzard product-feed code, such as `wow`, `wowt`, or `wow_classic_ptr`; use `null` only for an archived client without a feed. |
-| `build` | yes | Use `null` for a new active profile and let the generator resolve it, or provide an exact four-part archived build. |
-| `releaseBase` | to publish PTR/Beta | `id` of the related normal profile. It must use the same base `version`. |
-| `default` | no | Set `true` on the single safe fallback profile for a base version; normally omit it on PTR/Beta entries. |
-| `localized` | no | Set `false` when localized DB2 exports are unavailable so locale names fall back to the normal build. |
-| `dataSet` | no | Usually omit this and let the generator assign it after comparing complete generated fingerprints. Set it when the generated directory must have a distinct name from the profile ID, as with `wow_forever` using `forever`. |
-
-Example for re-adding a Retail Beta later:
-
-```json
-{
-  "id": "retail_beta",
-  "name": "Retail Beta",
-  "version": "retail",
-  "channel": "beta",
-  "product": "wow_beta",
-  "build": null,
-  "releaseBase": "retail",
-  "localized": false
-}
-```
-
-Example for attaching archived data to the already-declared Wrath base client:
-
-```json
-{
-  "id": "wrath_archive",
-  "name": "Wrath Classic archived build",
-  "version": "wrath",
-  "channel": "legacy",
-  "product": null,
-  "build": "3.4.3.XXXXX",
-  "default": true
-}
-```
-
-Replace `XXXXX` with the real final build number. Until this object and its
-generated data exist, the base client is recognized but deliberately has no
-taxi data fallback.
-
-The product code is the segment used by Blizzard's public version endpoint,
-`https://us.version.battle.net/<product>/versions`. Test a product and inspect
-its current US build with:
-
-```sh
-python tools/live_build.py --product wow_beta --region us
-```
-
-The exact build is also returned by WoW's `GetBuildInfo()` and is visible in the
-client's `.build.info`. The generator verifies that Wago Tools exposes the
-required DB2 tables for that build.
-
-Generate the new entry after saving the catalog:
-
-```sh
-python tools/generate.py --profile retail_beta --cache-dir .cache/db2
-python tools/profiles.py check
-```
-
-After every successful generation, the script stores the resolved build back
-in `tools/profiles.json`, recalculates `dataSet`, regenerates
-`Data/ClientProfiles.lua`, and updates all generated interface/profile blocks in
-`LibTaxiData.toc`. The TOC interface is derived from the first three build
-components; a change limited to the final build number correctly leaves the
-interface unchanged.
-
-To remove a profile, delete its catalog object and synchronize with pruning:
-
-```sh
-python tools/profiles.py sync --prune
-```
-
-Builds without an explicit `--build` are resolved from Blizzard's public
-product feeds:
-
-```sh
-# Update one active branch from Blizzard's feed.
-python tools/generate.py --profile classic --cache-dir .cache/db2
-
-# Generate the exact examples used by Classic Era and Mists Classic.
-python tools/generate.py --profile classic --build 1.15.9.68940
-python tools/generate.py --profile mists --build 5.5.4.68806
-
-# Refresh every profile backed by an active Blizzard product.
-python tools/generate.py --all --cache-dir .cache/db2
-
-# A no-server base version first needs a profile with product=null and an exact
-# build. It can then be generated normally.
-python tools/generate.py --profile wrath_archive --build 3.4.3.XXXXX
-```
-
-Release archives are built separately:
-
-```sh
-# Build every minimal release ZIP under dist/.
-python tools/package.py --build
-
-# Build only the Classic Era archive.
-python tools/package.py --build --data-set classic
-```
-
-The repository retains raw per-profile exports so the generator can compare
-them. These raw exports are not all shipped. `tools/package.py` creates one
-archive per unique `(dataSet, release type)`, trims the TOC and runtime manifest,
-and includes only the matching `Data/<dataSet>` and `Locale/<dataSet>`
-directories. Identical Live and PTR data can therefore share storage in the
-repository while still following different publication channels.
-
-Older DB2 layouts are normalized while generating data. Fields absent from a
-client schema, such as Classic's `MinimapAtlasMemberID` and historical content
-tuning offsets, receive neutral zero values so the public node shape remains
-stable across profiles. If localized PTR/Beta exports are unavailable, names
-fall back to the Live build of the same base version; numeric node and condition
-data always come from the requested build.
-
-##
-
-![Credits](https://github.com/user-attachments/assets/e1e2c4f3-9e84-40fe-af3b-618a0d2a948f)
-
-**Development**
-
-- Neoldric - developer
-
-**Data and tooling**
-
-- Blizzard Entertainment - World of Warcraft client APIs and public build feed
-- [Wago Tools](https://wago.tools/) - Versioned DB2 exports
-- [BigWigsMods Packager](https://github.com/BigWigsMods/packager) - Multi-platform packaging and deployment
+<p align="center">
+  <strong>LibTaxiData</strong><br>
+  Flight data for your next connection.<br><br>
+  <a href="#readme-top">Back to top</a>
+</p>

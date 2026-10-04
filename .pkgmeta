@@ -6,5 +6,6 @@ ignore:
   - .gitignore
   - .luacheckrc
   - README.md
+  - readme
   - tests
   - tools

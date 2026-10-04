@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="104" viewBox="0 0 1200 104" role="img" aria-labelledby="title desc">
+  <title id="title">Features</title>
+  <desc id="desc">LibTaxiData features section.</desc>
+  <defs>
+    <linearGradient id="surface" x2="1" y2="1"><stop stop-color="#0b4a37"/><stop offset="0.6" stop-color="#142e2d"/><stop offset="1" stop-color="#10242f"/></linearGradient>
+    <linearGradient id="silver" x2="0" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#b0c6b8"/></linearGradient>
+    <clipPath id="rounded"><rect width="1200" height="104" rx="22"/></clipPath>
+    <filter id="shadow" x="-20%" y="-40%" width="140%" height="200%"><feDropShadow dx="1" dy="3" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.7"/></filter>
+  </defs>
+  <g clip-path="url(#rounded)">
+    <rect width="1200" height="104" fill="url(#surface)"/>
+    <g fill="none" stroke="#a5d0b4" stroke-opacity="0.18" stroke-width="2">
+      <path d="M -20 90 C 100 -25 255 115 362 41 S 560 20 682 85 S 950 -30 1220 28"/>
+      <path d="M -20 18 C 180 135 260 -48 480 64 S 790 103 930 45 S 1090 40 1220 97"/>
+    </g>
+    <g fill="#c3dfc3" opacity="0.35"><circle cx="93" cy="38" r="4"/><circle cx="362" cy="41" r="4"/><circle cx="930" cy="45" r="4"/><circle cx="1107" cy="46" r="4"/></g>
+    <rect x="1" y="1" width="1198" height="102" rx="21" fill="none" stroke="#c7ddce" stroke-opacity="0.15"/>
+  </g>
+  <text x="600" y="69" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="58" font-weight="bold" fill="url(#silver)" filter="url(#shadow)">Features</text>
+</svg>
