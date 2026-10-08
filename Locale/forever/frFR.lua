@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 1.60.1.70245)
+-- Source: https://wago.tools/db2/TaxiNodes (build 1.60.1.70291)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "forever" then return end
@@ -7,19 +7,19 @@ if not lib.Client or lib.Client.dataSet ~= "forever" then return end
 if GetLocale() ~= "frFR" then return end
 
 lib.Names = {
-    [1] = "Abbaye de Northshire",
+    [1] = "Abbaye de Comté-du-Nord",
     [2] = "Stormwind, Elwynn",
     [4] = "Colline des sentinelles, marche de l'Ouest",
-    [5] = "Lakeshire, les Carmines",
-    [6] = "Ironforge, Dun Morogh",
+    [5] = "Comté-du-Lac, les Carmines",
+    [6] = "Forgefer, Dun Morogh",
     [7] = "Port de Menethil, les Paluns",
     [8] = "Thelsamar, Loch Modan",
     [9] = "Baie-du-Butin, Strangleronce",
     [10] = "Le Sépulcre, forêt des Pins argentés",
-    [11] = "Undercity, Tirisfal",
+    [11] = "Fossoyeuse, Tirisfal",
     [12] = "Darkshire, bois de la Pénombre",
     [13] = "Moulin-de-Tarren, Hillsbrad",
-    [14] = "Southshore, Hillsbrad",
+    [14] = "Austrivage, Hillsbrad",
     [15] = "Maleterres de l'est",
     [16] = "Refuge de l'Ornière, Arathi",
     [17] = "Trépas-d'Orgrim, Arathi",
@@ -49,7 +49,7 @@ lib.Names = {
     [43] = "Nid-de-l'Aigle, Les Hinterlands",
     [44] = "Valormok, Azshara",
     [45] = "Rempart-du-Néant, Terres foudroyées",
-    [46] = "Bac de Southshore, Hillsbrad",
+    [46] = "Bac d’Austrivage, Hillsbrad",
     [47] = "Transport, Grom'gol - Orgrimmar",
     [48] = "Poste de la Vénéneuse, Gangrebois",
     [49] = "Reflet-de-Lune",
@@ -59,11 +59,11 @@ lib.Names = {
     [53] = "Long-guet, Berceau-de-l'Hiver",
     [54] = "Transport, Feathermoon - Feralas",
     [55] = "Mur-de-Fougères, marécage d'Âprefange",
-    [56] = "Stonard, marais des Chagrins",
+    [56] = "Pierrêche, marais des Chagrins",
     [57] = "Village de pêcheurs, Teldrassil",
     [58] = "Avant-poste de Zoram'gar, Ashenvale",
     [59] = "Dun Baldar, Vallée d'Alterac",
-    [60] = "Donjon Frostwolf, Vallée d'Alterac",
+    [60] = "Donjon Loup-de-givre, Vallée d'Alterac",
     [61] = "Poste de Bois-brisé, Ashenvale",
     [62] = "Havrenuit, Reflet-de-Lune",
     [63] = "Havrenuit, Reflet-de-Lune",
