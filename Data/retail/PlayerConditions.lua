@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/PlayerCondition (build 12.1.0.69933)
+-- Source: https://wago.tools/db2/PlayerCondition (build 12.1.5.70340)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -8,7 +8,7 @@ lib.PlayerConditions = {
     [923] = { Flags = 1, RaceMasks = { 1309324210, 2854922922 } },
     [924] = { Flags = 1, RaceMasks = { 2973060173, 1427461461 } },
     [5703] = { Flags = 1, WorldStateExpressionID = 3785 },
-    [5793] = { ContentTuningID = 949, Flags = 1, MaxLevel = 255, MinLevel = 255 },
+    [5793] = { ContentTuningID = 949, Flags = 1 },
     [6211] = { Flags = 1, MinFactionID = { 932, 0, 0 }, MinReputation = { 3, 0, 0 }, PrevQuestID = { 10551, 0, 0, 0 } },
     [6212] = { Flags = 1, MinFactionID = { 934, 0, 0 }, MinReputation = { 3, 0, 0 }, PrevQuestID = { 10552, 0, 0, 0 } },
     [7305] = { ClassMask = 32, Flags = 1 },
@@ -21,8 +21,8 @@ lib.PlayerConditions = {
     [19486] = { Flags = 1, PrevQuestID = { 32108, 32109, 32477, 0 }, PrevQuestLogic = 262166 },
     [20068] = { Flags = 1, RaceMasks = { 2973060173, 1427461461 } },
     [20069] = { Flags = 1, RaceMasks = { 1309324210, 2854922922 } },
-    [28231] = { AuraSpellID = { 176111, 0, 0, 0 }, AuraSpellLogic = 65536, ContentTuningID = 178, Flags = 33, MinLevel = 90 },
-    [28232] = { AuraSpellID = { 176111, 0, 0, 0 }, AuraSpellLogic = 65536, ContentTuningID = 178, Flags = 33, MaxLevel = 255, MinLevel = 90 },
+    [28231] = { AuraSpellID = { 176111, 0, 0, 0 }, AuraSpellLogic = 65536, ContentTuningID = 178, Flags = 33 },
+    [28232] = { AuraSpellID = { 176111, 0, 0, 0 }, AuraSpellLogic = 65536, ContentTuningID = 178, Flags = 33 },
     [29229] = { Flags = 1, PrevQuestID = { 35730, 35049, 34992, 0 }, PrevQuestLogic = 10 },
     [33173] = { Flags = 1, PrevQuestID = { 37969, 38433, 0, 0 }, PrevQuestLogic = 2, RaceMasks = { 2973060173, 1427461461 } },
     [33174] = { Flags = 1, PrevQuestID = { 37969, 38433, 0, 0 }, PrevQuestLogic = 2, RaceMasks = { 1309324210, 2854922922 } },
@@ -54,7 +54,7 @@ lib.PlayerConditions = {
     [53150] = { AreaID = { 8574, 8714, 0, 0 }, AreaLogic = 196609, Flags = 1 },
     [53471] = { Flags = 1, ModifierTreeID = 66443 },
     [53948] = { Flags = 1, ModifierTreeID = 67430 },
-    [55364] = { ContentTuningID = 830, Flags = 33, MinLevel = 110, PrevQuestID = { 50659, 0, 0, 0 }, PrevQuestLogic = 65536 },
+    [55364] = { ContentTuningID = 830, Flags = 33, PrevQuestID = { 50659, 0, 0, 0 }, PrevQuestLogic = 65536 },
     [55588] = { AuraSpellLogic = 65536, Flags = 1, ModifierTreeID = 71115 },
     [57357] = { AuraSpellID = { 271003, 0, 0, 0 }, AuraSpellLogic = 65536, Flags = 1, PrevQuestID = { 51234, 0, 0, 0 }, RaceMasks = { 1309324210, 2854922922 } },
     [61955] = { Flags = 1, ModifierTreeID = 83306, RaceMasks = { 2973060173, 1427461461 } },
@@ -80,7 +80,7 @@ lib.PlayerConditions = {
     [64002] = { Flags = 1, ModifierTreeID = 83312 },
     [64389] = { Flags = 1, ModifierTreeID = 96171 },
     [64582] = { Flags = 1, ModifierTreeID = 85960 },
-    [66781] = { AuraSpellID = { 289076, 290054, 0, 0 }, AuraSpellLogic = 196609, ContentTuningID = 691, Flags = 97, MinLevel = 110, ModifierTreeID = 93651, PrevQuestID = { 54411, 0, 0, 0 }, PrevQuestLogic = 65536 },
+    [66781] = { AuraSpellID = { 289076, 290054, 0, 0 }, AuraSpellLogic = 196609, ContentTuningID = 691, Flags = 97, ModifierTreeID = 93651, PrevQuestID = { 54411, 0, 0, 0 }, PrevQuestLogic = 65536 },
     [67245] = { Flags = 1, ModifierTreeID = 95086 },
     [67469] = { Flags = 1, ModifierTreeID = 95701 },
     [70076] = { Flags = 1, ModifierTreeID = 103315 },
@@ -157,4 +157,12 @@ lib.PlayerConditions = {
     [160143] = { Flags = 1, ModifierTreeID = 454986 },
     [160144] = { Flags = 1, ModifierTreeID = 454988 },
     [160145] = { Flags = 1, ModifierTreeID = 454990 },
+    [162557] = { Flags = 1, ModifierTreeID = 461300 },
+    [162559] = { Flags = 1, ModifierTreeID = 461308 },
+    [162560] = { Flags = 1, ModifierTreeID = 461310 },
+    [162561] = { Flags = 1, ModifierTreeID = 461312 },
+    [162562] = { Flags = 1, ModifierTreeID = 461314 },
+    [162563] = { Flags = 1, ModifierTreeID = 461316 },
+    [162564] = { Flags = 1, ModifierTreeID = 461318 },
+    [162565] = { Flags = 1, ModifierTreeID = 461320 },
 }

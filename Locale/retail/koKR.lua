@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69933)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.5.70340)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -1000,4 +1000,25 @@ lib.Names = {
     [3285] = "아마니 거점",
     [3286] = "동쪽 입구",
     [3288] = "아마니 거점 - 아탈우텍 금고",
+    [3300] = "미궁 - 의식의 방",
+    [3301] = "미궁 - 성골 보관실 입구",
+    [3302] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 1a",
+    [3303] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 2b",
+    [3304] = "미궁 - 성골 보관실",
+    [3305] = "미궁 - 할라지의 소굴 입구",
+    [3306] = "미궁 - 할라지의 소굴",
+    [3307] = "미궁 - 중앙 방 입구",
+    [3308] = "미궁 - 중앙 방",
+    [3309] = "미궁 - 지하묘지 입구",
+    [3310] = "미궁 - 지하묘지",
+    [3311] = "미궁 - 중앙 방 입구",
+    [3312] = "미궁 - 동굴 탑 입구",
+    [3313] = "미궁 - 동굴 탑",
+    [3314] = "미궁 - 잔알라이의 은거처 입구",
+    [3315] = "미궁 - 잔알라이의 은거처",
+    [3316] = "미궁 - 아킬존의 둥지 입구",
+    [3317] = "미궁 - 아킬존의 둥지",
+    [3318] = "미궁 - 날로라크의 안식처 입구",
+    [3319] = "미궁 - 날로라크의 안식처",
+    [3329] = "미궁 - 지하묘지 입구",
 }
