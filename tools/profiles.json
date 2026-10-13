@@ -5,7 +5,7 @@
     "version": "retail",
     "channel": "live",
     "product": "wow",
-    "build": "12.1.5.70340",
+    "build": "12.1.5.70391",
     "default": true,
     "dataSet": "retail"
   },
