@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69933)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.5.70340)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -1000,4 +1000,25 @@ lib.Names = {
     [3285] = "Stützpunkt der Amani",
     [3286] = "Östlicher Eingang",
     [3288] = "Stützpunkt der Amani, Kammern von Atal'Utek",
+    [3300] = "Labyrinth, Kammer der Riten",
+    [3301] = "Labyrinth, Eingang des Reliquiars",
+    [3302] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 1a",
+    [3303] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 2b",
+    [3304] = "Labyrinth, Das Reliquiar",
+    [3305] = "Labyrinth, Eingang zu Halazzis Hort",
+    [3306] = "Labyrinth, Halazzis Hort",
+    [3307] = "Labyrinth, Eingang zur zentralen Kammer",
+    [3308] = "Labyrinth, Zentrale Kammer",
+    [3309] = "Labyrinth, Eingang zu den Katakomben",
+    [3310] = "Labyrinth, Katakomben",
+    [3311] = "Labyrinth, Eingang zur zentralen Kammer",
+    [3312] = "Labyrinth, Eingang zu den Höhlentürmen",
+    [3313] = "Labyrinth, Höhlentürme",
+    [3314] = "Labyrinth, Eingang zu Jan'alais Zuflucht",
+    [3315] = "Labyrinth, Jan'alais Zuflucht",
+    [3316] = "Labyrinth, Eingang zu Akil'zons Nest",
+    [3317] = "Labyrinth, Akil'zons Nest",
+    [3318] = "Labyrinth, Eingang zu Nalorakks Ruh",
+    [3319] = "Labyrinth, Nalorakks Ruh",
+    [3329] = "Labyrinth, Eingang zu den Katakomben",
 }

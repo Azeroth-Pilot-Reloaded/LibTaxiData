@@ -1,5 +1,5 @@
 ## X-Generated-Interfaces-Begin: true
-## Interface: 120100, 120007, 50504, 11509, 16001, 20506, 30403, 40402
+## Interface: 120105, 120100, 120007, 50504, 11509, 16001, 20506, 30403, 40402
 ## Interface-Classic: 11509
 ## Interface-Camelot: 16001
 ## Interface-TBC: 20506
