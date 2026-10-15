@@ -15,9 +15,9 @@
     "version": "retail",
     "channel": "ptr",
     "product": "wowt",
-    "build": "12.1.0.69587",
+    "build": "12.1.7.70424",
     "releaseBase": "retail",
-    "dataSet": "retail_ptr"
+    "dataSet": "retail"
   },
   {
     "id": "mists",

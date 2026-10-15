@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/ModifierTree (build 12.1.0.69587)
+-- Source: https://wago.tools/db2/ModifierTree (build 12.1.7.70424)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail_ptr" then return end
@@ -472,4 +472,20 @@ lib.ModifierTrees = {
     [455485] = { parent = 454986, operator = 2, amount = 1, type = 110, asset = 96809, secondaryAsset = 0, tertiaryAsset = 0 },
     [455486] = { parent = 454984, operator = 2, amount = 1, type = 110, asset = 96809, secondaryAsset = 0, tertiaryAsset = 0 },
     [455487] = { parent = 454990, operator = 2, amount = 1, type = 110, asset = 96809, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461300] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461301] = { parent = 461300, operator = 2, amount = 1, type = 108, asset = 32467, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461308] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461309] = { parent = 461308, operator = 2, amount = 1, type = 108, asset = 32474, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461310] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461311] = { parent = 461310, operator = 2, amount = 1, type = 108, asset = 32468, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461312] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461313] = { parent = 461312, operator = 2, amount = 1, type = 108, asset = 32469, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461314] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461315] = { parent = 461314, operator = 2, amount = 1, type = 108, asset = 32470, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461316] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461317] = { parent = 461316, operator = 2, amount = 1, type = 108, asset = 32471, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461318] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461319] = { parent = 461318, operator = 2, amount = 1, type = 108, asset = 32472, secondaryAsset = 1, tertiaryAsset = 0 },
+    [461320] = { parent = 0, operator = 4, amount = 1, type = 0, asset = 0, secondaryAsset = 0, tertiaryAsset = 0 },
+    [461321] = { parent = 461320, operator = 2, amount = 1, type = 108, asset = 32473, secondaryAsset = 1, tertiaryAsset = 0 },
 }
