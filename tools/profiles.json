@@ -5,7 +5,7 @@
     "version": "retail",
     "channel": "live",
     "product": "wow",
-    "build": "12.1.5.70391",
+    "build": "12.1.5.70448",
     "default": true,
     "dataSet": "retail"
   },
@@ -25,7 +25,7 @@
     "version": "mists",
     "channel": "live",
     "product": "wow_classic",
-    "build": "5.5.4.70268",
+    "build": "5.5.4.70449",
     "default": true,
     "dataSet": "mists"
   },
@@ -55,7 +55,7 @@
     "version": "forever",
     "channel": "beta",
     "product": "wow_classic_beta",
-    "build": "1.60.1.70425",
+    "build": "1.60.1.70450",
     "default": true,
     "dataSet": "forever"
   },
