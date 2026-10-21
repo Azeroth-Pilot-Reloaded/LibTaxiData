@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69587)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.7.70424)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail_ptr" then return end
@@ -1000,4 +1000,25 @@ lib.Names = {
     [3285] = "Tête de pont amani",
     [3286] = "Entrée est",
     [3288] = "Tête de pont amani, caveaux d’Atal’Utek",
+    [3300] = "Labyrinthe, salle des rites",
+    [3301] = "Labyrinthe, entrée du Reliquaire",
+    [3302] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 1a",
+    [3303] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 2b",
+    [3304] = "Labyrinthe, le Reliquaire",
+    [3305] = "Labyrinthe, entrée du repaire d’Halazzi",
+    [3306] = "Labyrinthe, repaire d’Halazzi",
+    [3307] = "Labyrinthe, entrée de la salle centrale",
+    [3308] = "Labyrinthe, salle centrale",
+    [3309] = "Labyrinthe, entrée des catacombes",
+    [3310] = "Labyrinthe, les catacombes",
+    [3311] = "Labyrinthe, entrée de la salle centrale",
+    [3312] = "Labyrinthe, entrée de la grotte aux Tours",
+    [3313] = "Labyrinthe, la grotte aux Tours",
+    [3314] = "Labyrinthe, entrée du refuge de Jan’alai",
+    [3315] = "Labyrinthe, refuge de Jan’alai",
+    [3316] = "Labyrinthe, entrée du perchoir d’Akil’zon",
+    [3317] = "Labyrinthe, perchoir d’Akil’zon",
+    [3318] = "Labyrinthe, entrée du Repos de Nalorakk",
+    [3319] = "Labyrinthe, Repos de Nalorakk",
+    [3329] = "Labyrinthe, entrée des catacombes",
 }

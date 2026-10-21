@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "build": "12.1.0.69933",
-  "pathCount": 4000,
-  "fingerprint": "278a9744e484be791c7ed2008876ba3d9b86b8ef5af77b26ba0c8b88cb51023c",
-  "excludedPathCount": 4690,
+  "build": "12.1.5.70448",
+  "pathCount": 4045,
+  "fingerprint": "a3632144f9150e62e92811c476d7f2ddce036adc670694f9d3fc5a8cf37c80d6",
+  "excludedPathCount": 4721,
   "manualPathCount": 0,
-  "estimatedDurationCount": 3967,
+  "estimatedDurationCount": 4012,
   "unknownDurationCount": 33,
   "unknownPriceCount": 0,
   "estimateSpeedYardsPerSecond": 32.0,
@@ -4775,7 +4775,7 @@
       "unknownPricePaths": []
     },
     "3131": {
-      "outgoingCount": 4,
+      "outgoingCount": 5,
       "unknownDurationPaths": [],
       "unknownPricePaths": []
     },
@@ -4865,7 +4865,7 @@
       "unknownPricePaths": []
     },
     "3168": {
-      "outgoingCount": 2,
+      "outgoingCount": 3,
       "unknownDurationPaths": [
         11734
       ],
@@ -5031,6 +5031,111 @@
       "unknownDurationPaths": [
         11733
       ],
+      "unknownPricePaths": []
+    },
+    "3300": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3301": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3302": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3303": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3304": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3305": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3306": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3307": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3308": {
+      "outgoingCount": 6,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3309": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3310": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3311": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3312": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3313": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3314": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3315": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3316": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3317": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3318": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3319": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "3329": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
       "unknownPricePaths": []
     }
   },
@@ -32660,6 +32765,12 @@
       "reason": "same-node"
     },
     {
+      "id": 11539,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
       "id": 11540,
       "fromNodeID": 0,
       "toNodeID": 0,
@@ -32667,6 +32778,18 @@
     },
     {
       "id": 11541,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11542,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11543,
       "fromNodeID": 0,
       "toNodeID": 0,
       "reason": "same-node"
@@ -32744,6 +32867,18 @@
       "reason": "same-node"
     },
     {
+      "id": 11608,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11609,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
       "id": 11610,
       "fromNodeID": 0,
       "toNodeID": 0,
@@ -32775,6 +32910,18 @@
     },
     {
       "id": 11615,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11617,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11618,
       "fromNodeID": 0,
       "toNodeID": 0,
       "reason": "same-node"
@@ -32829,6 +32976,30 @@
     },
     {
       "id": 11638,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11645,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11646,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11648,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11649,
       "fromNodeID": 0,
       "toNodeID": 0,
       "reason": "same-node"
@@ -32930,6 +33101,30 @@
       "reason": "same-node"
     },
     {
+      "id": 11693,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11694,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11695,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11696,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
       "id": 11697,
       "fromNodeID": 0,
       "toNodeID": 0,
@@ -32973,6 +33168,30 @@
     },
     {
       "id": 11704,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11705,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11706,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11707,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11708,
       "fromNodeID": 0,
       "toNodeID": 0,
       "reason": "same-node"
@@ -33170,7 +33389,79 @@
       "reason": "same-node"
     },
     {
+      "id": 11802,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11803,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11804,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11811,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
       "id": 11816,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11859,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11885,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11886,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11887,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11888,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11889,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11929,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 11930,
       "fromNodeID": 0,
       "toNodeID": 0,
       "reason": "same-node"

@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiPath + TaxiPathNode (build 2.5.6.69110)
+-- Source: https://wago.tools/db2/TaxiPath + TaxiPathNode (build 2.5.6.70006)
 -- Prices are base copper. Geometry durations are estimates at 32 yards/second.
 -- A DB2 connection is not proof that a character is offered this flight.
 local lib = _G.LibTaxiData_Internal

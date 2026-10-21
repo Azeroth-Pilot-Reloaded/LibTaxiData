@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69933)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.5.70448)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -1000,4 +1000,25 @@ lib.Names = {
     [3285] = "Ponto de Apoio dos Amani",
     [3286] = "Entrada Leste",
     [3288] = "Ponto de Apoio dos Amani, Câmaras de Atal'Utek",
+    [3300] = "Labirinto, Câmara dos Ritos",
+    [3301] = "Labirinto, Entrada para o Relicário",
+    [3302] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 1a",
+    [3303] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 2b",
+    [3304] = "Labirinto, o Relicário",
+    [3305] = "Labirinto, Entrada para o Covil de Halazzi",
+    [3306] = "Labirinto, Covil de Halazzi",
+    [3307] = "Labirinto, Entrada para a Câmara Central",
+    [3308] = "Labirinto, Câmara Central",
+    [3309] = "Labirinto, Entrada para as Catacumbas",
+    [3310] = "Labirinto, as Catacumbas",
+    [3311] = "Labirinto, Entrada para a Câmara Central",
+    [3312] = "Labirinto, Entrada para as Torres Cavernosas",
+    [3313] = "Labirinto, Torres Cavernosas",
+    [3314] = "Labirinto, Entrada para o Refúgio de Jan'alai",
+    [3315] = "Labirinto, Refúgio de Jan'alai",
+    [3316] = "Labirinto, Entrada para o Poleiro de Akil'zon",
+    [3317] = "Labirinto, Poleiro de Akil'zon",
+    [3318] = "Labirinto, entrada para o Repouso de Nalorakk",
+    [3319] = "Labirinto, Repouso de Nalorakk",
+    [3329] = "Labirinto, Entrada para as Catacumbas",
 }

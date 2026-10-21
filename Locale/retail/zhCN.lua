@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiNodes (build 12.1.0.69933)
+-- Source: https://wago.tools/db2/TaxiNodes (build 12.1.5.70448)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail" then return end
@@ -1000,4 +1000,25 @@ lib.Names = {
     [3285] = "阿曼尼据点",
     [3286] = "东部入口",
     [3288] = "阿曼尼据点，阿塔乌特克地窟",
+    [3300] = "迷宫：祭仪之厅",
+    [3301] = "迷宫：骸骨室的入口",
+    [3302] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 1a",
+    [3303] = "12.1.5 Labyrinth - Rewards - Soulgate - Taxi - Chamber 2b",
+    [3304] = "迷宫：骸骨室",
+    [3305] = "迷宫：哈尔拉兹的巢窟入口",
+    [3306] = "迷宫：哈尔拉兹的巢窟",
+    [3307] = "迷宫：中央大厅的入口",
+    [3308] = "迷宫：中央大厅",
+    [3309] = "迷宫：墓穴的入口",
+    [3310] = "迷宫：墓穴",
+    [3311] = "迷宫：中央大厅的入口",
+    [3312] = "迷宫：洞窟塔群的入口",
+    [3313] = "迷宫：洞窟塔群",
+    [3314] = "迷宫：加亚莱的隐殿入口",
+    [3315] = "迷宫：加亚莱的隐殿",
+    [3316] = "迷宫：埃基尔松的栖台入口",
+    [3317] = "迷宫：埃基尔松的栖台",
+    [3318] = "迷宫：纳洛拉克的憩所入口",
+    [3319] = "迷宫：纳洛拉克的憩所",
+    [3329] = "迷宫：墓穴的入口",
 }
