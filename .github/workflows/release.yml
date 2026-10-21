@@ -192,8 +192,9 @@ jobs:
             release_dir="$RUNNER_TEMP/libtaxidata-${build_number}-${data_set}-${release_type}"
             wowi_args=(-w 27178)
             # WoWInterface does not support the forever game type.
+            # Explicitly unset the TOC's X-WoWI-ID; omitting -w falls back to it.
             if [ "$data_set" = "forever" ]; then
-              wowi_args=()
+              wowi_args=(-w 0)
             fi
             CF_API_KEY="$CF_API_TOKEN" \
             GITHUB_OAUTH="$GITHUB_TOKEN" \
