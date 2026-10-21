@@ -43,6 +43,7 @@ COMMON_FILES = (
     "LibTaxiData.lua",
     "LibTaxiData.toc",
     "LibTaxiData.xml",
+    "Localization.lua",
     "LICENSE",
 )
 COMMON_DIRECTORIES = ("assets",)

@@ -31,6 +31,7 @@ local API = {
     },
     DATA = {
         Nodes = lib.Nodes,
+        Paths = lib.Paths,
         Names = lib.Names,
         PlayerConditions = lib.PlayerConditions,
         ModifierTrees = lib.ModifierTrees,
@@ -87,6 +88,30 @@ end
 
 ---Alias that makes the all-fields behavior explicit to consumers.
 API.GetAllNodeData = API.GetNode
+
+-- Static directed connections do not imply character discovery or a live offer.
+local outgoingPaths = {}
+local emptyPaths = {}
+for pathID, path in pairs(lib.Paths) do
+    outgoingPaths[path.fromNodeID] = outgoingPaths[path.fromNodeID] or {}
+    outgoingPaths[path.fromNodeID][pathID] = path
+end
+
+---Return all paths for the selected data set, keyed by DB2/manual path ID.
+function API.GetAllPaths()
+    return lib.Paths
+end
+
+---Return one directed path. Base prices are copper; durations declare their source.
+---@param pathID number|string
+function API.GetPath(pathID)
+    return lib.Paths[pathID]
+end
+
+---Return paths departing from a node, keyed by path ID (empty for unknown nodes).
+function API.GetOutgoingPaths(nodeID)
+    return outgoingPaths[nodeID] or emptyPaths
+end
 
 ---Return the current-client-locale name for a node ID.
 ---@param nodeID number

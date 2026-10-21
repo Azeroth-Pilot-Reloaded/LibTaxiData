@@ -24,7 +24,7 @@ def semantic_content(path: Path) -> str:
     for line in path.read_text(encoding="utf-8-sig").splitlines():
         if line.startswith("-- Source:") and "(build " in line:
             continue
-        if path.name == "TaxiNodes.lua" and line.lstrip().startswith("build = "):
+        if path.name in ("TaxiNodes.lua", "TaxiPaths.lua") and line.lstrip().startswith("build = "):
             continue
         lines.append(line)
     return "\n".join(lines) + "\n"

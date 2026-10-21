@@ -199,3 +199,9 @@ tuning offsets, receive neutral zero values so the public node shape remains
 stable across profiles. If localized PTR/Beta exports are unavailable, names
 fall back to the Live build of the same base version; numeric node and condition
 data always come from the requested build.
+
+## Directed taxi connections
+
+The generator also imports build-pinned TaxiPath and TaxiPathNode, creates compact
+TaxiPaths.lua, and retains separately maintained corrections per data set. See
+[TAXI-PATHS.md](TAXI-PATHS.md) for fields, estimate limits, coverage and maintenance.

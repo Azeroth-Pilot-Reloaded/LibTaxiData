@@ -41,11 +41,12 @@ jobs:
           python-version: '3.13'
 
       - name: Compile tooling
-        run: python -m py_compile tools/generate.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py tools/release_version.py .github/scripts/post_discord.py
+        run: python -m py_compile tools/generate.py tools/taxi_paths.py tools/package.py tools/profile_catalog.py tools/profiles.py tools/live_build.py tools/data_fingerprint.py tools/release_version.py .github/scripts/post_discord.py
 
       - name: Validate client profile catalog and archives
         run: |
           python tools/profiles.py check
+          python tests/taxi_path_generation.py
           python tests/release_version.py
           python tests/post_discord.py
           python tools/package.py --matrix

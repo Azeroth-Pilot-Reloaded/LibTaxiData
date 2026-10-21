@@ -24,6 +24,7 @@ BUILD_PATTERN = re.compile(
     flags=re.MULTILINE,
 )
 TAXI_NODES_PATTERN = re.compile(r"^Data/([^/]+)/TaxiNodes\.lua$")
+TAXI_PATHS_PATTERN = re.compile(r"^Data/([^/]+)/TaxiPaths\.lua$")
 
 
 @dataclass(frozen=True)
@@ -60,6 +61,7 @@ def plan_release(
     api_changed: bool = False,
     added_versions: tuple[str, ...] = (),
     node_updates: tuple[str, ...] = (),
+    path_updates: tuple[str, ...] = (),
 ) -> ReleasePlan:
     """Apply the project's automatic major/minor policy.
 
@@ -85,11 +87,14 @@ def plan_release(
             tuple(major_reasons),
         )
 
-    if node_updates:
+    if node_updates or path_updates:
         return ReleasePlan(
             "minor",
             SemanticVersion(previous.major, previous.minor + 1, 0),
-            ("build and taxi-node changes: " + ", ".join(node_updates),),
+            tuple(reason for reason in (
+                "build and taxi-node changes: " + ", ".join(node_updates) if node_updates else "",
+                "taxi-path changes: " + ", ".join(path_updates) if path_updates else "",
+            ) if reason),
         )
 
     return ReleasePlan(None, None, ("no automatic release condition matched",))
@@ -118,6 +123,12 @@ def semantic_nodes(document: str) -> str:
             continue
         lines.append(line)
     return "\n".join(lines) + "\n"
+
+
+def is_path_update(previous: str | None, current: str | None) -> bool:
+    """Path/price/duration corrections publish even without a new client build."""
+    return (semantic_nodes(previous) if previous is not None else None) != \
+        (semantic_nodes(current) if current is not None else None)
 
 
 def is_build_with_node_update(previous: str | None, current: str | None) -> bool:
@@ -182,6 +193,10 @@ class GitRepository:
             if TAXI_NODES_PATTERN.fullmatch(path)
         }
 
+    def taxi_path_paths(self, ref: str) -> set[str]:
+        result = self.run("ls-tree", "-r", "--name-only", ref, "--", "Data")
+        return {path for path in result.stdout.splitlines() if TAXI_PATHS_PATTERN.fullmatch(path)}
+
 
 def inspect_release(
     repository: GitRepository,
@@ -204,6 +219,7 @@ def inspect_release(
     )
 
     node_updates: list[str] = []
+    path_updates: list[str] = []
     if previous_data_tag:
         repository.verify_ref(previous_data_tag)
         paths = repository.taxi_node_paths(previous_data_tag).intersection(
@@ -218,11 +234,19 @@ def inspect_release(
                 if match:
                     node_updates.append(match.group(1))
 
+    if previous_data_tag:
+        paths = repository.taxi_path_paths(previous_data_tag).union(repository.taxi_path_paths(repository.head))
+        for path in sorted(paths):
+            if is_path_update(repository.file_at(previous_data_tag, path, missing_ok=True),
+                              repository.file_at(repository.head, path, missing_ok=True)):
+                path_updates.append(TAXI_PATHS_PATTERN.fullmatch(path).group(1))
+
     return plan_release(
         previous_version_tag,
         api_changed=api_changed,
         added_versions=added_versions,
         node_updates=tuple(node_updates),
+        path_updates=tuple(path_updates),
     )
 
 

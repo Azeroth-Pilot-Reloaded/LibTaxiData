@@ -454,8 +454,9 @@ def save_profiles(
 
 def required_data_paths(output: Path, data_set: str) -> list[Path]:
     return [
-        output / "Data" / data_set / "TaxiNodes.lua",
-        output / "Locale" / data_set / "enUS.lua",
+        *(output / "Data" / data_set / name for name in
+          ("TaxiNodes.lua", "TaxiPaths.lua", "PlayerConditions.lua", "ModifierTrees.lua", "SupportingData.lua")),
+        *(output / "Locale" / data_set / f"{locale}.lua" for locale in LOCALES),
     ]
 
 
@@ -616,6 +617,7 @@ def render_toc(
     file_lines = []
     data_names = (
         "TaxiNodes.lua",
+        "TaxiPaths.lua",
         "PlayerConditions.lua",
         "ModifierTrees.lua",
         "SupportingData.lua",

@@ -143,6 +143,7 @@ for _, candidate in ipairs(LibTaxiData_Internal.ClientProfiles) do
 end
 assert(dataBuild, "missing source profile for data set: " .. dataSet)
 dofile("Data/" .. dataSet .. "/TaxiNodes.lua")
+dofile("Data/" .. dataSet .. "/TaxiPaths.lua")
 dofile("Data/" .. dataSet .. "/PlayerConditions.lua")
 dofile("Data/" .. dataSet .. "/ModifierTrees.lua")
 dofile("Data/" .. dataSet .. "/SupportingData.lua")
@@ -173,6 +174,21 @@ assert(type(taxi.GetNodeName(2)) == "string" and taxi.GetNodeName(2) ~= "")
 assert(taxi.GetNode(2).continentID == 0)
 assert(taxi.GetAllNodeData(2) == taxi.GetNode(2))
 assert(taxi.GetAllNodes()[2] == taxi.GetNode(2))
+assert(taxi.DATA.Paths == taxi.GetAllPaths())
+local pathCount = 0
+for pathID, path in pairs(taxi.GetAllPaths()) do
+    pathCount = pathCount + 1
+    assert(taxi.GetPath(pathID) == path)
+    assert(taxi.GetOutgoingPaths(path.fromNodeID)[pathID] == path)
+    assert(taxi.GetNode(path.fromNodeID) and taxi.GetNode(path.toNodeID))
+    assert(path.basePriceCopper == nil or path.basePriceCopper >= 0)
+    assert(path.durationSeconds == nil or path.durationSeconds >= 0)
+    assert(path.durationSource == "geometry-estimate" or path.durationSource == "manual" or path.durationSource == "unknown")
+end
+assert(pathCount == taxi.GetSource().paths.pathCount)
+assert(next(taxi.GetOutgoingPaths(-1)) == nil)
+assert(taxi.GetPath(-1) == nil)
+
 
 if profile ~= "retail" then
     local world = assert(taxi.GetNodeWorldPosition(2))

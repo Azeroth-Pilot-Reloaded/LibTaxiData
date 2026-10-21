@@ -115,6 +115,7 @@ jobs:
 
       - name: Validate generated addon
         run: |
+          python tests/taxi_path_generation.py
           python tools/profiles.py check
           luacheck .
           python tools/package.py --build --output-dir .cache/release-zips
@@ -142,11 +143,12 @@ jobs:
             Automated update for client selection `${{ steps.selection.outputs.profile }}`.
 
             Builds are resolved from Blizzard's product feeds unless an exact manual build was supplied.
-            Source: `TaxiNodes` and referenced condition tables from versioned Wago Tools DB2 exports.
+            Source: `TaxiNodes`, `TaxiPath`, `TaxiPathNode`, and referenced condition tables from versioned Wago Tools DB2 exports.
             The generator, Lua lint, runtime tests, and whitespace validation completed successfully.
           add-paths: |
             Data/**
             Locale/**
+            readme/coverage/**
             LibTaxiData.toc
             tools/profiles.json
 

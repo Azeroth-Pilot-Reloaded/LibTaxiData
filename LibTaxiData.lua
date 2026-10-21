@@ -9,6 +9,7 @@ _G.LibTaxiData_Internal = {
     ModifierTrees = {},
     Names = {},
     Nodes = {},
+    Paths = {},
     PlayerConditions = {},
     RaceBits = {},
 }

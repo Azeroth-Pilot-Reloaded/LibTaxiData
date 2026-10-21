@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 1,
+  "build": "1.15.9.70003",
+  "pathCount": 282,
+  "fingerprint": "13c4674789f51888d2a0455dfbf0f56599e94b223f1ad5cda8b18f3741a61e87",
+  "excludedPathCount": 12,
+  "manualPathCount": 0,
+  "estimatedDurationCount": 277,
+  "unknownDurationCount": 5,
+  "unknownPriceCount": 0,
+  "estimateSpeedYardsPerSecond": 32.0,
+  "nodes": {
+    "1": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "2": {
+      "outgoingCount": 7,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "4": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "5": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "6": {
+      "outgoingCount": 10,
+      "unknownDurationPaths": [
+        314
+      ],
+      "unknownPricePaths": []
+    },
+    "7": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "8": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "9": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "10": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "11": {
+      "outgoingCount": 7,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "12": {
+      "outgoingCount": 5,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "13": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "14": {
+      "outgoingCount": 5,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "15": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "16": {
+      "outgoingCount": 5,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "17": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "18": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "19": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "20": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "21": {
+      "outgoingCount": 7,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "22": {
+      "outgoingCount": 10,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "23": {
+      "outgoingCount": 8,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "25": {
+      "outgoingCount": 13,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "26": {
+      "outgoingCount": 9,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "27": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "28": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "29": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "30": {
+      "outgoingCount": 5,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "31": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "32": {
+      "outgoingCount": 6,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "33": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "34": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [
+        241
+      ],
+      "unknownPricePaths": []
+    },
+    "35": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "37": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "38": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "39": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "40": {
+      "outgoingCount": 8,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "41": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "42": {
+      "outgoingCount": 6,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "43": {
+      "outgoingCount": 5,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "44": {
+      "outgoingCount": 6,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "45": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "46": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "47": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [
+        285
+      ],
+      "unknownPricePaths": []
+    },
+    "48": {
+      "outgoingCount": 5,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "49": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "50": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [
+        295
+      ],
+      "unknownPricePaths": []
+    },
+    "51": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "52": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "53": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "54": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "55": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "56": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "57": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "58": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "59": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [
+        312
+      ],
+      "unknownPricePaths": []
+    },
+    "60": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "61": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "62": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "63": {
+      "outgoingCount": 1,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "64": {
+      "outgoingCount": 6,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "65": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "66": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "67": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "68": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "69": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "70": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "71": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "72": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "73": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "74": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "75": {
+      "outgoingCount": 2,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "76": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "77": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "78": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "79": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "80": {
+      "outgoingCount": 3,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "84": {
+      "outgoingCount": 4,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "85": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "86": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    },
+    "87": {
+      "outgoingCount": 0,
+      "unknownDurationPaths": [],
+      "unknownPricePaths": []
+    }
+  },
+  "excludedPaths": [
+    {
+      "id": 292,
+      "fromNodeID": 50,
+      "toNodeID": 36,
+      "reason": "excluded-endpoint"
+    },
+    {
+      "id": 302,
+      "fromNodeID": 35,
+      "toNodeID": 24,
+      "reason": "excluded-endpoint"
+    },
+    {
+      "id": 303,
+      "fromNodeID": 54,
+      "toNodeID": 24,
+      "reason": "excluded-endpoint"
+    },
+    {
+      "id": 436,
+      "fromNodeID": 78,
+      "toNodeID": 24,
+      "reason": "excluded-endpoint"
+    },
+    {
+      "id": 439,
+      "fromNodeID": 36,
+      "toNodeID": 24,
+      "reason": "excluded-endpoint"
+    },
+    {
+      "id": 472,
+      "fromNodeID": 0,
+      "toNodeID": 24,
+      "reason": "excluded-endpoint"
+    },
+    {
+      "id": 9571,
+      "fromNodeID": 2913,
+      "toNodeID": 2913,
+      "reason": "same-node"
+    },
+    {
+      "id": 9574,
+      "fromNodeID": 2914,
+      "toNodeID": 2914,
+      "reason": "same-node"
+    },
+    {
+      "id": 9620,
+      "fromNodeID": 2930,
+      "toNodeID": 2930,
+      "reason": "same-node"
+    },
+    {
+      "id": 9669,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 10538,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    },
+    {
+      "id": 10641,
+      "fromNodeID": 0,
+      "toNodeID": 0,
+      "reason": "same-node"
+    }
+  ]
+}

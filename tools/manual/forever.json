@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "description": "Manual taxi corrections, grouped by departure node. Generated data never overwrites this file.",
+  "nodes": {}
+}

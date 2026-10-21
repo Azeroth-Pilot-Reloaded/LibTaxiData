@@ -197,6 +197,8 @@ Examples:
 
 ---
 
+See [taxi connections, prices and durations](readme/TAXI-PATHS.md) for the directed-path API and manual maintenance.
+
 ## Public API
 
 The addon exposes `_G.LibTaxiData_API`. It does not register a LibStub major and

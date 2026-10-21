@@ -270,6 +270,9 @@ def main() -> int:
         embedded_profiles = set(re.findall(r'profile = "([^"]+)"', manifest))
         assert embedded_profiles == set(release["profile_list"])
         assert toc.count("\\TaxiNodes.lua") == 1
+        assert toc.count("\\TaxiPaths.lua") == 1
+        assert "LibTaxiData/Localization.lua" in names
+        assert "LibTaxiData/Data/" + release["data_set"] + "/TaxiPaths.lua" in names
         assert "## X-Curse-Project-ID: 1636228" in toc
         assert "## X-WoWI-ID: 27178" in toc
         assert "## X-Wago-ID: jK8gl56y" in toc

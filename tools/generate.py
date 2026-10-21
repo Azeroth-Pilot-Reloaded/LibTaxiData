@@ -10,12 +10,15 @@ import io
 import re
 import sys
 import time
+import tempfile
+import shutil
 import urllib.parse
 import urllib.request
 from collections import defaultdict, deque
 from pathlib import Path
 
 try:
+    from taxi_paths import generate_paths, load_manual
     from live_build import BUILD_PATTERN, get_product_build
     from profile_catalog import (
         LOCALES,
@@ -25,6 +28,7 @@ try:
         update_toc,
     )
 except ModuleNotFoundError:  # Imported as tools.generate by tests or maintenance scripts.
+    from tools.taxi_paths import generate_paths, load_manual
     from tools.live_build import BUILD_PATTERN, get_product_build
     from tools.profile_catalog import (
         LOCALES,
@@ -604,12 +608,13 @@ def generate_locales(
         write_lua(output / "Locale" / profile_id / f"{locale}.lua", lines)
 
 
-def generate_profile(
+def _generate_profile(
     output: Path,
     profile: dict[str, object],
     build: str,
     cache_dir: Path | None,
     locale_fallback_build: str | None,
+    manual_root: Path,
 ) -> None:
     if not BUILD_PATTERN.fullmatch(build):
         raise ValueError(f"Invalid Blizzard build: {build!r}")
@@ -659,6 +664,16 @@ def generate_profile(
         else:
             locale_rows[locale] = locale_rows["enUS"]
 
+    manual = load_manual(manual_root, str(profile["id"]))
+    try:
+        path_rows = download_csv("TaxiPath", build, "enUS", cache_dir)
+        point_rows = download_csv("TaxiPathNode", build, "enUS", cache_dir)
+    except (OSError, TimeoutError, ValueError):
+        if not manual.get("complete"):
+            raise
+        print(f"Using explicitly complete manual taxi paths for {profile['id']}", file=sys.stderr)
+        path_rows, point_rows = [], []
+
     base_nodes = locale_rows["enUS"]
     dev_maps = {
         integer(row["ID"])
@@ -697,6 +712,10 @@ def generate_profile(
         modifier_content_tuning_ids,
     )
     generate_locales(output, profile, build, included_ids, locale_rows)
+    path_report = generate_paths(output, profile, build, path_rows, point_rows, included_ids, manual)
+    print(f"Taxi paths: {path_report['pathCount']} retained; "
+          f"{path_report['unknownDurationCount']} durations unknown; "
+          f"{path_report['unknownPriceCount']} prices unknown.", file=sys.stderr)
 
     print(
         f"Generated profile {profile['id']} ({build}): {len(included)} taxi nodes; "
@@ -711,6 +730,40 @@ def generate_profile(
             + ", ".join(map(str, sorted(missing_conditions))),
             file=sys.stderr,
         )
+
+
+
+def generate_profile(output: Path, profile: dict[str, object], build: str,
+                     cache_dir: Path | None, locale_fallback_build: str | None) -> None:
+    # Acquire and validate the complete profile before touching installed outputs.
+    # Manual sources live in output/tools/manual and are never generated.
+    with tempfile.TemporaryDirectory(prefix="libtaxidata-profile-") as temporary:
+        staging = Path(temporary)
+        _generate_profile(staging, profile, build, cache_dir, locale_fallback_build, output)
+        sources = [source for source in sorted(staging.rglob("*")) if source.is_file()]
+        previous = {}
+        pending_paths = []
+        try:
+            for source in sources:
+                target = output / source.relative_to(staging)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                previous[target] = target.read_bytes() if target.exists() else None
+                pending = target.with_suffix(target.suffix + ".pending")
+                pending_paths.append(pending)
+                shutil.copyfile(source, pending)
+                pending.replace(target)
+        except OSError:
+            # Roll back every touched file after a failed commit. Network/schema
+            # failures never reach this phase; a copy failure must not mix builds.
+            for target, payload in previous.items():
+                if payload is None:
+                    target.unlink(missing_ok=True)
+                else:
+                    target.write_bytes(payload)
+            raise
+        finally:
+            for pending in pending_paths:
+                pending.unlink(missing_ok=True)
 
 
 def main() -> int:
