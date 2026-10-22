@@ -5,7 +5,7 @@
     "version": "retail",
     "channel": "live",
     "product": "wow",
-    "build": "12.1.5.70448",
+    "build": "12.1.5.70529",
     "default": true,
     "dataSet": "retail"
   },
@@ -55,7 +55,7 @@
     "version": "forever",
     "channel": "beta",
     "product": "wow_classic_beta",
-    "build": "1.60.1.70450",
+    "build": "1.60.1.70532",
     "default": true,
     "dataSet": "forever"
   },
