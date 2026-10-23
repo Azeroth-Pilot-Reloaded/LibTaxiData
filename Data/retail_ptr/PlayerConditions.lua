@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/PlayerCondition (build 12.1.7.70424)
+-- Source: https://wago.tools/db2/PlayerCondition (build 12.1.7.70493)
 local lib = _G.LibTaxiData_Internal
 if not lib then return end
 if not lib.Client or lib.Client.dataSet ~= "retail_ptr" then return end
@@ -66,7 +66,7 @@ lib.PlayerConditions = {
     [62537] = { Flags = 3, ModifierTreeID = 79104 },
     [62562] = { Flags = 3, ModifierTreeID = 79159 },
     [62691] = { Flags = 3, ModifierTreeID = 79656 },
-    [62729] = { AuraSpellLogic = 65536, Flags = 1, ModifierTreeID = 79785 },
+    [62729] = { AreaID = { 16913, 0, 0, 0 }, AreaLogic = 65536, AuraSpellLogic = 65536, Flags = 1, ModifierTreeID = 79785 },
     [62800] = { Flags = 3, ModifierTreeID = 79945 },
     [62814] = { Flags = 1, ModifierTreeID = 88023 },
     [62832] = { Flags = 3, ModifierTreeID = 80055 },

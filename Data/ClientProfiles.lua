@@ -16,7 +16,7 @@ lib.ClientGameTypes = lib.ClientVersions
 
 lib.ClientProfiles = {
     { profile = "retail", dataSet = "retail", version = "retail", gameType = "mainline", channel = "live", build = "12.1.5.70529", interface = 120105, product = "wow", default = true },
-    { profile = "retail_ptr", dataSet = "retail_ptr", version = "retail", gameType = "mainline", channel = "ptr", build = "12.1.7.70424", interface = 120107, product = "wowt" },
+    { profile = "retail_ptr", dataSet = "retail_ptr", version = "retail", gameType = "mainline", channel = "ptr", build = "12.1.7.70493", interface = 120107, product = "wowt" },
     { profile = "mists", dataSet = "mists", version = "mists", gameType = "mists", channel = "live", build = "5.5.4.70531", interface = 50504, product = "wow_classic", default = true },
     { profile = "mists_ptr", dataSet = "mists_ptr", version = "mists", gameType = "mists", channel = "ptr", build = "5.5.4.67849", interface = 50504, product = "wow_classic_ptr" },
     { profile = "classic", dataSet = "classic", version = "classic", gameType = "classic", channel = "live", build = "1.15.9.70003", interface = 11509, product = "wow_classic_era", default = true },
