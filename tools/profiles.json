@@ -15,7 +15,7 @@
     "version": "retail",
     "channel": "ptr",
     "product": "wowt",
-    "build": "12.1.7.70424",
+    "build": "12.1.7.70493",
     "releaseBase": "retail",
     "dataSet": "retail_ptr"
   },

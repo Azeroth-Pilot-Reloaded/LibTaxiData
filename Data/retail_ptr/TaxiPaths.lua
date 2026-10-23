@@ -1,5 +1,5 @@
 -- This file is generated. Do not edit it by hand.
--- Source: https://wago.tools/db2/TaxiPath + TaxiPathNode (build 12.1.7.70424)
+-- Source: https://wago.tools/db2/TaxiPath + TaxiPathNode (build 12.1.7.70493)
 -- Prices are base copper. Geometry durations are estimates at 32 yards/second.
 -- A DB2 connection is not proof that a character is offered this flight.
 local lib = _G.LibTaxiData_Internal
@@ -4057,7 +4057,7 @@ lib.Paths = {
 lib.Source.paths = {
     fingerprint = "a3632144f9150e62e92811c476d7f2ddce036adc670694f9d3fc5a8cf37c80d6",
     pathCount = 4045,
-    excludedPathCount = 4735,
+    excludedPathCount = 4736,
     manualPathCount = 0,
     estimatedDurationCount = 4012,
     unknownDurationCount = 33,
