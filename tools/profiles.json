@@ -45,7 +45,7 @@
     "version": "classic",
     "channel": "live",
     "product": "wow_classic_era",
-    "build": "1.15.9.70003",
+    "build": "1.15.9.70576",
     "default": true,
     "dataSet": "classic"
   },
